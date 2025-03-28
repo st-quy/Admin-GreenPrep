@@ -36,8 +36,22 @@ const PrivateRoute = [
                 breadcrumb: "",
               },
               {
-                path: "student/:id",
-                element: <div>Student</div>,
+                path: "student",
+                children: [
+                  {
+                  path:":id",
+                  children: [
+                    {
+                      path:"",
+                      element: <div>Student Detail</div>,
+                    },
+                    {
+                      path:"grade",
+                      element: <div>Student Grade</div>,
+                    },
+                  ]
+                },
+               ],
                 breadcrumb: "Student Detail",
               },
             ],
