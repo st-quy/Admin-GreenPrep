@@ -90,24 +90,25 @@ const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
         onOk={handleOk}
         okText={isEdit ? "Update" : "Create"}
         okButtonProps={{
-          className: "!bg-[#003087] !text-white !rounded-[50px]",
+          className:
+            "!bg-[#003087] !text-white !rounded-[50px] !xl:text-[16px]",
         }}
         cancelButtonProps={{
           className:
-            "!border !border-[#003087] !bg-white !text-[#003087] !rounded-[50px]",
+            "!border !border-[#003087] !bg-white !text-[#003087] !rounded-[50px] !xl:text-[16px]",
         }}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
       >
-        <h4 className="text-[30px]">
-          {isEdit ? "Edit Session" : "Create Session"}
+        <h4 className="xl:text-[30px]">
+          {isEdit ? "Update session" : "Create Session"}
         </h4>
         <p className="text-[#637381] xl:text-[18px] xl:mb-10">
           {isEdit
-            ? "Update the session details below."
-            : "Fill in the details to create a new session."}
+            ? "Modify and extend the current session."
+            : "Set up a new session quickly and easily."}
         </p>
-        <form>
+        <form className="mb-14">
           <div className="w-full flex flex-col mb-2">
             <label className="mb-2 xl:text-[16px]" htmlFor="">
               Session Name
@@ -129,7 +130,7 @@ const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
             <label className="mb-2 xl:text-[16px]" htmlFor="">
               Session Key
               {errors.sessionKey ? (
-                <span className="text-red-500 text-sm ms-2">
+                <span className="text-red-500 xl:text-[16px] ms-2">
                   {errors.sessionKey}
                 </span>
               ) : (
@@ -146,7 +147,7 @@ const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
             <label className="mb-2 xl:text-[16px]" htmlFor="">
               Exam Set
               {errors.examSet ? (
-                <span className="text-red-500 text-sm ms-2">
+                <span className="text-red-500 xl:text-[16px] ms-2">
                   {errors.examSet}
                 </span>
               ) : (
@@ -161,10 +162,10 @@ const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
             />
           </div>
           <div className="w-full flex flex-col mb-2">
-            <label className="mb-2 " htmlFor="">
+            <label className="mb-2 xl:text-[16px]" htmlFor="">
               Start
               {errors.dateRange ? (
-                <span className="text-red-500 text-sm ms-2">
+                <span className="text-red-500 xl:text-[16px] ms-2">
                   {errors.dateRange}
                 </span>
               ) : (
