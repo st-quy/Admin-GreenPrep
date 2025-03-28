@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
+import SessionDetail from "@features/session/SessionDetail.jsx";
 
 const PrivateRoute = [
   {
@@ -32,7 +33,7 @@ const PrivateRoute = [
             children: [
               {
                 path: "",
-                element: <div>Session Detail</div>,
+                element: <SessionDetail/>,
                 breadcrumb: "",
               },
               {
