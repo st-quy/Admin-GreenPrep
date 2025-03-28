@@ -33,14 +33,19 @@ export const QuestionAnswer = ({
           <div>&nbsp;{quesntionsAnswerData?.Content || ""}</div>
         </div>
         {quesntionsAnswerData?.ImageKeys?.length > 0 && (
-          <img
-            src="https://res.cloudinary.com/dlhcg0tcz/image/upload/v1742958343/greenprep/SpeakingImg/2.png"
-            alt="speaking image"
-            className="mt-3 w-[35.8125rem]"
-          />
+          <div className="mt-3 flex gap-1 flex-wrap">
+            {quesntionsAnswerData?.ImageKeys?.map((image, index) => (
+              <img
+                key={index}
+                src={image || ""}
+                alt="speaking image"
+                className="w-[35.8125rem]"
+              />
+            ))}
+          </div>
         )}
         {speakingPartFour?.length > 0 && (
-          <div className="flex flex-col gap-2 py-1">
+          <div className="flex flex-col gap-2 py-2">
             {speakingPartFour.map((quest) => (
               <p key={quest.ID}>{quest?.Content || ""}</p>
             ))}
