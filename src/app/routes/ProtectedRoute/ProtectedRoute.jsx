@@ -64,7 +64,7 @@ export const ProtectedRoute = () => {
         />
         <StepForwardOutlined style={{ fontSize: "24px", cursor: "pointer" }} />
       </Header>
-      <Content style={{ padding: "0 48px" }}>
+      <Content className="p-10 pt-4">
         <Breadcrumb paths={breadcrumbPaths} />
         <Outlet />
       </Content>
