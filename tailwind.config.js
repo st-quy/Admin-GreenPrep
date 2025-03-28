@@ -25,7 +25,13 @@ export default {
     fontFamily: {
       sans: ["Inter", "sans-serif"],
     },
-    extend: {},
+    extend: {
+      colors: {
+        secondaryColor: "#13C296",
+        greenLight6: "#DAF8E6",
+        greenDark: "#1A8245",
+      },
+    },
   },
   plugins: [],
   corePlugins: {

@@ -1,5 +1,7 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
+import SessionLayout from "../../features/auth/ui/SessionLayout.jsx";
+import SessionInformation from "@pages/SessionManagement/SessionInformation.jsx";
 
 const PrivateRoute = [
   {
@@ -27,13 +29,13 @@ const PrivateRoute = [
             breadcrumb: "Class Detail",
           },
           {
-            path: "session-detail",
+            path: "session",
+            element: <SessionLayout />,
             breadcrumb: "Session Detail",
             children: [
               {
                 path: "",
-                element: <div>Session Detail</div>,
-                breadcrumb: "",
+                element: <SessionInformation />,
               },
               {
                 path: "student/:id",
