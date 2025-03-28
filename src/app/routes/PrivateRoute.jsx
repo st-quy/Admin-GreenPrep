@@ -1,6 +1,12 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
 
+
+
+const ProfilePage = lazy(
+  () => import("@pages/Profile/ProfilePage.jsx")
+);
+
 const PrivateRoute = [
   {
     path: "/",
@@ -46,8 +52,14 @@ const PrivateRoute = [
       },
       {
         path: "profile",
-        element: <div>Profile Page</div>,
         breadcrumb: "Profile",
+        children: [
+          { 
+            path: "", 
+            element: <ProfilePage />,
+            breadcrumb: "",
+         },
+        ],
       },
     ],
   },
