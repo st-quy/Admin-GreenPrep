@@ -1,6 +1,5 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
-import SessionDetail from "@features/session/SessionDetail.jsx";
 
 const PrivateRoute = [
   {
