@@ -1,9 +1,16 @@
 // Define public routes accessible to all users
 
+import { PublicLayout } from "@app/layout/PublicLayout";
+
+
 const PublicRoute = [
   {
-    path: "login",
-    element: "login",
+    path:"/",
+    element:<PublicLayout />,
+    children: [{
+      path: "login",
+      element: "login",
+    }]
   },
 ];
 
