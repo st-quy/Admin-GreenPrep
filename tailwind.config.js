@@ -30,6 +30,8 @@ export default {
         secondaryColor: "#13C296",
         greenLight6: "#DAF8E6",
         greenDark: "#1A8245",
+        tableHeadColor: "#E6F0FA",
+        primaryColor: "#003087",
       },
     },
   },
