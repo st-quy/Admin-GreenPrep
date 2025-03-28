@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
+import Dashboard from "@pages/Dashboard/Dashboard.jsx";
 
 const PrivateRoute = [
   {
@@ -9,7 +10,7 @@ const PrivateRoute = [
     children: [
       {
         path: "",
-        element: <div>Dashboard</div>,
+        element: <Dashboard />,
         breadcrumb: "Dashboard",
       },
       {
