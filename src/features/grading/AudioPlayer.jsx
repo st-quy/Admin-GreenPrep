@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Button, Slider } from "antd";
 import {
-  PlayCircleOutlined,
-  PauseCircleOutlined,
+  CaretRightOutlined,
+  PauseOutlined,
   DownloadOutlined,
 } from "@ant-design/icons";
 
@@ -83,8 +83,8 @@ export default function AudioPlayer({
       <Button
         type="text"
         onClick={togglePlay}
-        icon={isPlaying ? <PauseCircleOutlined /> : <PlayCircleOutlined />}
-        className="text-xl flex items-center justify-center"
+        icon={isPlaying ? <PauseOutlined /> : <CaretRightOutlined />}
+        className="text-2xl flex items-center justify-center"
         title={isPlaying ? "Pause" : "Play"}
       />
 
@@ -110,7 +110,7 @@ export default function AudioPlayer({
         type="text"
         onClick={downloadAudio}
         icon={<DownloadOutlined />}
-        className="text-xl flex items-center justify-center"
+        className="text-2xl flex items-center justify-center"
         title="Download"
       />
     </div>
