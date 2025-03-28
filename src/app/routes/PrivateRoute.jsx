@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
+import ClassDetail from "@pages/class-detail/ClassDetail.jsx";
 
 const PrivateRoute = [
   {
@@ -23,7 +24,7 @@ const PrivateRoute = [
           },
           {
             path: "detail",
-            element: <div>Class Detail</div>,
+            element: <ClassDetail />,
             breadcrumb: "Class Detail",
           },
           {
@@ -39,19 +40,19 @@ const PrivateRoute = [
                 path: "student",
                 children: [
                   {
-                  path:":id",
-                  children: [
-                    {
-                      path:"",
-                      element: <div>Student Detail</div>,
-                    },
-                    {
-                      path:"grade",
-                      element: <div>Student Grade</div>,
-                    },
-                  ]
-                },
-               ],
+                    path: ":id",
+                    children: [
+                      {
+                        path: "",
+                        element: <div>Student Detail</div>,
+                      },
+                      {
+                        path: "grade",
+                        element: <div>Student Grade</div>,
+                      },
+                    ],
+                  },
+                ],
                 breadcrumb: "Student Detail",
               },
             ],
