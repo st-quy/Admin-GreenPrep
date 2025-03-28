@@ -1,10 +1,17 @@
 import ResetPasswordSuccessfullyPage from "@pages/ResetPasswordSuccessfully/ResetPasswordSuccessfullyPage.jsx";
 import ResetPasswordSuccessfullyLayout from "@pages/ResetPasswordSuccessfully/ResetPasswordSuccessfullyLayout.jsx";
 
+import { PublicLayout } from "@app/layout/PublicLayout";
+
+
 const PublicRoute = [
   {
-    path: "login",
-    element: "login",
+    path:"/",
+    element:<PublicLayout />,
+    children: [{
+      path: "login",
+      element: "login",
+    }]
   },
   {
     path: "reset-password-success",
