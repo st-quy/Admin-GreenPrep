@@ -1,0 +1,21 @@
+{
+    "sessions": [
+      {
+        "sessionName": "SESSION 1",
+        "participants": 50,
+        "sessionDate": "12/12/2021 9:00",
+        "sessionKey": "KEY 001",
+        "status": "Completed",
+        "endTime": "12/12/2021 11:00"
+      }
+    ],
+    "students": [
+      {
+        "studentName": "John Doe",
+        "studentID": "ST001",
+        "className": "10A1",
+        "email": "johndoe@example.com",
+        "phone": "123456789"
+      }
+    ]
+  }

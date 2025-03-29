@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { Table, Input, Button } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import CheckCircleIcon from "@/assets/icons/check-circle.svg";
@@ -12,7 +12,7 @@ const dataSource = Array.from({ length: 50 }, (_, index) => ({
   className: `CLASS${(index % 5) + 1}`,
 }));
 
-const StudentMonitoring = () => {
+const StudentMonitoring = ({ searchKeyword }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10); // Thêm state cho pageSize
@@ -34,6 +34,16 @@ const StudentMonitoring = () => {
   const handleBulkReject = () => {
     console.log("Bulk reject:", selectedRowKeys);
   };
+
+  // Searching functionality
+  const filteredData = useMemo(() => {
+  if (!searchKeyword) return dataSource;
+  return dataSource.filter(
+    (item) =>
+      item.studentName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+      item.className.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
+}, [searchKeyword, dataSource]);
 
   const rowSelection = {
     selectedRowKeys,
@@ -108,7 +118,7 @@ const StudentMonitoring = () => {
   const paginationConfig = {
     current: currentPage,
     pageSize: pageSize,
-    total: totalItems,
+    total: filteredData.length,
     showSizeChanger: true,
     onShowSizeChange: onShowSizeChange,
     onChange: (page) => setCurrentPage(page),
@@ -121,7 +131,7 @@ const StudentMonitoring = () => {
   };
 
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       {/* Controls */}
       <div className="flex items-center">
         {selectedRowKeys.length > 0 && (
@@ -154,7 +164,7 @@ const StudentMonitoring = () => {
         rowSelection={rowSelection}
         // @ts-ignore
         columns={columns}
-        dataSource={dataSource}
+        dataSource={filteredData}
         pagination={paginationConfig}
         className="border border-gray-200 rounded-lg overflow-hidden"
         rowClassName="hover:bg-gray-50"
