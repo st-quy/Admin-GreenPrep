@@ -6,7 +6,7 @@ import { TableType, StatusType, LevelEnum } from "../constraint/TableEnum";
 const StudentSessionTable = ({
   data,
   type,
-  status,
+  status = type === TableType.STUDENT ? undefined : "draft",
   onAllQuestionGraded = () => {},
 }) => {
   const navigate = useNavigate();
