@@ -5,10 +5,11 @@ import LoginPage from "../../features/auth/ui/LoginForm";
 
 
 const PublicRoute = [
-  {
-    path:"/",
-    element:<PublicLayout />,
-    children: [{
+  // {
+    // path:"/",
+    // element:"",
+    // children: [
+      {
       path: "login",
       element: <LoginPage />,
     }]
