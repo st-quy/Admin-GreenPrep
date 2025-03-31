@@ -3,6 +3,38 @@ import { Form, Button, Input, message } from "antd";
 import { EyeOutlined, EyeInvisibleOutlined, LeftOutlined,MailOutlined } from "@ant-design/icons";
 import { Link,useNavigate } from "react-router-dom";
 import { ForgotPw, Logo } from "@assets/images";
+import * as yup from "yup";
+
+const emailSchema = yup.object().shape({
+  email: yup.string().email("Please enter a valid email address Ex:ABC@bc.com").required("Email is required"),
+});
+
+const passwordSchema = yup.object({
+  password: yup
+    .string()
+    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, "Password must be at least 8 characters include uppercase letter, number and special character.")
+    .required("New password is required."),
+});
+
+const confirmPasswordSchema = yup.object({
+  confirmPassword: yup
+    .string()
+    // .oneOf([yup.ref("password"), null], "Passwords must match")
+    .required("Confirm new password is required."),
+});
+
+
+
+const yupSync = (schema) => ({
+  validator: async (_, value) => {
+    try {
+      await schema.validateSyncAt(_.field, { [_.field]: value });
+    } catch (error) {
+      return Promise.reject(new Error(error.message));
+    }
+  },
+});
+
 
 
 const ForgotPasswordForm = () => {
@@ -12,7 +44,7 @@ const ForgotPasswordForm = () => {
   const handleEmailSubmit = async (values) => {
     try {
       console.log("Reset password for:", values.email);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 300));
       setIsReset(true);
     } catch (error) {
       message.error(error.message || "Failed to process request. Please try again.");
@@ -57,11 +89,7 @@ const ForgotPasswordForm = () => {
                 }
                 name="email"
                 required={false}
-                rules={[
-                  { required: true, message: "Email is required" },
-                  { type: "email", message: "Please enter a valid email" },
-                ]}
-              >
+                rules={[yupSync(emailSchema)]}>
                 <Input className="h-[40px]" placeholder="Enter your email here" suffix={<MailOutlined style={{ color: '#6B7280' }} />} />
               </Form.Item>
             ) : (
@@ -74,15 +102,11 @@ const ForgotPasswordForm = () => {
                   }
                   name="password"
                   required={false}
-                  rules={[
-                    { required: true, message: "New password is required." },
-                    {
-                      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-                      message: "Password must be at least 8 characters include uppercase letter, number and special character."
-                    }
-                  ]}
+                  rules={[yupSync(passwordSchema)]}
                 >
-                  <Input.Password className="h-[40px]" placeholder="********" iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)} />
+                  <Input.Password className="h-[40px]" placeholder="********" iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)} 
+                        onCopy={(e) => e.preventDefault()} // Ngăn sao chép mật khẩu
+                  />
                 </Form.Item>
                 <Form.Item
                   label={
@@ -92,11 +116,12 @@ const ForgotPasswordForm = () => {
                   }
                   name="confirmPassword"
                   required={false}
-                  rules={[
-                    { required: true, message: "Confirm new password is required." },
-                  ]}
+                  dependencies={["password"]}
+                   rules={[yupSync(confirmPasswordSchema)]}
                 >
-                  <Input.Password className="h-[40px]" placeholder="********" iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)} />
+                  <Input.Password className="h-[40px]" placeholder="********" iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)} 
+                      onCopy={(e) => e.preventDefault()} // Ngăn sao chép mật khẩu
+                  />
                 </Form.Item>
               </>
             )}
