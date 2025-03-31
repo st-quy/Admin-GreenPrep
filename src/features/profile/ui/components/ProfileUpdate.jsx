@@ -1,9 +1,18 @@
 import React from 'react';
 import { Form, Input, Button, Modal, message } from 'antd';
-import { profileSchema } from '../schema/profileButtonsSchema';
+import { profileSchema } from '../../schema/profileButtonsSchema';
 
 const ProfileUpdate = ({ isOpen, onClose, userData }) => {
   const [form] = Form.useForm();
+
+  const validateField = async (fieldName, value) => {
+    try {
+      await profileSchema.validateAt(fieldName, form.getFieldsValue());
+      form.setFields([{ name: fieldName, errors: [] }]);
+    } catch (err) {
+      form.setFields([{ name: fieldName, errors: [err.message] }]);
+    }
+  };
 
   const handleSubmit = async (values) => {
     try {
@@ -16,7 +25,14 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
       err.inner.forEach((error) => {
         errors[error.path] = error.message;
       });
-      console.log("Validation errors:", errors);
+      Object.keys(errors).forEach((field) => {
+        form.setFields([
+          {
+            name: field,
+            errors: [errors[field]],
+          },
+        ]);
+      });
       message.error("Please check your input and try again");
     }
   };
@@ -53,60 +69,88 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
         }}
       >
         <Form.Item
-          label="Fullname"
+          label={
+            <span className="font-medium">
+              Fullname <span className="text-red-500">*</span>
+            </span>
+          }
           name="fullname"
-          rules={[{ required: true, message: "Fullname is required" }]}
+          validateTrigger={["onChange", "onBlur"]}
+          validateFirst
         >
-          <Input className="h-[46px] rounded-lg" />
+          <Input 
+            className="h-[46px] rounded-lg" 
+            onChange={(e) => validateField("fullname", e.target.value)}
+          />
         </Form.Item>
 
         <Form.Item
-          label="Email"
+          label={
+            <span className="font-medium">
+              Email <span className="text-red-500">*</span>
+            </span>
+          }
           name="email"
-          rules={[
-            { required: true, message: "Email is required" },
-            { type: "email", message: "Invalid email address" },
-          ]}
+          validateTrigger={["onChange", "onBlur"]}
+          validateFirst
         >
-          <Input className="h-[46px] rounded-lg" />
+          <Input 
+            className="h-[46px] rounded-lg"
+            onChange={(e) => validateField("email", e.target.value)}
+          />
         </Form.Item>
 
         <Form.Item
-          label="Code"
+          label={
+            <span className="font-medium">
+              Code <span className="text-red-500">*</span>
+            </span>
+          }
           name="code"
-          rules={[{ required: true, message: "Code is required" }]}
+          validateTrigger={["onChange", "onBlur"]}
+          validateFirst
         >
-          <Input className="h-[46px] rounded-lg" />
+          <Input 
+            className="h-[46px] rounded-lg"
+            onChange={(e) => validateField("code", e.target.value)}
+          />
         </Form.Item>
 
         <Form.Item
           label="Phone number"
           name="phoneNumber"
-          rules={[
-            {
-              pattern: /^[0-9]{9,10}$/,
-              message: "Phone number must be 9-10 digits",
-            },
-          ]}
+          validateTrigger={["onChange", "onBlur"]}
+          validateFirst
         >
-          <Input className="h-[46px] rounded-lg" />
+          <Input 
+            className="h-[46px] rounded-lg"
+            onChange={(e) => validateField("phoneNumber", e.target.value)}
+          />
         </Form.Item>
 
         <Form.Item
           label="Date of Birth"
           name="bod"
-          rules={[
-            {
-              pattern: /^(0[1-9]|[12][0-9]|3[01])\/(0[1-9]|1[0-2])\/\d{4}$/,
-              message: "Date must be in format dd/mm/yyyy",
-            },
-          ]}
+          validateTrigger={["onChange", "onBlur"]}
+          validateFirst
         >
-          <Input placeholder="dd/mm/yyyy" className="h-[46px] rounded-lg" />
+          <Input 
+            placeholder="dd/mm/yyyy" 
+            className="h-[46px] rounded-lg"
+            onChange={(e) => validateField("bod", e.target.value)}
+          />
         </Form.Item>
 
-        <Form.Item label="Address" name="address">
-          <Input className="h-[46px] rounded-lg" />
+        <Form.Item 
+          label="Address" 
+          name="address"
+          validateTrigger={["onChange", "onBlur"]}
+          validateFirst
+        >
+          <Input 
+            className="h-[46px] rounded-lg"
+            onChange={(e) => validateField("address", e.target.value)}
+          />
         </Form.Item>
 
         <div className="md:col-span-2 flex justify-end gap-4 mt-6">

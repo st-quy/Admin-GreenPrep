@@ -1,7 +1,10 @@
 import * as yup from "yup";
 
 export const profileSchema = yup.object().shape({
-  fullname: yup.string().required("Fullname is required"),
+  fullname: yup
+    .string()
+    .required("Fullname is required")
+    .matches(/^[A-Za-z\s]+$/, "Fullname can only contain letters"),
   email: yup
     .string()
     .email("Invalid email address")

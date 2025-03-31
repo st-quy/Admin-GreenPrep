@@ -1,7 +1,7 @@
 import React from 'react';
-import ButtonProfile from './ButtonProfile';
-import ProfileUpdate from './ProfileUpdate';
-import ChangePassword from './ChangePassword';
+import ButtonProfile from './components/ButtonProfile';
+import ProfileUpdate from './components/ProfileUpdate';
+import ChangePassword from './components/ChangePassword';
 import { useState } from 'react';
 
 const ProfileTeacher = ({ userData }) => {

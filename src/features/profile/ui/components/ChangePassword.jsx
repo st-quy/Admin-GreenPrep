@@ -1,9 +1,18 @@
 import React from 'react';
 import { Form, Input, Button, Modal, message } from 'antd';
-import { passwordSchema } from '../schema/profileButtonsSchema';
+import { passwordSchema } from '../../schema/profileButtonsSchema';
 
 const ChangePassword = ({ isOpen, onClose }) => {
   const [form] = Form.useForm();
+
+  const validateField = async (fieldName, value) => {
+    try {
+      await passwordSchema.validateAt(fieldName, form.getFieldsValue());
+      form.setFields([{ name: fieldName, errors: [] }]);
+    } catch (err) {
+      form.setFields([{ name: fieldName, errors: [err.message] }]);
+    }
+  };
 
   const verifyCurrentPassword = async (password) => {
     return new Promise((resolve) => {
@@ -58,7 +67,14 @@ const ChangePassword = ({ isOpen, onClose }) => {
         err.inner.forEach((error) => {
           errors[error.path] = error.message;
         });
-        console.log("Validation errors:", errors);
+        Object.keys(errors).forEach((field) => {
+          form.setFields([
+            {
+              name: field,
+              errors: [errors[field]],
+            },
+          ]);
+        });
       } else if (err.message === "Request timeout") {
         message.error("Request timed out. Please try again.");
       } else {
@@ -96,14 +112,13 @@ const ChangePassword = ({ isOpen, onClose }) => {
             </span>
           }
           name="currentPassword"
-          rules={[
-            { required: true, message: "Current password is required" },
-          ]}
-          validateTrigger="onBlur"
+          validateTrigger={["onChange", "onBlur"]}
+          validateFirst
         >
           <Input.Password
             className="h-[46px] rounded-lg"
             placeholder="Enter your current password"
+            onChange={(e) => validateField("currentPassword", e.target.value)}
           />
         </Form.Item>
 
@@ -114,21 +129,13 @@ const ChangePassword = ({ isOpen, onClose }) => {
             </span>
           }
           name="newPassword"
-          rules={[
-            { required: true, message: "New password is required" },
-            { min: 8, message: "Password must be at least 8 characters" },
-            {
-              pattern:
-                /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-              message:
-                "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character",
-            },
-          ]}
-          validateTrigger="onBlur"
+          validateTrigger={["onChange", "onBlur"]}
+          validateFirst
         >
           <Input.Password
             className="h-[46px] rounded-lg"
             placeholder="Enter your new password"
+            onChange={(e) => validateField("newPassword", e.target.value)}
           />
         </Form.Item>
 
@@ -139,22 +146,13 @@ const ChangePassword = ({ isOpen, onClose }) => {
             </span>
           }
           name="confirmPassword"
-          rules={[
-            { required: true, message: "Please confirm your password" },
-            ({ getFieldValue }) => ({
-              validator(_, value) {
-                if (!value || getFieldValue("newPassword") === value) {
-                  return Promise.resolve();
-                }
-                return Promise.reject(new Error("Passwords must match"));
-              },
-            }),
-          ]}
-          validateTrigger="onBlur"
+          validateTrigger={["onChange", "onBlur"]}
+          validateFirst
         >
           <Input.Password
             className="h-[46px] rounded-lg"
             placeholder="Confirm your new password"
+            onChange={(e) => validateField("confirmPassword", e.target.value)}
           />
         </Form.Item>
 
