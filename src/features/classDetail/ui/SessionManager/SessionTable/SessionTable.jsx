@@ -1,6 +1,5 @@
 import React from "react";
-import DeleteIcon from "@assets/icons/class-detail/delete.png";
-import { Button, Pagination } from "antd";
+import { Pagination } from "antd";
 import ActionModal from "../../SessionModal/ActionModal/ActionModal";
 import { formatDateTime } from "@shared/lib/utils/formatString";
 import DeleteModal from "../../SessionModal/DeleteModal/DeleteModal";
@@ -18,11 +17,14 @@ const SessionTable = ({ dataSource }) => {
 
   return (
     <>
-      <table className="w-full shadow-xl rounded-lg overflow-hidden border border-[#E0E0E0]">
+      <table className="w-full overflow-hidden border border-[#E0E0E0] rounded-tl-[10px] rounded-tr-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.2)]">
         <thead className="bg-[#EEEEEE]">
           <tr>
             {tableHeaders.map((header, index) => (
-              <th key={index} className="p-6">
+              <th
+                key={index}
+                className="p-6 text-[14px] font-[500] md:text-[14px] lg:text-[16px]"
+              >
                 {header}
               </th>
             ))}
@@ -31,14 +33,17 @@ const SessionTable = ({ dataSource }) => {
         <tbody className="text-center">
           {dataSource && dataSource.length > 0 ? (
             dataSource.map((item, index) => (
-              <tr key={index}>
-                <td className="p-4">{item.sessionName}</td>
+              <tr
+                key={index}
+                className="text-[14px] font-[500] text-[#637381] md:text-[14px] lg:text-[16px]"
+              >
+                <td className="p-4 text-[#003087]">{item.sessionName}</td>
                 <td className="p-4">{item.sessionKey}</td>
                 <td className="p-4">{formatDateTime(item.startTime)}</td>
                 <td className="p-4">{formatDateTime(item.endTime)}</td>
                 <td className="p-4">{item.numberOfParticipants}</td>
                 <td className="p-4">{item.status}</td>
-                <td className="p-4 flex justify-center items-center gap-4">
+                <td className="flex justify-center items-center gap-4 p-4">
                   <ActionModal isEdit={true} initialData={item} onSubmit={""} />
                   <DeleteModal />
                 </td>

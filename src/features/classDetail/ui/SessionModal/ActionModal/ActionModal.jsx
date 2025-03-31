@@ -76,13 +76,13 @@ const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
   return (
     <>
       {isEdit ? (
-        <Button onClick={showModal} className="!hover:border-none !border-none">
+        <Button onClick={showModal} className="!border-none !hover:border-none">
           <img src={EditIcon} alt="Edit" width={20} height={20} />
         </Button>
       ) : (
         <Button
           onClick={showModal}
-          className="!bg-[#003087] !p-6 !text-white !rounded-[50px]"
+          className="!rounded-[50px] !bg-[#003087] !p-6 !text-white font-[500] lg:text-[16px] md:text-[14px]"
         >
           Create Session
         </Button>
@@ -101,16 +101,16 @@ const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
           xxl: "40%",
         }}
         footer={(_) => (
-          <div className="py-4 flex justify-end gap-4">
+          <div className="flex justify-end gap-4 py-4">
             <Button
               onClick={handleCancel}
-              className="w-[124px] h-[52px] rounded-[50px] text-[#003087] border-[#003087] border-[1px]"
+              className="h-[52px] w-[124px] rounded-[50px] border-[1px] border-[#003087] text-[#003087] lg:text-[16px] md:text-[14px]"
             >
               Cancel
             </Button>
             <Button
               onClick={handleOk}
-              className="w-[124px] h-[52px] bg-[#003087] rounded-[50px] text-white"
+              className="h-[52px] w-[124px] rounded-[50px] bg-[#003087] text-white lg:text-[16px] md:text-[14px]"
             >
               {isEdit ? "Update" : "Create"}
             </Button>
@@ -118,27 +118,31 @@ const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
         )}
       >
         <div className="px-6 pt-4">
-          <h4 className="text-[30px]">
+          <h4 className="font-[700] lg:text-[30px] md:text-[28px]">
             {isEdit ? "Update session" : "Create Session"}
           </h4>
-          <p className="text-[#637381 text-[18px] mb-6">
+          <p className="mb-6 font-[500] text-[#637381] lg:text-[18px] md:text-[16px]">
             {isEdit
               ? "Modify and extend the current session."
               : "Set up a new session quickly and easily."}
           </p>
           <form className="mb-14">
-            <div className="w-full flex flex-col mb-2">
-              <label className="mb-2 text-[16px]" htmlFor="">
+            <div className="mb-2 flex w-full flex-col">
+              <label
+                className="mb-2 font-[500] lg:text-[16px] md:text-[14px]"
+                htmlFor=""
+              >
                 Session Name
                 {errors.sessionName ? (
-                  <span className="text-red-500 text-[16px] ms-2">
+                  <span className="ms-2 text-[16px] text-red-500">
                     {errors.sessionName}
                   </span>
                 ) : (
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="ml-1 text-red-500">*</span>
                 )}
               </label>
               <Input
+                className="py-[12px] pr-[16px] ps-[20px]"
                 placeholder="Session Name"
                 value={formState.sessionName}
                 onChange={(e) =>
@@ -146,18 +150,22 @@ const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
                 }
               />
             </div>
-            <div className="w-full flex flex-col mb-2">
-              <label className="mb-2 xl:text-[16px]" htmlFor="">
+            <div className="mb-2 flex w-full flex-col">
+              <label
+                className="mb-2 font-[500] lg:text-[16px] md:text-[14px]"
+                htmlFor=""
+              >
                 Session Key
                 {errors.sessionKey ? (
-                  <span className="text-red-500 xl:text-[16px] ms-2">
+                  <span className="ms-2 xl:text-[16px] text-red-500">
                     {errors.sessionKey}
                   </span>
                 ) : (
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="ml-1 text-red-500">*</span>
                 )}
               </label>
               <Input
+                className="py-[12px] pr-[16px] ps-[20px]"
                 placeholder="Session Key"
                 value={formState.sessionKey}
                 onChange={(e) =>
@@ -165,36 +173,44 @@ const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
                 }
               />
             </div>
-            <div className="w-full flex flex-col mb-2">
-              <label className="mb-2 xl:text-[16px]" htmlFor="">
+            <div className="mb-2 flex w-full flex-col">
+              <label
+                className="mb-2 font-[500] lg:text-[16px] md:text-[14px]"
+                htmlFor=""
+              >
+                {" "}
                 Exam Set
                 {errors.examSet ? (
-                  <span className="text-red-500 xl:text-[16px] ms-2">
+                  <span className="ms-2 xl:text-[16px] text-red-500">
                     {errors.examSet}
                   </span>
                 ) : (
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="ml-1 text-red-500">*</span>
                 )}
               </label>
               <Select
-                className="!w-full"
+                className="!h-[46px] !w-full"
                 value={formState.examSet}
                 onChange={(value) => handleInputChange("examSet", value)}
                 options={[]}
               />
             </div>
-            <div className="w-full flex flex-col mb-2">
-              <label className="mb-2 xl:text-[16px]" htmlFor="">
+            <div className="mb-2 flex w-full flex-col">
+              <label
+                className="mb-2 font-[500] lg:text-[16px] md:text-[14px]"
+                htmlFor=""
+              >
                 Start
                 {errors.dateRange ? (
-                  <span className="text-red-500 xl:text-[16px] ms-2">
+                  <span className="ms-2 xl:text-[16px] text-red-500">
                     {errors.dateRange}
                   </span>
                 ) : (
-                  <span className="text-red-500 ml-1">*</span>
+                  <span className="ml-1 text-red-500">*</span>
                 )}
               </label>
               <RangePicker
+                className="py-[12px] pr-[16px] ps-[20px]"
                 showTime
                 value={formState.dateRange}
                 onChange={(dates) => handleInputChange("dateRange", dates)}

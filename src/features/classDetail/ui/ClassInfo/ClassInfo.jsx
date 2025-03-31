@@ -3,18 +3,19 @@ import Group from "@assets/icons/class-detail/group.png";
 
 const ClassInfo = ({ data }) => {
   return (
-    <div className="w-full flex justify-between items-center pb-6">
+    <div className="flex w-full items-center justify-between pb-6">
       <div>
-        <h4 className="text-[26px] font-[600]">Class Information</h4>
-        <p className="text-[#637381]">View class details</p>
+        <h4 className="font-[700] lg:text-[30px] md:text-[28px]">
+          Class Information
+        </h4>
+        <p className="font-[500] text-[#637381] lg:text-[18px] md:text-[16px]">
+          View class details
+        </p>
       </div>
-      <div className="flex justify-between items-center gap-4">
-        <div className="bg-[#E6F0FA] p-4 border border-[#3758F9] rounded-[10px] flex justify-center items-center gap-4 xl:w-[200px] xl:h-[60px]">
-          <img src={Group} width={36} height={31} alt="Group Icon" />
-          <h6 className="text-[24px] font-[500] uppercase">{data.className}</h6>
-        </div>
-        <h6 className="text-[24px] font-500 uppercase bg-[#DAF8E6] p-4 border border-[#F9F9F9] rounded-[10px]">
-          {data.status}
+      <div className="flex items-center justify-center gap-4 rounded-[10px] border border-[#3758F9] bg-[#E6F0FA] p-4 xl:h-[60px] xl:w-[200px]">
+        <img src={Group} width={36} height={31} alt="Group Icon" />
+        <h6 className="font-[500] uppercase lg:text-[24px] md:text-[22px]">
+          {data.className}
         </h6>
       </div>
     </div>
