@@ -5,13 +5,13 @@ import "@features/grading/index.css";
 
 const { TabPane } = Tabs;
 
-const AssessmentComponent = () => {
+const AssessmentComponent = ({data}) => {
   const [activeTab, setActiveTab] = useState('writing');
 
-  const data = {
-    writing: [8, 3, 3, 15],
-    speaking: [7, 4, 5, 10],
-  };
+  // const data = {
+  //   writing: [8, 3, 3, 15],
+  //   speaking: [7, 4, 5, 10],
+  // };
 
   const columns = [
     {
