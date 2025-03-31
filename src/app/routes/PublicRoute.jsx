@@ -17,3 +17,5 @@ import ForgotPasswordForm from "@features/auth/ui/ForgotPasswordForm";
           },   
         ],}
       ]
+
+export default PublicRoute;
