@@ -5,8 +5,7 @@ export default function LogoutButton() {
     const navigate = useNavigate();
 
     const handleLogout = () => {
-        // Clear any stored authentication data if needed
-        // Redirect to login page
+ 
         navigate('/login');
     };
 

@@ -1,27 +1,15 @@
 import React, { useState, useRef } from 'react';
-import { Button, Typography, Avatar, message } from 'antd';
+import { Button, Typography, Avatar, message, Form } from 'antd';
 import { UserOutlined, CameraOutlined } from '@ant-design/icons';
 import defaultAvatar from '@assets/images/avatar.png';
-import ProfileButtons from '@features/profile/ui/ProfileTeacher';
+import ProfileTeacher from '@features/profile/ui/ProfileTeacher';
 
 const { Title, Text } = Typography;
 
 const ProfilePage = () => {
   const fileInputRef = useRef(null);
   const [avatar, setAvatar] = useState(defaultAvatar);
-
-
-  const userData = {
-    firstName: 'Nguyen',
-    lastName: 'Thanh Thao',
-    fullName: 'Thanh Thao Nguyen',
-    email: 'thao.nguyen@gmail.com',
-    role: 'Admin',
-    code: 'TN09090',
-    phoneNumber: 'No information',
-    bod: 'No information',
-    address: 'No information'
-  };
+  const [form] = Form.useForm();
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -67,9 +55,7 @@ const ProfilePage = () => {
           <Title level={4} className="m-0">My profile</Title>
           <Text className="text-gray-500">Summary of personal information.</Text>
         </div>
-        <ProfileButtons 
-          userData={userData}
-        />
+        <ProfileTeacher />
       </div>
 
       <div className="bg-white rounded-lg shadow-lg border border-gray-100 p-6 sm:p-8">
@@ -94,9 +80,15 @@ const ProfilePage = () => {
             />
           </div>
           <div>
-            <Title level={4} className="m-0">{userData.fullName}</Title>
-            <Text className="text-gray-500 font-semibold">{userData.role}</Text>
-            <Text className="block text-gray-500 font-semibold">{userData.email}</Text>
+            <Form.Item name="fullName">
+              <Title level={4} className="m-0">{form.getFieldValue('fullName')}</Title>
+            </Form.Item>
+            <Form.Item name="role">
+              <Text className="text-gray-500 font-semibold">{form.getFieldValue('role')}</Text>
+            </Form.Item>
+            <Form.Item name="email">
+              <Text className="block text-gray-500 font-semibold">{form.getFieldValue('email')}</Text>
+            </Form.Item>
           </div>
         </div>
       </div>
@@ -104,24 +96,36 @@ const ProfilePage = () => {
       <div className="bg-white rounded-[8px] shadow-lg border border-gray-100 w-full mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8">
           <div className="space-y-2">
-            <InfoField label="First Name" value={userData.firstName} />
+            <Form.Item name="firstName">
+              <InfoField label="First Name" value={form.getFieldValue('firstName')} />
+            </Form.Item>
           </div>
           <div className="space-y-2">
-            <InfoField label="Last Name" value={userData.lastName} />
+            <Form.Item name="lastName">
+              <InfoField label="Last Name" value={form.getFieldValue('lastName')} />
+            </Form.Item>
           </div>
           <div className="space-y-2">
-            <InfoField label="Email" value={userData.email} />
+            <Form.Item name="email">
+              <InfoField label="Email" value={form.getFieldValue('email')} />
+            </Form.Item>
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8 border-t border-gray-100">
           <div className="space-y-2">
-            <InfoField label="BOD" value={userData.bod} />
+            <Form.Item name="bod">
+              <InfoField label="BOD" value={form.getFieldValue('bod') || 'No information'} />
+            </Form.Item>
           </div>
           <div className="space-y-2">
-            <InfoField label="Phone number" value={userData.phoneNumber} />
+            <Form.Item name="phoneNumber">
+              <InfoField label="Phone number" value={form.getFieldValue('phoneNumber') || 'No information'} />
+            </Form.Item>
           </div>
           <div className="space-y-2">
-            <InfoField label="Address" value={userData.address} />
+            <Form.Item name="address">
+              <InfoField label="Address" value={form.getFieldValue('address') || 'No information'} />
+            </Form.Item>
           </div>
         </div>
       </div>
@@ -129,10 +133,14 @@ const ProfilePage = () => {
       <div className="bg-white rounded-[8px] shadow-lg border border-gray-100 w-full mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8">
           <div className="space-y-2">
-            <InfoField label="Code" value={userData.code} />
+            <Form.Item name="code">
+              <InfoField label="Code" value={form.getFieldValue('code')} />
+            </Form.Item>
           </div>
           <div className="space-y-2">
-            <InfoField label="Role" value={userData.role} />
+            <Form.Item name="role">
+              <InfoField label="Role" value={form.getFieldValue('role')} />
+            </Form.Item>
           </div>
           <div></div>
         </div>

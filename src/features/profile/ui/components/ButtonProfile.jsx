@@ -7,7 +7,7 @@ const ButtonProfile = ({ onUpdateProfile, onChangePassword }) => {
       <Button
         type="default"
         onClick={onChangePassword}
-        className="min-w-[140px] md:min-w-[160px] h-[40px] rounded-full border border-[#0066CC] text-[#0066CC] hover:text-[#0066CC] hover:border-[#0066CC] font-medium"
+        className="min-w-[140px] md:min-w-[160px] h-[40px] rounded-full border border-[#003087] text-[#003087] hover:text-[#0066CC] hover:border-[#0066CC] font-medium"
       >
         Change password
       </Button>
