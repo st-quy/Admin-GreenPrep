@@ -1,6 +1,7 @@
 // Define public routes accessible to all users
 
 import { PublicLayout } from "@app/layout/PublicLayout";
+import LoginPage from "../../features/auth/ui/LoginForm";
 
 
 const PublicRoute = [
@@ -9,7 +10,7 @@ const PublicRoute = [
     element:<PublicLayout />,
     children: [{
       path: "login",
-      element: "login",
+      element: <LoginPage />,
     }]
   },
 ];
