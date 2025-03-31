@@ -3,6 +3,8 @@ import { Table, Input, Button } from "antd";
 import { SearchOutlined } from "@ant-design/icons";
 import CheckCircleIcon from "@/assets/icons/check-circle.svg";
 import CloseCircleIcon from "@/assets/icons/close-circle.svg";
+import ConfirmationModal from "@app/components/Modal/ConfirmationModal"; // Import ConfirmationModal
+import { Warning } from "@assets/images"; // Giả sử bạn đã có file này
 
 // Mock data
 const dataSource = Array.from({ length: 50 }, (_, index) => ({
@@ -15,24 +17,72 @@ const dataSource = Array.from({ length: 50 }, (_, index) => ({
 const StudentMonitoring = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10); // Thêm state cho pageSize
+  const [pageSize, setPageSize] = useState(10);
+  const [modalOpen, setModalOpen] = useState(false); // State để kiểm soát modal
+  const [modalConfig, setModalConfig] = useState({
+    title: "",
+    message: "",
+    okText: "",
+    okButtonColor: "",
+    onConfirm: () => {},
+  });
 
   const totalItems = dataSource.length;
 
-  //   const handleApprove = (record) => {
-  //     console.log("Approved:", record);
-  //   };
+  const handleApprove = (record) => {
+    setModalConfig({
+      title: "Are you sure you want to approve this student?",
+      message: `After you approve this student, this account will be able to take the test.`,
+      okText: "Approve",
+      okButtonColor: "#22AD5C",
+      onConfirm: () => {
+        console.log("Approved:", record);
+        setModalOpen(false);
+      },
+    });
+    setModalOpen(true);
+  };
 
-  //   const handleReject = (record) => {
-  //     console.log("Rejected:", record);
-  //   };
+  const handleReject = (record) => {
+    setModalConfig({
+      title: "Are you sure you want to reject this student?",
+      message: `After you reject this student, this account will no longer available is this pending list.`,
+      okText: "Reject",
+      okButtonColor: "#F23030",
+      onConfirm: () => {
+        console.log("Rejected:", record);
+        setModalOpen(false);
+      },
+    });
+    setModalOpen(true);
+  };
 
   const handleBulkApprove = () => {
-    console.log("Bulk approve:", selectedRowKeys);
+    setModalConfig({
+      title: "Are you sure you want to approve all students?",
+      message: `Once you approve all students, all accounts will be able to take the test.`,
+      okText: "Approve",
+      okButtonColor: "#22AD5C",
+      onConfirm: () => {
+        console.log("Bulk approve:", selectedRowKeys);
+        setModalOpen(false);
+      },
+    });
+    setModalOpen(true);
   };
 
   const handleBulkReject = () => {
-    console.log("Bulk reject:", selectedRowKeys);
+    setModalConfig({
+      title: "Are you sure you want to reject all students?",
+      message: `After you reject all students, all accounts will no longer be available on this pending list.`,
+      okText: "Reject",
+      okButtonColor: "#F23030",
+      onConfirm: () => {
+        console.log("Bulk reject:", selectedRowKeys);
+        setModalOpen(false);
+      },
+    });
+    setModalOpen(true);
   };
 
   const rowSelection = {
@@ -83,17 +133,13 @@ const StudentMonitoring = () => {
           <img
             src={CheckCircleIcon}
             alt="Check Circle"
-            onClick={() => {
-              alert("hi");
-            }}
+            onClick={() => handleApprove(record)}
             className="h-7 text-[#22AD5C] hover:text-green-600 hover:cursor-pointer"
           />
           <img
             src={CloseCircleIcon}
             alt="Close Circle"
-            onClick={() => {
-              alert("hi");
-            }}
+            onClick={() => handleReject(record)}
             className="h-7 text-[#F23030] hover:text-red-600 hover:cursor-pointer"
           />
         </div>
@@ -105,6 +151,7 @@ const StudentMonitoring = () => {
     setCurrentPage(current);
     setPageSize(size);
   };
+
   const paginationConfig = {
     current: currentPage,
     pageSize: pageSize,
@@ -121,9 +168,9 @@ const StudentMonitoring = () => {
   };
 
   return (
-    <div className="max-w-6xl">
+    <div className="w-full">
       {/* Controls */}
-      <div className="flex items-center">
+      <div className="flex items-center mb-4">
         {selectedRowKeys.length > 0 && (
           <div className="flex">
             <div
@@ -144,7 +191,7 @@ const StudentMonitoring = () => {
         {/* <Input
           placeholder="Search by student name"
           prefix={<SearchOutlined className="text-gray-400" />}
-          className="w-64 rounded-md h-8 mb-4"
+          className="w-64 rounded-md h-8"
         /> */}
       </div>
 
@@ -168,6 +215,17 @@ const StudentMonitoring = () => {
             ),
           },
         }}
+      />
+
+      {/* Confirmation Modal */}
+      <ConfirmationModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        title={modalConfig.title}
+        message={modalConfig.message}
+        okText={modalConfig.okText}
+        okButtonColor={modalConfig.okButtonColor}
+        onConfirm={modalConfig.onConfirm}
       />
     </div>
   );
