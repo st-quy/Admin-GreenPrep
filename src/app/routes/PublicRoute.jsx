@@ -16,4 +16,12 @@ const PublicRoute = [
   },
 ];
 
-export default PublicRoute;
+            path: "login",
+             element: "login",
+          },
+          {
+            path: "forgot-password",
+            element: <ForgotPasswordForm/>,
+          },   
+        ],}
+      ]

@@ -67,7 +67,6 @@ const ForgotPasswordForm = () => {
 
   return (
     <div className="flex flex-col items-start min-h-screen bg-gray-100 px-4 md:px-10 lg:px-20">
-      <img src={Logo} alt="Logo" className="w-[147px] h-[34px] mt-[42px] md:ml-[21px] lg:ml-[16px] xl:ml-[20px]" />
       <div className="flex flex-col md:flex-row items-center max-w-[1440px] w-full justify-evenly mt-10">
         <div className="w-full sm:w-[400px] sm:h-[450px] md:w-[450px] md:h-[450px] lg:w-[650px] lg:h-[600px] xl:w-[658px] xl:h-[697px] bg-white p-[40px] rounded-lg shadow-lg">
         <Link to="/login" className="mb-2 text-[#111928] md:text-[12px] lg:text-[14px] xl:text-[16px] font-semibold flex items-center self-start no-underline hover:no-underline">
