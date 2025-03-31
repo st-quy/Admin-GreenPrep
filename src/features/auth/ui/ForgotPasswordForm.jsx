@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { Form, Button, Input, message } from "antd";
-import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import { EyeOutlined, EyeInvisibleOutlined, LeftOutlined,MailOutlined } from "@ant-design/icons";
 import { Link,useNavigate } from "react-router-dom";
-import { EmailIcon } from "@assets/icons";
 import { ForgotPw, Logo } from "@assets/images";
-
+import { emailSchema, passwordSchema, confirmPasswordSchema } from "../schemas/forgotPasswordSchema";
+import { yupSync } from "@shared/lib/utils/yupSync";
 
 const ForgotPasswordForm = () => {
   const [isReset, setIsReset] = useState(false);
@@ -39,16 +39,21 @@ const ForgotPasswordForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-start min-h-screen bg-gray-100 px-4 md:px-10 lg:px-20">
-      <img src={Logo} alt="Logo" className="w-[147px] h-[34px] mt-[42px] md:ml-[21px] lg:ml-[16px] xl:ml-[20px]" />
-      <div className="flex flex-col md:flex-row items-center max-w-[1440px] w-full justify-evenly mt-10">
-        <div className="w-full sm:w-[400px] sm:h-[450px] md:w-[450px] md:h-[450px] lg:w-[650px] lg:h-[600px] xl:w-[658px] xl:h-[697px] bg-white p-[40px] rounded-lg shadow-lg">
-        {!isReset && (
-            <Link to="/login" className="mb-2 text-[#111928] md:text-[12px] lg:text-[14px] xl:text-[16px] font-semibold flex items-center self-start no-underline hover:no-underline">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4 md:px-10 lg:px-20">
+      <div className="flex flex-col md:flex-row items-center max-w-[1440px] w-full justify-center gap-8 -mt-40">
+        <div className="w-full sm:w-[400px] sm:h-[450px] md:w-[450px] md:h-[450px] lg:w-[650px] lg:h-[600px] xl:w-[658px] xl:h-[697px] bg-white p-[40px] pt-[60px] rounded-lg shadow-lg">
+          {!isReset && (
+            <Link
+              to="/login"
+              className="mb-4 text-[#111928] md:text-[12px] lg:text-[14px] xl:text-[16px] font-semibold flex items-center self-start no-underline hover:no-underline"
+            >
               <span className="mr-2">&lt;</span> Back to Login
-            </Link>)}  
-          <h2 className="text-[28px] md:text-[30px] lg:text-[42px] xl:text-[45px] font-bold text-[#111928] mb-4 leading-tight">{isReset ? "Create new password" : "Forgot password?"}</h2>
-          <p className="text-gray-600 text-sm mb-4 md:text-[12.5px] lg:text-[18px] xl:text-[20px]">
+            </Link>
+          )}
+          <h2 className="text-[28px] md:text-[30px] lg:text-[42px] xl:text-[45px] font-bold text-[#111928] mb-4 leading-tight">
+            {isReset ? "Create new password" : "Forgot password?"}
+          </h2>
+          <p className="text-gray-600 text-sm mb-6 md:text-[12.5px] lg:text-[18px] xl:text-[20px]">
             {isReset
               ? "Your previous password has been reset. Please set a new password for your account."
               : "Don't worry! Enter your email below to recover your password"}
@@ -67,12 +72,8 @@ const ForgotPasswordForm = () => {
                 }
                 name="email"
                 required={false}
-                rules={[
-                  { required: true, message: "Email is required" },
-                  { type: "email", message: "Please enter a valid email" },
-                ]}
-              >
-                <Input className="h-[40px]" placeholder="Enter your email here" suffix={<img src={EmailIcon} alt="email icon" style={{ width: 16 }} />} />
+                rules={[yupSync(emailSchema)]}>
+                <Input className="h-[40px]" placeholder="Enter your email here" suffix={<MailOutlined style={{ color: '#6B7280' }} />} />
               </Form.Item>
             ) : (
               <>
@@ -84,12 +85,11 @@ const ForgotPasswordForm = () => {
                   }
                   name="password"
                   required={false}
-                  rules={[
-                    { required: true, message: "New password is required." },
-                    { min: 8, message: "Password must be at least 8 characters." },
-                  ]}
+                  rules={[yupSync(passwordSchema)]}
                 >
-                  <Input.Password className="h-[40px]" placeholder="********" iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)} />
+                  <Input.Password className="h-[40px]" placeholder="********" iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)} 
+                        onCopy={(e) => e.preventDefault()} // Ngăn sao chép mật khẩu
+                  />
                 </Form.Item>
                 <Form.Item
                   label={
@@ -100,11 +100,12 @@ const ForgotPasswordForm = () => {
                   }
                   name="confirmPassword"
                   required={false}
-                  rules={[
-                    { required: true, message: "Confirm new password is required." },
-                  ]}
+                  dependencies={["password"]}
+                   rules={[yupSync(confirmPasswordSchema)]}
                 >
-                  <Input.Password className="h-[40px]" placeholder="********" iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)} />
+                  <Input.Password className="h-[40px]" placeholder="********" iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)} 
+                      onCopy={(e) => e.preventDefault()} // Ngăn sao chép mật khẩu
+                  />
                 </Form.Item>
               </>
             )}
