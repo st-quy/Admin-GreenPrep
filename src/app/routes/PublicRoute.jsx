@@ -1,32 +1,19 @@
-// Define public routes accessible to all users
-
-// import { PublicLayout } from "@app/layout/PublicLayout";
-
+import { PublicLayout } from "@app/layout/PublicLayout";
 import ForgotPasswordForm from "@features/auth/ui/ForgotPasswordForm";
-
-
-
-const PublicRoute = [
-  // {
-    // path:"/",
-    // element:"",
-    // children: [
+    
+    const PublicRoute = [
       {
-      path: "login",
-      element: "login",
-    },
-    {
-      path: "forgot-password",
-      element: <ForgotPasswordForm/>,
-    },   
-    {
-      path: "reset-password-success",
-      element: "reset-password-success",
-    }
-  // ]
-  
-  // },
-  
-];
+        path:"/",
+        element:<PublicLayout />,
+        children: [
+          {
 
-export default PublicRoute;
+            path: "login",
+             element: "login",
+          },
+          {
+            path: "forgot-password",
+            element: <ForgotPasswordForm/>,
+          },   
+        ],}
+      ]
