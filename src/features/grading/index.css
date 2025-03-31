@@ -1,0 +1,7 @@
+.ant-table-wrapper .ant-table-tbody>tr>td {
+    padding: 0 !important;
+}
+
+.ant-tabs .ant-tabs-tab+.ant-tabs-tab {
+    margin-left: 0 !important;
+}
