@@ -1,11 +1,8 @@
 import { useState } from "react";
-import { Table, Input, Button } from "antd";
-import { SearchOutlined } from "@ant-design/icons";
+import { Table } from "antd";
 import CheckCircleIcon from "@/assets/icons/check-circle.svg";
 import CloseCircleIcon from "@/assets/icons/close-circle.svg";
-import ConfirmationModal from "@app/components/Modal/ConfirmationModal"; // Import ConfirmationModal
-import { Warning } from "@assets/images"; // Giả sử bạn đã có file này
-
+import ConfirmationModal from "@app/components/Modal/ConfirmationModal";
 // Mock data
 const dataSource = Array.from({ length: 50 }, (_, index) => ({
   key: index.toString(),
@@ -18,7 +15,7 @@ const StudentMonitoring = () => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
-  const [modalOpen, setModalOpen] = useState(false); // State để kiểm soát modal
+  const [modalOpen, setModalOpen] = useState(false);
   const [modalConfig, setModalConfig] = useState({
     title: "",
     message: "",
@@ -50,7 +47,6 @@ const StudentMonitoring = () => {
       okText: "Reject",
       okButtonColor: "#F23030",
       onConfirm: () => {
-        console.log("Rejected:", record);
         setModalOpen(false);
       },
     });
@@ -64,7 +60,6 @@ const StudentMonitoring = () => {
       okText: "Approve",
       okButtonColor: "#22AD5C",
       onConfirm: () => {
-        console.log("Bulk approve:", selectedRowKeys);
         setModalOpen(false);
       },
     });
@@ -78,7 +73,6 @@ const StudentMonitoring = () => {
       okText: "Reject",
       okButtonColor: "#F23030",
       onConfirm: () => {
-        console.log("Bulk reject:", selectedRowKeys);
         setModalOpen(false);
       },
     });
@@ -188,13 +182,7 @@ const StudentMonitoring = () => {
             </div>
           </div>
         )}
-        {/* <Input
-          placeholder="Search by student name"
-          prefix={<SearchOutlined className="text-gray-400" />}
-          className="w-64 rounded-md h-8"
-        /> */}
       </div>
-
       {/* Table */}
       <Table
         scroll={{ y: 400 }}
