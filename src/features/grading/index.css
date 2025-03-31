@@ -1,0 +1,16 @@
+.custom-tabs .ant-tabs-tab-btn {
+    font-size: 16px !important;
+    color: #637381 !important;
+    gap: 40px !important;
+  }
+
+  .custom-tabs .ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: #003087 !important;
+  }
+  
+  .custom-tabs .ant-tabs-ink-bar {
+    background-color: #003087 !important;
+  }
+  
+  
+  
