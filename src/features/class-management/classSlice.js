@@ -2,10 +2,6 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   classes: [
-    { id: 1, name: 'CL0708', sessions: 3 },
-    { id: 2, name: 'CL0708', sessions: 3 },
-    { id: 3, name: 'CL0708', sessions: 3 },
-    { id: 4, name: 'CL0708', sessions: 3 },
   ],
   loading: false,
   error: null,
