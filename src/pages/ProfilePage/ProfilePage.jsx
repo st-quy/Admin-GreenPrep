@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react';
 import { Button, Typography, Avatar, message } from 'antd';
 import { UserOutlined, CameraOutlined } from '@ant-design/icons';
 import defaultAvatar from '@assets/images/avatar.png';
-import ProfileButtons from '@features/profile/ui/ProfileButtons';
+import ProfileButtons from '@features/profile/ui/ProfileTeacher';
 
 const { Title, Text } = Typography;
 
@@ -68,7 +68,6 @@ const ProfilePage = () => {
           <Text className="text-gray-500">Summary of personal information.</Text>
         </div>
         <ProfileButtons 
-          onChangePassword={handleChangePassword}
           userData={userData}
         />
       </div>
