@@ -32,7 +32,7 @@ const PrivateRoute = [
             children: [
               {
                 path: "",
-                element: <div>Session Detail</div>,
+                element: <div> Session Details </div>,
                 breadcrumb: "",
               },
               {
