@@ -49,30 +49,26 @@ export default function ScoreTabs() {
               ]}
               style={{
                 background: "white", 
-                paddingLeft: "25px", 
-                paddingRight: "25px", 
                 borderRadius: "8px", 
                 borderBottom:"1px solid #DFE4EA", 
                 boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.1)"
             }} 
             />
-            <div className="flex items-center gap-4">
-              <div className="text-base font-bold">
-                Total Score: <span className="text-2xl font-semibold text-[#003087]">{totalScore}</span>
-                {/* pl-[30px] pr-[50px]  */}
+            <div className="flex items-center leading-6">
+              <div className="flex text-base items-center">
+                Total Score: <span className="text-2xl font-semibold text-[#003087] pl-[30px] pr-[50px]">{totalScore}</span>
               </div>
-              <div className="flex gap-2">
+              <div className="flex">
                 <Button
                   onClick={handleSaveAsDraft}
-                //   className="px-4 py-1 rounded-full border border-blue-600 text-blue-600 hover:bg-blue-50 transition-colors"
-                className="w-[157px] h-[50px] text-base text-[#003087] border border-[#003087] rounded-[50px] mr-[12px]"
+                className="h-auto px-[28px] py-[13px]  text-base text-[#003087] border border-[#003087] rounded-[50px] mr-[12px]"
                 >
                   Save as draft
                 </Button>
                 <Button
                   onClick={handleSubmitScore}
                   type="primary"
-                  className="w-[157px] h-[50px] text-base bg-[#003087] rounded-[50px]"
+                  className="h-auto px-[28px] py-[13px] text-base bg-[#003087] rounded-[50px]"
                 >
                   Submit score
                 </Button>
