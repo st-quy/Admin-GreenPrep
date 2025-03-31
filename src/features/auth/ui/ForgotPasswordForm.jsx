@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import { Form, Button, Input, message } from "antd";
-import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import { EyeOutlined, EyeInvisibleOutlined, LeftOutlined,MailOutlined } from "@ant-design/icons";
 import { Link,useNavigate } from "react-router-dom";
-import { EmailIcon } from "@assets/icons";
 import { ForgotPw, Logo } from "@assets/images";
 
 
@@ -26,7 +25,7 @@ const ForgotPasswordForm = () => {
         throw new Error("Passwords do not match");
       }
       console.log("New password set:", values.password);
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 300));
       message.success("Your password has been successfully changed.");
       navigate("/reset-password-success");
     } catch (error) {
@@ -39,10 +38,9 @@ const ForgotPasswordForm = () => {
       <img src={Logo} alt="Logo" className="w-[147px] h-[34px] mt-[42px] md:ml-[21px] lg:ml-[16px] xl:ml-[20px]" />
       <div className="flex flex-col md:flex-row items-center max-w-[1440px] w-full justify-evenly mt-10">
         <div className="w-full sm:w-[400px] sm:h-[450px] md:w-[450px] md:h-[450px] lg:w-[650px] lg:h-[600px] xl:w-[658px] xl:h-[697px] bg-white p-[40px] rounded-lg shadow-lg">
-        {!isReset && (
-            <Link to="/login" className="mb-2 text-[#111928] md:text-[12px] lg:text-[14px] xl:text-[16px] font-semibold flex items-center self-start no-underline hover:no-underline">
-              <span className="mr-2">&lt;</span> Back to Login
-            </Link>)}  
+        <Link to="/login" className="mb-2 text-[#111928] md:text-[12px] lg:text-[14px] xl:text-[16px] font-semibold flex items-center self-start no-underline hover:no-underline">
+              <LeftOutlined className="mr-2" /> Back to Login
+            </Link>
           <h2 className="text-[28px] md:text-[30px] lg:text-[42px] xl:text-[45px] font-bold text-[#111928] mb-4 leading-tight">{isReset ? "Create new password" : "Forgot password?"}</h2>
           <p className="text-gray-600 text-sm mb-4 md:text-[12.5px] lg:text-[18px] xl:text-[20px]">
             {isReset
@@ -64,7 +62,7 @@ const ForgotPasswordForm = () => {
                   { type: "email", message: "Please enter a valid email" },
                 ]}
               >
-                <Input className="h-[40px]" placeholder="Enter your email here" suffix={<img src={EmailIcon} alt="email icon" style={{ width: 16 }} />} />
+                <Input className="h-[40px]" placeholder="Enter your email here" suffix={<MailOutlined style={{ color: '#6B7280' }} />} />
               </Form.Item>
             ) : (
               <>
@@ -78,7 +76,10 @@ const ForgotPasswordForm = () => {
                   required={false}
                   rules={[
                     { required: true, message: "New password is required." },
-                    { min: 6, message: "Password must be at least 8 characters." },
+                    {
+                      pattern: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+                      message: "Password must be at least 8 characters include uppercase letter, number and special character."
+                    }
                   ]}
                 >
                   <Input.Password className="h-[40px]" placeholder="********" iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)} />
