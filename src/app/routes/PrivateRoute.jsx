@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
+import ClassManagement from "@features/class-management/ui/ClassManagement.jsx";
 
 const PrivateRoute = [
   {
@@ -18,7 +19,7 @@ const PrivateRoute = [
         children: [
           {
             index: true,
-            element: <div>Class Management</div>,
+            element: <ClassManagement /> ,
           },
           {
             path: "detail",
