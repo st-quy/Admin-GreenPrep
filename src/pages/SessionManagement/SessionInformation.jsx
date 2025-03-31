@@ -4,7 +4,7 @@ import "./index.css";
 import StudentMonitoring from "@/features/session/ui/student-modering.jsx";
 const { Search } = Input;
 import SearchInput from "@/app/components/SearchInput.jsx";
-import Details from "@features/auth/ui/DetailsManagement/Details";
+import Details from "@features/auth/ui/Details/Details";
 
 const SessionInformation = () => {
   const [searchKeyword, setSearchKeyword] = useState("");

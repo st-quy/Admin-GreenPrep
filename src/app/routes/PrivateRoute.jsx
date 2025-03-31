@@ -2,7 +2,6 @@ import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
 import SessionLayout from "../../features/auth/ui/SessionLayout.jsx";
 import SessionInformation from "@pages/SessionManagement/SessionInformation.jsx";
-import Student from "@pages/StudentManagement/Student.jsx";
 
 const PrivateRoute = [
   {
@@ -46,7 +45,7 @@ const PrivateRoute = [
                   children: [
                     {
                       path:"",
-                      element: <Student />,
+                      element: <div>Student infor</div>,
                     },
                     {
                       path:"grade",

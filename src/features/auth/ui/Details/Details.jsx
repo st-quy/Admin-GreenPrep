@@ -19,6 +19,19 @@ const Details = ({ type }) => {
     return <p>Loading...</p>;
   }
 
+  const getStatusStyle = (status) => {
+    switch (status) {
+      case "Completed":
+        return "px-[10px] py-[3px] bg-greenLight6 flex items-center justify-center rounded-full text-greenDark font-medium m-[12px]";
+      case "Ongoing":
+        return "px-[10px] py-[3px] bg-blueLight5 flex items-center justify-center rounded-full text-blueDark font-medium m-[12px]";
+      case "Not started":
+        return "px-[10px] py-[3px] bg-dark8 flex items-center justify-center rounded-full text-dark3 font-medium m-[12px]";
+      default:
+        return "";
+    }
+  };
+
   return (
     <div>
       <p className="text-[30px] text-black font-bold">
@@ -116,7 +129,7 @@ const Details = ({ type }) => {
                     <p className="text-black font-semibold m-[15px]">
                       {item.sessionKey}
                     </p>
-                    <div className="px-[10px] py-[3px] bg-[#DAF8E6] flex items-center justify-center rounded-full text-[#1A8245] font-medium m-[12px]">
+                    <div className={getStatusStyle(item.status)}>
                       {item.status}
                     </div>
                     <p className="text-black font-semibold m-[15px]">
@@ -138,7 +151,7 @@ const Details = ({ type }) => {
           </div>
         ))}
       </div>
-        <hr className="w-full bg-black bg-opacity-50 my-[50px]"></hr>
+      <hr className="w-full bg-black bg-opacity-50 my-[50px]"></hr>
     </div>
   );
 };
