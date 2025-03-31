@@ -3,39 +3,8 @@ import { Form, Button, Input, message } from "antd";
 import { EyeOutlined, EyeInvisibleOutlined, LeftOutlined,MailOutlined } from "@ant-design/icons";
 import { Link,useNavigate } from "react-router-dom";
 import { ForgotPw, Logo } from "@assets/images";
-import * as yup from "yup";
-
-const emailSchema = yup.object().shape({
-  email: yup.string().email("Please enter a valid email address Ex:ABC@bc.com").required("Email is required"),
-});
-
-const passwordSchema = yup.object({
-  password: yup
-    .string()
-    .matches(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/, "Password must be at least 8 characters include uppercase letter, number and special character.")
-    .required("New password is required."),
-});
-
-const confirmPasswordSchema = yup.object({
-  confirmPassword: yup
-    .string()
-    // .oneOf([yup.ref("password"), null], "Passwords must match")
-    .required("Confirm new password is required."),
-});
-
-
-
-const yupSync = (schema) => ({
-  validator: async (_, value) => {
-    try {
-      await schema.validateSyncAt(_.field, { [_.field]: value });
-    } catch (error) {
-      return Promise.reject(new Error(error.message));
-    }
-  },
-});
-
-
+import { emailSchema, passwordSchema, confirmPasswordSchema } from "../schemas/forgotPasswordSchema";
+import { yupSync } from "@shared/lib/utils/yupSync";
 
 const ForgotPasswordForm = () => {
   const [isReset, setIsReset] = useState(false);
@@ -67,7 +36,7 @@ const ForgotPasswordForm = () => {
 
   return (
     <div className="flex flex-col items-start min-h-screen bg-gray-100 px-4 md:px-10 lg:px-20">
-      <img src={Logo} alt="Logo" className="w-[147px] h-[34px] mt-[42px] md:ml-[21px] lg:ml-[16px] xl:ml-[20px]" />
+        
       <div className="flex flex-col md:flex-row items-center max-w-[1440px] w-full justify-evenly mt-10">
         <div className="w-full sm:w-[400px] sm:h-[450px] md:w-[450px] md:h-[450px] lg:w-[650px] lg:h-[600px] xl:w-[658px] xl:h-[697px] bg-white p-[40px] rounded-lg shadow-lg">
         <Link to="/login" className="mb-2 text-[#111928] md:text-[12px] lg:text-[14px] xl:text-[16px] font-semibold flex items-center self-start no-underline hover:no-underline">
@@ -77,7 +46,7 @@ const ForgotPasswordForm = () => {
           <p className="text-gray-600 text-sm mb-4 md:text-[12.5px] lg:text-[18px] xl:text-[20px]">
             {isReset
               ? "Your previous password has been reset. Please set a new password for your account."
-              : "Don’t worry! Enter your email below to recover your password"}
+              : "Don't worry! Enter your email below to recover your password"}
           </p>
           <Form onFinish={isReset ? handlePasswordSubmit : handleEmailSubmit} layout="vertical">
             {!isReset ? (
