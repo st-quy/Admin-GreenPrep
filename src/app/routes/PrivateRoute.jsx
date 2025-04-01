@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
+import ClassManagement from "@features/auth/classManagement/ui/classMangment.jsx";
 
 const PrivateRoute = [
   {
@@ -17,6 +18,10 @@ const PrivateRoute = [
         breadcrumb: "Class Management",
         children: [
           {
+
+            path: "",
+            element: <ClassManagement></ClassManagement>,
+            breadcrumb: "",
             index: true,
             element: <div>Class Management</div>,
           },
