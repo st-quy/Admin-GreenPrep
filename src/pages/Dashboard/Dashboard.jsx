@@ -1,290 +1,354 @@
-import React from "react";
-import { Table, Input, Card, Progress } from "antd";
+import React, { useState, useEffect } from "react";
+import {
+  Table,
+  Card,
+  Button,
+  Input,
+  Row,
+  Col,
+  Spin,
+  Badge,
+  Typography,
+  Progress,
+} from "antd";
 import {
   UserOutlined,
   BookOutlined,
   FileOutlined,
   CheckCircleOutlined,
-  TrophyOutlined,
+  DownloadOutlined,
+  SearchOutlined,
 } from "@ant-design/icons";
-// Import Chart.js trước khi import react-chartjs-2
+import { fetchClassesWithSessionCount } from "../../features/auth/dashboard/services/classService";
 import {
-  Chart as ChartJS,
-  RadialLinearScale,
-  PointElement,
-  LineElement,
-  Filler,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale,
-} from "chart.js";
-import { Radar, Line } from "react-chartjs-2";
+  fetchSessions,
+  getSessionStatusStatistics,
+} from "../../features/auth/dashboard/services/sessionService";
+import { fetchTotalUsers } from "../../features/auth/dashboard/services/userService";
+import { exportToPDF } from "../../features/auth/dashboard/services/pdfService";
 
-// Đăng ký Chart.js components
-ChartJS.register(
-  RadialLinearScale,
-  PointElement,
-  LineElement,
-  Filler,
-  Tooltip,
-  Legend,
-  CategoryScale,
-  LinearScale
-);
+const { Title, Text } = Typography;
 
-// StatCard Component
-const StatCard = ({ icon, title, value }) => (
-  <div className="bg-white rounded-lg p-6 shadow-sm">
-    <div className="flex items-start space-x-4">
-      <div className="p-3 bg-blue-50 rounded-lg">{icon}</div>
+// Modern Statistic Card Component
+const StatCard = ({
+  icon,
+  title,
+  value,
+  subText = null,
+  color = "#1890ff",
+  increase = null,
+}) => (
+  <div className="p-5 bg-white rounded-md shadow-sm h-full">
+    <div className="flex items-center mb-3">
+      {icon}
+      <span className="ml-2 text-gray-500">{title}</span>
+    </div>
+    <div className="flex justify-between items-end mb-3">
       <div>
-        <h2 className="text-gray-500 text-sm">{title}</h2>
-        <div className="text-2xl font-bold">{value}</div>
+        <Title
+          level={4}
+          style={{ margin: 0, fontSize: "28px", fontWeight: "500" }}
+        >
+          {value}
+        </Title>
       </div>
+      {subText && <Text className="text-gray-400 text-xs">{subText}</Text>}
+    </div>
+    <div className="mt-3">
+      {increase && (
+        <Text className="text-xs text-green-600 mb-1 block">
+          {increase} <span className="ml-1">↑</span>
+        </Text>
+      )}
+      <Progress
+        percent={100}
+        showInfo={false}
+        strokeColor={color}
+        trailColor="#f0f0f0"
+        strokeWidth={3}
+      />
     </div>
   </div>
 );
 
+// Column Chart Component (Simplified version)
+const ColumnChart = ({ data, title }) => {
+  return (
+    <Card title={title} className="shadow-sm" bordered={false}>
+      <div className="p-4">
+        {data.length === 0 ? (
+          <div className="text-center text-gray-500 my-4">
+            <Text type="secondary">No session data available</Text>
+          </div>
+        ) : (
+          <div className="flex flex-wrap">
+            {data.map((item, index) => (
+              <div key={index} className="mb-4 w-1/2 px-2">
+                <Text strong className="mb-1 block">
+                  {item.type}
+                </Text>
+                <div className="flex items-center">
+                  <div
+                    className="mr-2 h-5 rounded-sm"
+                    style={{
+                      width: `${Math.min(item.value * 10, 80)}%`,
+                      backgroundColor: "#6a5acd",
+                    }}
+                  ></div>
+                  <Badge
+                    count={item.value}
+                    style={{ backgroundColor: "#6a5acd" }}
+                  />
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+};
+
+// Status Chart Component
+const StatusChart = ({ data, title }) => {
+  return (
+    <Card title={title} className="shadow-sm" bordered={false}>
+      <div className="p-4">
+        {data.length === 0 ? (
+          <div className="text-center text-gray-500 my-4">
+            <Text type="secondary">No status data available</Text>
+          </div>
+        ) : (
+          <div>
+            {data.map((item, index) => (
+              <div key={index} className="mb-4">
+                <div className="flex justify-between mb-1">
+                  <Text>{item.type}</Text>
+                  <Text>{item.value}</Text>
+                </div>
+                <Progress
+                  percent={Math.min(item.value * 10, 100)}
+                  showInfo={false}
+                  strokeColor="#6a5acd"
+                  trailColor="#f0f0f0"
+                  strokeWidth={5}
+                />
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </Card>
+  );
+};
+
 const Dashboard = () => {
-  // Mock data - sau này sẽ lấy từ API
-  const statistics = {
-    totalStudents: 105,
-    totalClasses: 573,
-    studentGrowth: "0.38%",
-    classGrowth: "2.69%",
-    totalTests: 1250,
-    averageAccuracy: 75,
-    totalSkills: 6,
+  const [classes, setClasses] = useState([]);
+  const [sessions, setSessions] = useState([]);
+  const [totalUsers, setTotalUsers] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [searchText, setSearchText] = useState("");
+  const [sessionStats, setSessionStats] = useState([]);
+  const [classSessionData, setClassSessionData] = useState([]);
+
+  // Fetch data from API
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        // Fetch classes with session count
+        const classData = await fetchClassesWithSessionCount();
+        setClasses(classData);
+
+        // Prepare data for class session chart
+        const chartData = classData.map((cls) => ({
+          type: cls.className,
+          value: cls.sessionCount || 0,
+        }));
+        setClassSessionData(chartData);
+
+        // Fetch total users
+        const users = await fetchTotalUsers();
+        setTotalUsers(users);
+
+        // Fetch session statistics
+        const stats = await getSessionStatusStatistics();
+        setSessionStats(stats);
+
+        setLoading(false);
+      } catch (error) {
+        console.error("Error loading dashboard data:", error);
+        setLoading(false);
+      }
+    };
+
+    loadData();
+  }, []);
+
+  // Calculate total sessions
+  const totalSessions = classes.reduce((sum, cls) => {
+    return sum + (cls.sessionCount || 0);
+  }, 0);
+
+  // Fetch session data for a specific class
+  const loadSessions = async (classId) => {
+    try {
+      const data = await fetchSessions(classId);
+      setSessions(data);
+    } catch (error) {
+      console.error("Error fetching sessions:", error);
+    }
   };
 
-  const studentData = [
+  // Columns for class table
+  const classColumns = [
     {
-      key: "1",
-      studentName: "STUDENT A",
-      sessionName: "FALL_P1_2024",
-      grammar: { score: 42, grade: "C" },
-      reading: { score: 42, grade: "C" },
-      listening: { score: 42, grade: "C" },
-      speaking: { score: 42, grade: "C" },
-      writing: { score: 42, grade: "C" },
-      total: 135,
-      level: "C",
+      title: "Class Code",
+      dataIndex: "className",
+      key: "className",
+      render: (text) => <Text strong>{text}</Text>,
+    },
+    {
+      title: "Created Date",
+      dataIndex: "createdAt",
+      key: "createdAt",
+      render: (text) => (
+        <Text>{new Date(text).toLocaleDateString("en-US")}</Text>
+      ),
+    },
+    {
+      title: "Updated Date",
+      dataIndex: "updatedAt",
+      key: "updatedAt",
+      render: (text) => (
+        <Text>{new Date(text).toLocaleDateString("en-US")}</Text>
+      ),
+    },
+    {
+      title: "Total Sessions",
+      dataIndex: "sessionCount",
+      key: "sessionCount",
+      render: (text) => (
+        <Badge
+          count={text || 0}
+          showZero
+          style={{ backgroundColor: text ? "#1890ff" : "#d9d9d9" }}
+        />
+      ),
+    },
+    {
+      title: "Action",
+      key: "action",
+      render: (_, record) => (
+        <Button type="primary" ghost>
+          Class Details
+        </Button>
+      ),
     },
   ];
 
-  const recentActivities = [
-    {
-      key: "1",
-      studentName: "STUDENT A",
-      topicName: "Grammar",
-      questionType: "Multiple Choice",
-      accuracy: 85,
-      date: "2024-04-15",
-    },
-  ];
+  // Filter classes by search text
+  const filteredClasses = classes.filter((cls) =>
+    cls.className.toLowerCase().includes(searchText.toLowerCase())
+  );
 
-  // Mock data cho biểu đồ
-  const skillsData = {
-    labels: [
-      "Grammar",
-      "Reading",
-      "Listening",
-      "Speaking",
-      "Writing",
-      "Vocabulary",
-    ],
-    datasets: [
-      {
-        label: "Student Performance",
-        data: [65, 75, 70, 80, 60, 85],
-        backgroundColor: "rgba(54, 162, 235, 0.2)",
-        borderColor: "rgba(54, 162, 235, 1)",
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const progressData = {
-    labels: ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-    datasets: [
-      {
-        label: "Progress Score",
-        data: [65, 70, 75, 80, 85, 90],
-        fill: false,
-        borderColor: "rgb(75, 192, 192)",
-        tension: 0.1,
-      },
-    ],
-  };
-
-  const columns = [
-    {
-      title: "STUDENT NAME",
-      dataIndex: "studentName",
-      key: "studentName",
-    },
-    {
-      title: "SESSION NAME",
-      dataIndex: "sessionName",
-      key: "sessionName",
-    },
-    {
-      title: "GRAMMAR & VOCABS",
-      dataIndex: "grammar",
-      key: "grammar",
-      render: (text) => `${text.score} | ${text.grade}`,
-    },
-    {
-      title: "READING",
-      dataIndex: "reading",
-      key: "reading",
-      render: (text) => `${text.score} | ${text.grade}`,
-    },
-    {
-      title: "LISTENING",
-      dataIndex: "listening",
-      key: "listening",
-      render: (text) => `${text.score} | ${text.grade}`,
-    },
-    {
-      title: "SPEAKING",
-      dataIndex: "speaking",
-      key: "speaking",
-      render: (text) => `${text.score} | ${text.grade}`,
-    },
-    {
-      title: "WRITING",
-      dataIndex: "writing",
-      key: "writing",
-      render: (text) => `${text.score} | ${text.grade}`,
-    },
-    {
-      title: "TOTAL",
-      dataIndex: "total",
-      key: "total",
-    },
-    {
-      title: "LEVEL",
-      dataIndex: "level",
-      key: "level",
-    },
-  ];
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen bg-gray-50">
+        <Spin size="large" tip="Loading dashboard data..." />
+      </div>
+    );
+  }
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
-      <p className="text-gray-600 mb-6">
-        Manage and organize both classes and individual sessions.
-      </p>
+    <div className="p-6 bg-white min-h-screen">
+      <div className="mb-6">
+        <div className="flex items-center text-gray-500 mb-2">
+          <span>Home</span>
+          <span className="mx-2">›</span>
+          <span className="text-gray-700">Dashboard</span>
+        </div>
 
-      {/* Statistics Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        <StatCard
-          icon={<UserOutlined />}
-          title="Total Students"
-          value={statistics.totalStudents}
-        />
-        <StatCard
-          icon={<FileOutlined />}
-          title="Total Tests Taken"
-          value={statistics.totalTests}
-        />
-        <StatCard
-          icon={<CheckCircleOutlined />}
-          title="Average Accuracy"
-          value={`${statistics.averageAccuracy}%`}
-        />
-        <StatCard
-          icon={<TrophyOutlined />}
-          title="Skills Covered"
-          value={statistics.totalSkills}
-        />
+        <Title level={3}>Dashboard</Title>
+        <Text className="text-gray-600">
+          Manage and organize both classes and individual sessions.
+        </Text>
       </div>
 
+      {/* Overview Statistics */}
+      <Row gutter={[16, 16]} className="mb-8">
+        <Col xs={24} sm={8}>
+          <StatCard
+            icon={<span className="text-blue-600 text-xl">👤</span>}
+            title="Total Student"
+            value={totalUsers}
+            increase="0.39%"
+            subText="This week"
+            color="#1890ff"
+          />
+        </Col>
+        <Col xs={24} sm={8}>
+          <StatCard
+            icon={<span className="text-purple-600 text-xl">📚</span>}
+            title="Total Class"
+            value={classes.length}
+            subText="This week"
+            increase="2.69%"
+            color="#722ed1"
+          />
+        </Col>
+        <Col xs={24} sm={8}>
+          <StatCard
+            icon={<span className="text-green-500 text-xl">📝</span>}
+            title="Total Sessions"
+            value={totalSessions}
+            subText="This week"
+            increase="1.45%"
+            color="#52c41a"
+          />
+        </Col>
+      </Row>
+
       {/* Student Performance Section */}
-      <div className="bg-white rounded-lg p-6 shadow-sm mt-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+      <div className="mb-6">
+        <div className="flex justify-between items-center mb-2">
           <div>
-            <h2 className="text-xl font-bold mb-1">Student Performance</h2>
-            <p className="text-gray-600">
-              Monitor academic progress and achievements.
-            </p>
+            <Title level={4} style={{ margin: 0 }}>
+              Class List
+            </Title>
+            <Text className="text-gray-500">
+              View and manage all available classes.
+            </Text>
           </div>
-          <div className="flex flex-col md:flex-row gap-4 mt-4 md:mt-0">
-            <button className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 transition-colors">
+          <div className="flex gap-3">
+            <Button
+              type="primary"
+              onClick={() => exportToPDF(classes)}
+              icon={<DownloadOutlined />}
+            >
               Export as PDF
-            </button>
-            <Input.Search
-              placeholder="Search by student name"
-              className="w-full md:w-[300px]"
+            </Button>
+            <Input
+              placeholder="Search by class code"
+              prefix={<SearchOutlined />}
+              style={{ width: 220 }}
+              onChange={(e) => setSearchText(e.target.value)}
             />
           </div>
         </div>
 
-        {/* Student Table */}
-        <div className="overflow-x-auto">
+        <Card className="shadow-sm" bordered={false}>
           <Table
-            columns={columns}
-            dataSource={studentData}
+            columns={classColumns}
+            dataSource={filteredClasses}
+            rowKey="ID"
             pagination={{
-              total: 50,
               pageSize: 10,
-              showSizeChanger: false,
+              showSizeChanger: true,
+              showTotal: (total) =>
+                `Showing 1-${Math.min(total, 10)} of ${total}`,
             }}
-            className="w-full"
+            className="custom-table"
           />
-        </div>
-      </div>
-
-      <div className="mt-6">
-        {/* Recent Student Activities */}
-        <Card title="Recent Activities">
-          <Table
-            columns={[
-              {
-                title: "Student",
-                dataIndex: "studentName",
-                key: "studentName",
-              },
-              {
-                title: "Topic",
-                dataIndex: "topicName",
-                key: "topicName",
-              },
-              {
-                title: "Question Type",
-                dataIndex: "questionType",
-                key: "questionType",
-              },
-              {
-                title: "Accuracy",
-                dataIndex: "accuracy",
-                key: "accuracy",
-                render: (accuracy) => (
-                  <Progress percent={accuracy} size="small" />
-                ),
-              },
-              {
-                title: "Date",
-                dataIndex: "date",
-                key: "date",
-              },
-            ]}
-            dataSource={recentActivities}
-          />
-        </Card>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-        {/* Biểu đồ kỹ năng */}
-        <Card title="Skills Performance">
-          <Radar data={skillsData} />
-        </Card>
-
-        {/* Biểu đồ tiến độ theo thời gian */}
-        <Card title="Progress Over Time">
-          <Line data={progressData} />
         </Card>
       </div>
     </div>

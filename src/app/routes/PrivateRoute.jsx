@@ -9,7 +9,7 @@ const PrivateRoute = [
     breadcrumb: "Home",
     children: [
       {
-        path: "",
+        index: true,
         element: <Dashboard />,
         breadcrumb: "Dashboard",
       },
