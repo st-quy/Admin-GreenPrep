@@ -1,7 +1,6 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
 import ClassDetail from "@pages/class-detail/ClassDetail.jsx";
-
 const PrivateRoute = [
   {
     path: "/",

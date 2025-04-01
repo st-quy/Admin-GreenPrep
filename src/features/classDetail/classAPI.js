@@ -1,3 +1,5 @@
+import axiosInstance from "@shared/config/axios";
+
 export const sessionsData = [
   {
     sessionName: "Session 1",
@@ -36,4 +38,19 @@ export const sessionsData = [
 export const classData = {
   className: "class01",
   status: "open",
+};
+
+export const ClassDetailApi = {
+  getClassById: (classId) => {
+    return axiosInstance.get(`/classes/${classId}`);
+  },
+  createSession: (sessionData) => {
+    return axiosInstance.post(`/sessions`, sessionData);
+  },
+  updateSession: (sessionId, sessionData) => {
+    return axiosInstance.put(`/sessions/${sessionId}`, sessionData);
+  },
+  deleteSession: (sessionId) => {
+    return axiosInstance.delete(`/sessions/${sessionId}`);
+  },
 };

@@ -17,7 +17,7 @@ const SessionManager = ({ data }) => {
         <ActionModal isEdit={false} onSubmit={""} />
       </div>
       <div className="mt-8">
-        <SessionTable dataSource={data} />
+        <SessionTable dataSource={data.Sessions} />
       </div>
     </>
   );
