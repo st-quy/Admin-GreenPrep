@@ -36,6 +36,7 @@ export default {
         blueDark: "#1C3FB7",
         dark8: "#E5E7EB",
         dark3: "#374151",
+        redDark: "#E10E0E",
       },
     },
   },

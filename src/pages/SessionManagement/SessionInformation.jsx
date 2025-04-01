@@ -1,25 +1,47 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import { Tabs, Input } from "antd";
 import "./index.css";
 import StudentMonitoring from "@/features/session/ui/student-modering.jsx";
+import StudentSessionTable from "@/features/session/ui/StudentSessionTable.jsx";
 const { Search } = Input;
 import SearchInput from "@/app/components/SearchInput.jsx";
 import Details from "@features/auth/ui/Details/Details";
 
 const SessionInformation = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [pendingRequestData, setPendingRequestData] = useState([]);
+
   const onSearchChange = (event) => {
     setSearchKeyword(event.target.value);
   };
+
+  useEffect(() => {
+    const fetchPendingRequestData = async () => {
+      const data = [
+        { id: 1, name: "Request 1" },
+        { id: 2, name: "Request 2" },
+      ];
+      setPendingRequestData(data);
+    };
+
+    fetchPendingRequestData();
+  }, []);
 
   const items = [
     {
       label: "Participant List",
       key: "item-1",
-      children: <StudentMonitoring searchKeyword={searchKeyword} />,
+      children: <StudentSessionTable  searchKeyword={searchKeyword} type="session" />,
     },
     {
-      label: "Pending Request",
+      label: (
+        <span className="">
+          Pending Request
+          {pendingRequestData.length > 0 && (
+            <span className="absolute top-3 right-7 w-[13px] h-[13px] bg-redDark rounded-full"></span>
+          )}
+        </span>
+      ),
       key: "item-2",
       children: <StudentMonitoring searchKeyword={searchKeyword} />,
     },

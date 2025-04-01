@@ -4,7 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { TableType, StatusType, LevelEnum } from "../constraint/TableEnum";
 
 const StudentSessionTable = ({
-  data,
+  data = [],
+  searchKeyword,
   type,
   status = type === TableType.STUDENT ? undefined : "draft",
   onAllQuestionGraded = () => {},
@@ -12,6 +13,16 @@ const StudentSessionTable = ({
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+
+  // Filter data based on searchKeyword
+  const filteredData = useMemo(() => {
+    if (!searchKeyword) return data;
+    return data.filter(
+      (item) =>
+        item.studentName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+        item.className.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
+  }, [searchKeyword, data]);
 
   const initialLevels = useMemo(
     () =>
@@ -169,7 +180,7 @@ const StudentSessionTable = ({
         style: { marginRight: "32px" },
         current: currentPage,
         pageSize: pageSize,
-        total: data.length,
+        total: filteredData.length,
         showSizeChanger: true,
         pageSizeOptions: ["5", "10", "15", "20"],
         showTotal: (total, range) =>

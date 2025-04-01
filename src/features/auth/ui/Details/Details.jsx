@@ -1,35 +1,78 @@
 import React, { useEffect, useState } from "react";
+import axios from "axios";
 
 const Details = ({ type }) => {
   const [data, setData] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/data.json")
-      .then((response) => response.json())
-      .then((jsonData) => {
+    const fetchData = async () => {
+      try {
+        let url = "";
         if (type === "session") {
-          setData(jsonData.sessions); 
+          url = "https://dev-api-greenprep.onrender.com/api/sessions/5d3740d4-bc75-485e-9d72-a3448735c111";
         } else if (type === "student") {
-          setData(jsonData.students)
+          url = "https://dev-api-greenprep.onrender.com/api/students";
         }
-      });
+
+        const response = await axios.get(url);
+        if (type === "session") {
+          setData([response.data.data]);
+        } else {
+          setData(response.data.data);
+        }
+      } catch (error) {
+        console.error("Error when get data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, [type]);
 
   if (data.length === 0) {
-    return <p>Loading...</p>;
+    return <p className="text-center text-red-500 font-bold">Loading...</p>;
   }
 
   const getStatusStyle = (status) => {
     switch (status) {
-      case "Completed":
-        return "px-[10px] py-[3px] bg-greenLight6 flex items-center justify-center rounded-full text-greenDark font-medium m-[12px]";
-      case "Ongoing":
-        return "px-[10px] py-[3px] bg-blueLight5 flex items-center justify-center rounded-full text-blueDark font-medium m-[12px]";
-      case "Not started":
-        return "px-[10px] py-[3px] bg-dark8 flex items-center justify-center rounded-full text-dark3 font-medium m-[12px]";
+      case "COMPLETED":
+        return "w-[106px] px-[10px] py-[3px] bg-greenLight6 flex items-center justify-center rounded-full text-greenDark font-medium m-[12px]";
+      case "ON_GOING":
+        return "w-[96px] px-[10px] py-[3px] bg-blueLight5 flex items-center justify-center rounded-full text-blueDark font-medium m-[12px]";
+      case "NOT_STARTED":
+        return "w-[114px] px-[10px] py-[3px] bg-dark8 flex items-center justify-center rounded-full text-dark3 font-medium m-[12px]";
       default:
         return "";
     }
+  };
+
+  const formatStatus = (status) => {
+    switch (status) {
+      case "COMPLETED":
+        return "Completed";
+      case "ON_GOING":
+        return "On going";
+      case "NOT_STARTED":
+        return "Not started";
+      default:
+        return "Unknown";
+    }
+  };
+
+  const formatDateTime = (dateTime) => {
+    const date = new Date(dateTime);
+    const formattedDate = date.toLocaleDateString("en-GB", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    });
+    const formattedTime = date.toLocaleTimeString("en-GB", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+    return `${formattedDate} ${formattedTime}`;
   };
 
   return (
@@ -78,25 +121,25 @@ const Details = ({ type }) => {
                 {type === "session" ? (
                   <>
                     <p className="text-black font-semibold m-[15px]">
-                      {item.sessionName}
+                      {item.sessionName || "Not Available"}
                     </p>
                     <p className="text-black font-semibold m-[15px]">
-                      {item.participants}
+                      {item.SessionParticipants.length || "Not Available"}
                     </p>
                     <p className="text-black font-semibold m-[15px]">
-                      {item.sessionDate}
+                      {formatDateTime(item.startTime) || "Not Available"}
                     </p>
                   </>
                 ) : (
                   <>
                     <p className="text-black font-semibold m-[15px]">
-                      {item.studentName}
+                      {item.studentName || "Not Available"}
                     </p>
                     <p className="text-black font-semibold m-[15px]">
-                      {item.studentID}
+                      {item.studentID || "Not Available"}
                     </p>
                     <p className="text-black font-semibold m-[15px]">
-                      {item.className}
+                      {item.className || "Not Available"}
                     </p>
                   </>
                 )}
@@ -127,22 +170,22 @@ const Details = ({ type }) => {
                 {type === "session" ? (
                   <>
                     <p className="text-black font-semibold m-[15px]">
-                      {item.sessionKey}
+                      {item.sessionKey || "Not Available"}
                     </p>
                     <div className={getStatusStyle(item.status)}>
-                      {item.status}
+                      {formatStatus(item.status) || "Not Available"}
                     </div>
                     <p className="text-black font-semibold m-[15px]">
-                      {item.endTime}
+                      {formatDateTime(item.endTime) || "Not Available"}
                     </p>
                   </>
                 ) : (
                   <>
                     <p className="text-black font-semibold m-[15px]">
-                      {item.email}
+                      {item.email || "Not Available"}
                     </p>
                     <p className="text-black font-semibold m-[15px]">
-                      {item.phone}
+                      {item.phone || "Not Available"}
                     </p>
                   </>
                 )}
