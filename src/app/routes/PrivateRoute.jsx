@@ -19,11 +19,8 @@ const PrivateRoute = [
         breadcrumb: "Class Management",
         children: [
           {
-            path: "",
-            element: <ClassManagement></ClassManagement>,
-            breadcrumb: "",
             index: true,
-            element: <div>Class Management</div>,
+            element: <ClassManagement />,
           },
           {
             path: "detail",
