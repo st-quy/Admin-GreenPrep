@@ -1,9 +1,11 @@
 import React, { useState } from "react";
-import { Button, Modal } from "antd";
+import { Button, message, Modal } from "antd";
 import DeleteIcon from "@assets/icons/class-detail/delete.png";
 import Warning from "@assets/icons/class-detail/warning.png";
+import { useDeleteSessionMutation } from "@features/classDetail/hooks/useClassDetail";
 
-const DeleteModal = () => {
+const DeleteModal = ({ sessionID }) => {
+  const deleteSession = useDeleteSessionMutation();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
 
@@ -11,17 +13,23 @@ const DeleteModal = () => {
     setOpen(true);
   };
 
-  const handleOk = () => {
+  const handleOk = async () => {
     setConfirmLoading(true);
-    setTimeout(() => {
+    try {
+      await deleteSession.mutateAsync(sessionID);
+      message.success("Session deleted successfully!");
       setOpen(false);
+    } catch (error) {
+      message.error("Failed to delete the session. Please try again.");
+    } finally {
       setConfirmLoading(false);
-    }, 2000);
+    }
   };
+
   const handleCancel = () => {
-    console.log("Clicked cancel button");
     setOpen(false);
   };
+
   return (
     <>
       <Button className="!hover:border-none" onClick={showModal}>
@@ -29,16 +37,27 @@ const DeleteModal = () => {
       </Button>
       <Modal
         open={open}
+        closable={false}
         onOk={handleOk}
         confirmLoading={confirmLoading}
         onCancel={handleCancel}
         okText={"Delete"}
-        okButtonProps={{
-          className: "!bg-[#F23030] !text-white !rounded-[50px]",
-        }}
-        cancelButtonProps={{
-          className: "!bg-white !text-[#003087] !rounded-[50px]",
-        }}
+        footer={(_) => (
+          <div className="flex justify-end gap-4 py-4">
+            <Button
+              onClick={handleCancel}
+              className="h-[50px] w-[106px] rounded-[50px] shadow-[0px_1px_3px_rgba(166,175,195,0.4)] text-[#003087] lg:text-[16px] md:text-[14px]"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleOk}
+              className="h-[50px] w-[106px] rounded-[50px] bg-[#F23030] text-white lg:text-[16px] md:text-[14px]"
+            >
+              Delete
+            </Button>
+          </div>
+        )}
         width={{
           xs: "90%",
           sm: "80%",
@@ -53,11 +72,11 @@ const DeleteModal = () => {
             <div className="bg-[#FEEBEB] w-fit p-4 rounded-full flex justify-center items-center">
               <img src={Warning} alt="Warning Icon" width={20} height={20} />
             </div>
-            <h6 className="text-[24px]">
+            <h6 className="lg:text-[24px] md:text-[22px]">
               Are you sure to delete this session?
             </h6>
           </div>
-          <p className="text-[#637381] text-[16px] pb-6">
+          <p className="text-[#637381] lg:text-[18px] md:text-[16px] pb-6">
             Once you delete this session, all associated data will be
             permanently removed and cannot be recovered. Please confirm if you
             want to proceed with this action.

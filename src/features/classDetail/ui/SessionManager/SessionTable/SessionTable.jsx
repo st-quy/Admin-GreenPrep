@@ -45,7 +45,7 @@ const SessionTable = ({ dataSource }) => {
                 <td className="p-4">{item.status}</td>
                 <td className="flex justify-center items-center gap-4 p-4">
                   <ActionModal isEdit={true} initialData={item} onSubmit={""} />
-                  <DeleteModal />
+                  <DeleteModal sessionID={item.ID} />
                 </td>
               </tr>
             ))
