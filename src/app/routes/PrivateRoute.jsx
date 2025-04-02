@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
+import { GradingPage } from "@pages/grading/GradingPage.jsx";
 
 const PrivateRoute = [
   {
@@ -46,7 +47,7 @@ const PrivateRoute = [
                       },
                       {
                         path: "grade",
-                        element: <div>Student Grade</div>,
+                        element: <GradingPage />,
                         breadcrumb: "Grade",
                       },
                     ],
