@@ -5,9 +5,11 @@ import {
   useSessionParticipants,
   useStudentParticipants,
 } from "../hooks/useSession";
+import axios from "axios";
 
 const StudentSessionTable = ({
   id,
+  searchKeyword,
   type,
   status = "draft",
   onAllQuestionGraded = () => {},
@@ -16,28 +18,56 @@ const StudentSessionTable = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [levels, setLevels] = useState({});
-  const { data, isLoading } =
-    type === TableType.SESSION
-      ? useSessionParticipants(id)
-      : useStudentParticipants(id);
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSessionParticipants = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get(
+          `https://dev-api-greenprep.onrender.com/api/sessions/${id}`
+        );
+        const participants = response.data.data.SessionParticipants || [];
+        setData(participants);
+      } catch (error) {
+        console.error("Error fetching session participants:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchSessionParticipants();
+    }
+  }, [id]);
+
+  const initialLevels = useMemo(
+    () =>
+      data.reduce((acc, cur) => {
+        acc[cur.studentId] = cur.level;
+        return acc;
+      }, {}),
+    [data]
+  );
+
+  const [levels, setLevels] = useState(initialLevels);
+
   const processedData = useMemo(() => {
-    return (data?.data || []).map((record) => ({
-      ...record,
-      Total:
-        (record.GrammarVocab || 0) +
-        (record.Listening || 0) +
-        (record.Reading || 0) +
-        (record.Speaking || 0) +
-        (record.Writing || 0),
+    return data.map((item) => ({
+      ...item,
+      Total: item.GrammarVocab + item.Listening + item.Reading,
     }));
   }, [data]);
 
-  useEffect(() => {
-    setLevels(
-      processedData.reduce((acc, cur) => ({ ...acc, [cur.ID]: cur.Level }), {})
+  const filteredData = useMemo(() => {
+    if (!searchKeyword) return processedData;
+    return processedData.filter(
+      (item) =>
+        item.Level?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+        item.UserID?.toLowerCase().includes(searchKeyword.toLowerCase())
     );
-  }, [processedData]);
+  }, [processedData, searchKeyword]);
 
   const checkIsAllQuestionGraded = useCallback(() => {
     if (!processedData.length) return;
@@ -169,11 +199,11 @@ const StudentSessionTable = ({
   return (
     <Table
       columns={columns}
-      dataSource={paginatedData.map((item) => ({ ...item, key: item.ID }))}
+      dataSource={filteredData.map((item) => ({ ...item, key: item.ID }))}
       pagination={{
         current: currentPage,
-        pageSize,
-        total: processedData.length,
+        pageSize: pageSize,
+        total: filteredData.length,
         showSizeChanger: true,
         pageSizeOptions: ["5", "10", "15", "20"],
         showTotal: (total, range) =>
