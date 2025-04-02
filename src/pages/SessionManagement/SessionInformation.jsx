@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Tabs, Input } from "antd";
 import "./index.css";
 import StudentMonitoring from "@/features/session/ui/student-modering.jsx";
@@ -31,7 +31,7 @@ const SessionInformation = () => {
     {
       label: "Participant List",
       key: "item-1",
-      children: <StudentSessionTable  searchKeyword={searchKeyword} type="session" />,
+      children: <StudentSessionTable searchKeyword={searchKeyword} type="session" />,
     },
     {
       label: (
@@ -47,7 +47,7 @@ const SessionInformation = () => {
     },
   ];
 
-  const [buttonState, setButtonState] = React.useState("readyToPublish");
+  const [buttonState, setButtonState] = useState("readyToPublish");
 
   const handlePublishScore = () => {
     setButtonState("publishedScore");
@@ -55,15 +55,12 @@ const SessionInformation = () => {
 
   return (
     <div className="flex flex-col">
-
-      <Details type="session"/>
+      <Details type="session" id="5d3740d4-bc75-485e-9d72-a3448735c111" />
 
       <div className="">
         <div className="flex justify-between">
           <div>
-            <p className="text-[30px] text-black font-bold">
-              Student Monitoring
-            </p>
+            <p className="text-[30px] text-black font-bold">Student Monitoring</p>
             <p className="text-[18px] text-[#637381] font-medium mt-[10px]">
               Track student request and participation.
             </p>
@@ -80,21 +77,19 @@ const SessionInformation = () => {
               </button>
             )}
             {buttonState === "publishedScore" && (
-              <button className="bg-[#E5E7EB] text-[#6B7280] font-bold rounded-full px-[28px] py-[13px] text-base border-none">
-                Published Score
+              <button className="bg-[#E5E7EB] text-[#6B7280] font-bold rounded-full px-[28px] py-[13px] text-base border-none" disabled>
+                Published
               </button>
             )}
           </div>
         </div>
-
-        <div className="flex flex-col mt-[69px]">
-          <SearchInput
-          placeholder="Search by student name or class"
+        <div className="mt-[34px]">
+          <SearchInput placeholder="Search by name, class,..." 
           onSearchChange={onSearchChange}
           className="absolute z-10"
           />
-          <Tabs items={items} className="flex-1 w-full" />
         </div>
+        <Tabs defaultActiveKey="item-1" items={items} />
       </div>
     </div>
   );

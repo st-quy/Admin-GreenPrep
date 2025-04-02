@@ -34,6 +34,12 @@
     margin-left: 0;
 }
 
+/* .ant-tabs .ant-tabs-tab {
+    border-bottom: #DFE4EA solid 2px;
+    z-index: 10;
+    transition: 0.3s;
+} */
+
 .ant-tabs .ant-tabs-tab.ant-tabs-tab-active {
     display: flex;
     justify-content: center;
@@ -41,4 +47,6 @@
     color: #003087;
     background-color: #E6F0FA;
     font-size: 16px;
+    /* border-bottom: #003087 solid 2px;
+    z-index: 10; */
 }

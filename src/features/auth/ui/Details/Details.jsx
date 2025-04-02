@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 
-const Details = ({ type }) => {
+const Details = ({ type, id }) => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -10,29 +10,29 @@ const Details = ({ type }) => {
       try {
         let url = "";
         if (type === "session") {
-          url = "https://dev-api-greenprep.onrender.com/api/sessions/5d3740d4-bc75-485e-9d72-a3448735c111";
+          url = `https://dev-api-greenprep.onrender.com/api/sessions/${id}`;
         } else if (type === "student") {
-          url = "https://dev-api-greenprep.onrender.com/api/students";
+          url = `https://dev-api-greenprep.onrender.com/api/students/${id}`;
         }
-
+  
         const response = await axios.get(url);
-        if (type === "session") {
-          setData([response.data.data]);
-        } else {
-          setData(response.data.data);
-        }
+        setData([response.data.data]);
       } catch (error) {
-        console.error("Error when get data:", error);
+        console.error("Error when getting data:", error);
       } finally {
         setLoading(false);
       }
     };
-
+  
     fetchData();
-  }, [type]);
+  }, [type, id]);
+
+  if (loading) {
+    return <p className="text-center text-red-500 font-bold">Loading...</p>;
+  }
 
   if (data.length === 0) {
-    return <p className="text-center text-red-500 font-bold">Loading...</p>;
+    return <p className="text-center text-red-500 font-bold">No data available.</p>;
   }
 
   const getStatusStyle = (status) => {
@@ -81,9 +81,7 @@ const Details = ({ type }) => {
         {type === "session" ? "Session Information" : "Student Information"}
       </p>
       <p className="text-[18px] text-[#637381] font-medium mt-[10px]">
-        {type === "session"
-          ? "View session details."
-          : "View student details."}
+        {type === "session" ? "View session details." : "View student details."}
       </p>
       <div className="mt-4">
         {data.map((item, index) => (
@@ -124,7 +122,9 @@ const Details = ({ type }) => {
                       {item.sessionName || "Not Available"}
                     </p>
                     <p className="text-black font-semibold m-[15px]">
-                      {item.SessionParticipants.length || "Not Available"}
+                    {item.SessionParticipants && Array.isArray(item.SessionParticipants)
+                      ? item.SessionParticipants.length
+                      : "Not Available"}
                     </p>
                     <p className="text-black font-semibold m-[15px]">
                       {formatDateTime(item.startTime) || "Not Available"}
@@ -194,7 +194,7 @@ const Details = ({ type }) => {
           </div>
         ))}
       </div>
-      <hr className="w-full bg-black bg-opacity-50 my-[50px]"></hr>
+      <hr className="w-full bg-black bg-opacity-50 my-[50px]" />
     </div>
   );
 };
