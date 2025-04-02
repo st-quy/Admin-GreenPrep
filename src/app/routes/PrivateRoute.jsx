@@ -21,7 +21,7 @@ const PrivateRoute = [
             element: <div>Class Management</div>,
           },
           {
-            path: "detail",
+            path: "class-detail/:id",
             element: <ClassDetail />,
             breadcrumb: "Class Detail",
           },

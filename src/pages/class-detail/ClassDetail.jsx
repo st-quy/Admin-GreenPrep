@@ -8,11 +8,8 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 const ClassDetail = () => {
-  const {
-    data: classDetail,
-    isLoading,
-    isError,
-  } = useClassDetailQuery("04573d32-e1da-4aa3-b02d-3a101c33d3bb");
+  const { id } = useParams();
+  const { data: classDetail, isLoading, isError } = useClassDetailQuery(id);
 
   if (isLoading)
     return (
