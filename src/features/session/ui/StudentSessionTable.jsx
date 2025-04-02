@@ -18,47 +18,31 @@ const StudentSessionTable = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-  const [data, setData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [levels, setLevels] = useState({});
+  const { data, isLoading } =
+    type === TableType.SESSION
+      ? useSessionParticipants(id)
+      : useStudentParticipants(id);
 
+      const processedData = useMemo(() => {
+        return (data?.data || []).map((record) => ({
+          ...record,
+          Total:
+            (record.GrammarVocab || 0) +
+            (record.Listening || 0) +
+            (record.Reading || 0) +
+            (record.Speaking || 0) +
+            (record.Writing || 0),
+        }));
+      }, [data]);
   useEffect(() => {
-    const fetchSessionParticipants = async () => {
-      try {
-        setIsLoading(true);
-        const response = await axios.get(
-          `https://dev-api-greenprep.onrender.com/api/sessions/${id}`
-        );
-        const participants = response.data.data.SessionParticipants || [];
-        setData(participants);
-      } catch (error) {
-        console.error("Error fetching session participants:", error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+    setLevels(
+      processedData.reduce((acc, cur) => ({ ...acc, [cur.ID]: cur.Level }), {})
+    );
+  }, [processedData]);
 
-    if (id) {
-      fetchSessionParticipants();
-    }
-  }, [id]);
 
-  const initialLevels = useMemo(
-    () =>
-      data.reduce((acc, cur) => {
-        acc[cur.studentId] = cur.level;
-        return acc;
-      }, {}),
-    [data]
-  );
 
-  const [levels, setLevels] = useState(initialLevels);
-
-  const processedData = useMemo(() => {
-    return data.map((item) => ({
-      ...item,
-      Total: item.GrammarVocab + item.Listening + item.Reading,
-    }));
-  }, [data]);
 
   const filteredData = useMemo(() => {
     if (!searchKeyword) return processedData;
@@ -181,7 +165,11 @@ const StudentSessionTable = ({
       ];
     } else {
       return [
-        { title: "SESSION NAME", dataIndex: ["Session","sessionName"], key: "SessionID" },
+        {
+          title: "SESSION NAME",
+          dataIndex: ["Session", "sessionName"],
+          key: "SessionID",
+        },
         ...commonColumns,
       ];
     }
