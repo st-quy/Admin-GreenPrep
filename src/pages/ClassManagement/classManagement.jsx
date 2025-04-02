@@ -269,7 +269,7 @@ const ClassManagement = () => {
         {currentClasses.length > 0 && (
           <div className="flex justify-start mt-4">
             <div className="w-full mx-auto">
-              <div className="flex flex-col md:flex-row justify-between items-center gap-4 md:gap-[32px] py-3">
+              <div className="flex flex-col md:flex-row justify-end items-center gap-4 md:gap-[32px] py-3">
                 <div className="font-['Inter'] font-medium text-[14px] md:text-[16px] leading-[24px] tracking-[0px] text-[#202224] opacity-60 text-center md:text-left">
                   Showing {indexOfFirstClass + 1}-
                   {Math.min(indexOfLastClass, filteredClasses.length)} of{" "}
