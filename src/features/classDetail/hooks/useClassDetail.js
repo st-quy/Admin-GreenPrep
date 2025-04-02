@@ -12,7 +12,22 @@ export const useClassDetailQuery = (classID) => {
   });
 };
 
-export const useCreateSessionMutation = () => {};
+export const useCreateSessionMutation = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (classID, data) => {
+      const response = await ClassDetailApi.createSession(classID, data);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["classDetail"] });
+    },
+    onError: (error) => {
+      console.error("Lỗi khi tạo session:", error);
+    },
+  });
+};
 
 export const useUpdateSessionMutation = () => {};
 

@@ -15,11 +15,17 @@ const { RangePicker } = DatePicker;
 import { yupSync } from "@shared/lib/utils";
 import { sessionSchema } from "@features/classDetail/validate";
 import { ClassDetailApi } from "@features/classDetail/classAPI";
+import { useCreateSessionMutation } from "@features/classDetail/hooks/useClassDetail";
 
-const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
+const ActionModal = ({
+  isEdit = false,
+  initialData = null,
+  classId = null,
+}) => {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const createSession = useCreateSessionMutation();
 
   const showModal = () => {
     setOpen(true);
@@ -28,17 +34,6 @@ const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
   const handleCancel = () => {
     setOpen(false);
     form.resetFields();
-  };
-
-  const handleGenerateKey = async () => {
-    try {
-      const response = await ClassDetailApi.generateSessionKey();
-      const generatedKey = response.data.key;
-      form.setFieldsValue({ sessionKey: generatedKey }); // Update the form field
-      message.success("Session key generated successfully!");
-    } catch (error) {
-      message.error("Failed to generate session key. Please try again.");
-    }
   };
 
   return (
@@ -95,11 +90,7 @@ const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
               name="sessionKey"
             >
               <Space.Compact className="!w-full">
-                <Input
-                  disabled={true}
-                  placeholder="Session Key"
-                  className="!h-[46px] "
-                />
+                <Input placeholder="Session Key" className="!h-[46px] " />
                 <Button className="!h-[46px]" onClick={handleGenerateKey}>
                   <img src={GenerateIcon} alt="Generate Icon" />
                 </Button>
@@ -112,7 +103,15 @@ const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
               rules={[yupSync(sessionSchema)]}
               name="examSet"
             >
-              <Select className="!h-[46px] !w-full" options={[]} />
+              <Select
+                className="!h-[46px] !w-full"
+                options={[
+                  { label: "Math Exam", value: "math" },
+                  { label: "Science Exam", value: "science" },
+                  { label: "History Exam", value: "history" },
+                  { label: "English Exam", value: "english" },
+                ]}
+              />
             </Form.Item>
             <Form.Item
               label="Date Range"
@@ -134,7 +133,6 @@ const ActionModal = ({ isEdit = false, initialData = null, onSubmit }) => {
                   Cancel
                 </Button>
                 <Button
-                  onClick={onSubmit}
                   htmlType="submit"
                   className="h-[52px] w-[124px] rounded-[50px] bg-[#003087] text-white lg:text-[16px] md:text-[14px]"
                 >

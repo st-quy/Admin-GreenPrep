@@ -15,7 +15,7 @@ const SessionManager = ({ data }) => {
             Overview of Active and Past Sessions
           </p>
         </div>
-        <ActionModal isEdit={false} onSubmit={""} />
+        <ActionModal isEdit={false} classId={data.ID} />
       </div>
       <div className="mb-[10px] mt-4 flex gap-4">
         <Input
