@@ -5,7 +5,6 @@ import {
   useSessionParticipants,
   useStudentParticipants,
 } from "../hooks/useSession";
-import axios from "axios";
 
 const StudentSessionTable = ({
   id,
@@ -20,29 +19,26 @@ const StudentSessionTable = ({
   const [pageSize, setPageSize] = useState(5);
   const [levels, setLevels] = useState({});
   const { data, isLoading } =
-    type === TableType.SESSION
+    type == TableType.SESSION 
       ? useSessionParticipants(id)
       : useStudentParticipants(id);
 
-      const processedData = useMemo(() => {
-        return (data?.data || []).map((record) => ({
-          ...record,
-          Total:
-            (record.GrammarVocab || 0) +
-            (record.Listening || 0) +
-            (record.Reading || 0) +
-            (record.Speaking || 0) +
-            (record.Writing || 0),
-        }));
-      }, [data]);
+  const processedData = useMemo(() => {
+    return (data?.data || []).map((record) => ({
+      ...record,
+      Total:
+        (record.GrammarVocab || 0) +
+        (record.Listening || 0) +
+        (record.Reading || 0) +
+        (record.Speaking || 0) +
+        (record.Writing || 0),
+    }));
+  }, [data]);
   useEffect(() => {
     setLevels(
       processedData.reduce((acc, cur) => ({ ...acc, [cur.ID]: cur.Level }), {})
     );
   }, [processedData]);
-
-
-
 
   const filteredData = useMemo(() => {
     if (!searchKeyword) return processedData;
@@ -125,23 +121,26 @@ const StudentSessionTable = ({
       title: "LEVEL",
       dataIndex: "Level",
       key: "Level",
-      render: (level, record) => (
-        <Select
-          value={levels[record.ID]}
-          placeholder="Level"
-          disabled={
-            status === StatusType.PUBLISHED || type === TableType.STUDENT
-          }
-          onChange={(value) => onLevelChange(record.ID, value)}
-          className="w-20"
-        >
-          {LevelEnum.map((lvl) => (
-            <Select.Option key={lvl} value={lvl}>
-              {lvl}
-            </Select.Option>
-          ))}
-        </Select>
-      ),
+      render: (level, record) =>
+        type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
+          <Select
+            value={levels[record.ID]}
+            placeholder="Level"
+            disabled={
+              status === StatusType.PUBLISHED || type === TableType.STUDENT
+            }
+            onChange={(value) => onLevelChange(record.ID, value)}
+            className="w-20"
+          >
+            {LevelEnum.map((lvl) => (
+              <Select.Option key={lvl} value={lvl}>
+                {lvl}
+              </Select.Option>
+            ))}
+          </Select>
+        ) : (
+          <span className="text-[14px] text-[#637381]">{level}</span>
+        ),
     },
   ];
 

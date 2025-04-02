@@ -2,6 +2,7 @@ import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
 import SessionLayout from "../../features/auth/ui/SessionLayout.jsx";
 import SessionInformation from "@pages/SessionManagement/SessionInformation.jsx";
+import { TableType } from "@features/session/constraint/TableEnum.js";
 
 const PrivateRoute = [
   {
@@ -33,19 +34,21 @@ const PrivateRoute = [
             breadcrumb: "Session Detail",
             children: [
               {
-                path: "",
-                element: <SessionInformation />,
+                path: ":id",
+                element: <SessionInformation type={TableType.SESSION} />,
               },
               {
                 path: "student",
                 children: [
                   {
-                    path: ":studentId",
+                    path: ":id",
                     breadcrumb: ":studentId",
                     children: [
                       {
                         index: true,
-                        element: <div>Student Detail</div>,
+                        element: (
+                          <SessionInformation type={TableType.STUDENT} />
+                        ),
                       },
                       {
                         path: "grade",
