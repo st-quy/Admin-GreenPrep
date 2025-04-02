@@ -1,9 +1,9 @@
-import { QuestionAnswer } from "./QuestionAnswer";
-import React, { useState } from "react";
-import { Tabs, Button } from "antd";
 import "antd/dist/reset.css";
+
+import { QuestionAnswer } from "./QuestionAnswer";
 import ScoreTabs from "./Navigation";
-import AssessmentComponent from "./assessmentScores";
+import ScoreCommentForm from "./ScoreCommentForm";
+
 export const Assessment = () => {
   return (
     <div className="w-full">
@@ -13,11 +13,12 @@ export const Assessment = () => {
       <div className="flex flex-col gap-6 w-full">
         <div className="flex gap-10 relative">
           {/* map data here */}
-          <div className="w-[70%] h-fit shadow-md">
+          <div className="w-[80%] h-fit shadow-md rounded-lg">
             <QuestionAnswer isSpeaking={true} fileName={"test"} />
           </div>
-          <div className="w-[20.375rem] h-[15.9375rem] shadow-md sticky top-0">
+          <div className="w-[20%] h-[15.9375rem] shadow-md sticky top-0 rounded-lg">
             {/* put component of score here */}
+            <ScoreCommentForm />
           </div>
         </div>
       </div>
