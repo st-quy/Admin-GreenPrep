@@ -39,7 +39,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
       );
 
       const requestsData = response.data.data || [];
-      const pendingRequests = requestsData
+      const mapData = requestsData
         .filter((req) => req.status === "pending")
         .map((req, index) => ({
           key: req.ID || index.toString(),
@@ -48,14 +48,25 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
           className: req.User?.class || "null",
           requestId: req.ID,
         }));
-
+      let pendingRequests = mapData;
+      if (searchKeyword) {
+        pendingRequests = mapData.filter(
+          (item) =>
+            item.studentName
+              .toLowerCase()
+              .includes(searchKeyword.toLowerCase()) ||
+            item.className.toLowerCase().includes(searchKeyword.toLowerCase())
+        );
+      }
       setDataSource(pendingRequests);
       setTotalItems(pendingRequests.length);
     } catch (error) {
       message.error("Error fetching request list: " + error.message);
     }
   };
-
+  useEffect(() => {
+    fetchSessionRequests();
+  }, [searchKeyword]);
   useEffect(() => {
     if (sessionId) {
       fetchSessionRequests();
@@ -208,7 +219,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
       key: "studentName",
       align: "center",
       render: (text) => (
-        <span className="text-[#637381] text-[14px]">{text}</span>
+        <span className="text-[#637381] text-[16px]">{text}</span>
       ),
     },
     {
@@ -217,7 +228,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
       key: "studentId",
       align: "center",
       render: (text) => (
-        <span className="text-[#637381] text-[14px]">{text}</span>
+        <span className="text-[#637381] text-[16px]">{text}</span>
       ),
     },
     {
@@ -226,7 +237,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
       key: "className",
       align: "center",
       render: (text) => (
-        <span className="text-[#637381] text-[14px]">{text}</span>
+        <span className="text-[#637381] text-[16px]">{text}</span>
       ),
     },
     {

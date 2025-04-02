@@ -7,10 +7,10 @@ const { Search } = Input;
 import SearchInput from "@/app/components/SearchInput.jsx";
 import Details from "@features/auth/ui/Details/Details";
 import { FilterFilled } from "@ant-design/icons";
+import { TableType } from "@features/session/constraint/TableEnum";
 
 const SessionInformation = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
-  const [pendingRequestData, setPendingRequestData] = useState([]);
 
   const idSession = "48ad7513-61ee-4069-a886-e16d39573cd1";
 
@@ -21,30 +21,12 @@ const SessionInformation = () => {
   const handleNavigate = (id, action) => {
     console.log(`Navigating to ${action} for participant with ID: ${id}`);
   };
-
-  useEffect(() => {
-    console.log("Length:", pendingRequestData);
-  }, [pendingRequestData]);
-
-  // useEffect(() => {
-  //   const fetchPendingRequestData = async () => {
-  //     const data = [
-  //       { id: 1, name: "Request 1" },
-  //       { id: 2, name: "Request 2" },
-  //     ];
-  //     setPendingRequestData(data);
-  //   };
-
-  //   fetchPendingRequestData();
-  // }, []);
-
   const items = [
     {
       label: "Participant List",
       key: "item-1",
-      children: <StudentSessionTable 
-                  searchKeyword={searchKeyword} 
-                  type="session" 
+      children: <StudentSessionTable searchKeyword={searchKeyword} 
+                  type={TableType.SESSION}
                   id={idSession}
                   onNavigate={handleNavigate} />,
     },
@@ -52,13 +34,10 @@ const SessionInformation = () => {
       label: (
         <span className="">
           Pending Request
-          {pendingRequestData.length > 0 && (
-            <span className="absolute top-3 right-7 w-[13px] h-[13px] bg-redDark rounded-full"></span>
-          )}
         </span>
       ),
       key: "item-2",
-      children: <StudentMonitoring searchKeyword={searchKeyword} />,
+      children: <StudentMonitoring sessionId={idSession} searchKeyword={searchKeyword} />,
     },
   ];
 
