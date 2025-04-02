@@ -11,14 +11,7 @@ import {
   Typography,
   Progress,
 } from "antd";
-import {
-  UserOutlined,
-  BookOutlined,
-  FileOutlined,
-  CheckCircleOutlined,
-  DownloadOutlined,
-  SearchOutlined,
-} from "@ant-design/icons";
+import { DownloadOutlined, SearchOutlined } from "@ant-design/icons";
 import { fetchClassesWithSessionCount } from "../../features/auth/dashboard/services/classService";
 import {
   fetchSessions,
@@ -38,23 +31,24 @@ const StatCard = ({
   color = "#1890ff",
   increase = null,
 }) => (
-  <div className="p-5 bg-white rounded-md shadow-sm h-full">
-    <div className="flex items-center mb-3">
+  <div className="p-4 md:p-5 bg-white rounded-md shadow-sm h-full">
+    <div className="flex items-center mb-2 md:mb-3">
       {icon}
-      <span className="ml-2 text-gray-500">{title}</span>
+      <span className="ml-2 text-gray-500 text-sm md:text-base">{title}</span>
     </div>
-    <div className="flex justify-between items-end mb-3">
+    <div className="flex justify-between items-end mb-2 md:mb-3">
       <div>
         <Title
           level={4}
-          style={{ margin: 0, fontSize: "28px", fontWeight: "500" }}
+          style={{ margin: 0, fontSize: "20px", fontWeight: "500" }}
+          className="md:text-[28px]"
         >
           {value}
         </Title>
       </div>
       {subText && <Text className="text-gray-400 text-xs">{subText}</Text>}
     </div>
-    <div className="mt-3">
+    <div className="mt-2 md:mt-3">
       {increase && (
         <Text className="text-xs text-green-600 mb-1 block">
           {increase} <span className="ml-1">↑</span>
@@ -75,7 +69,7 @@ const StatCard = ({
 const ColumnChart = ({ data, title }) => {
   return (
     <Card title={title} className="shadow-sm" bordered={false}>
-      <div className="p-4">
+      <div className="p-2 md:p-4">
         {data.length === 0 ? (
           <div className="text-center text-gray-500 my-4">
             <Text type="secondary">No session data available</Text>
@@ -83,7 +77,7 @@ const ColumnChart = ({ data, title }) => {
         ) : (
           <div className="flex flex-wrap">
             {data.map((item, index) => (
-              <div key={index} className="mb-4 w-1/2 px-2">
+              <div key={index} className="mb-4 w-full sm:w-1/2 px-2">
                 <Text strong className="mb-1 block">
                   {item.type}
                 </Text>
@@ -113,7 +107,7 @@ const ColumnChart = ({ data, title }) => {
 const StatusChart = ({ data, title }) => {
   return (
     <Card title={title} className="shadow-sm" bordered={false}>
-      <div className="p-4">
+      <div className="p-2 md:p-4">
         {data.length === 0 ? (
           <div className="text-center text-gray-500 my-4">
             <Text type="secondary">No status data available</Text>
@@ -239,7 +233,7 @@ const Dashboard = () => {
       title: "Action",
       key: "action",
       render: (_, record) => (
-        <Button type="primary" ghost>
+        <Button type="primary" ghost size="small" className="md:size-middle">
           Class Details
         </Button>
       ),
@@ -260,25 +254,27 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-6 bg-white min-h-screen">
-      <div className="mb-6">
+    <div className="p-3 md:p-6 bg-white min-h-screen">
+      <div className="mb-4 md:mb-6">
         <div className="flex items-center text-gray-500 mb-2">
           <span>Home</span>
           <span className="mx-2">›</span>
           <span className="text-gray-700">Dashboard</span>
         </div>
 
-        <Title level={3}>Dashboard</Title>
-        <Text className="text-gray-600">
+        <Title level={3} className="text-xl md:text-2xl lg:text-3xl">
+          Dashboard
+        </Title>
+        <Text className="text-gray-600 text-sm md:text-base">
           Manage and organize both classes and individual sessions.
         </Text>
       </div>
 
       {/* Overview Statistics */}
-      <Row gutter={[16, 16]} className="mb-8">
-        <Col xs={24} sm={8}>
+      <Row gutter={[12, 12]} className="mb-6 md:mb-8">
+        <Col xs={24} sm={24} md={8}>
           <StatCard
-            icon={<span className="text-blue-600 text-xl">👤</span>}
+            icon={<span className="text-blue-600 text-lg md:text-xl">👤</span>}
             title="Total Student"
             value={totalUsers}
             increase="0.39%"
@@ -286,9 +282,11 @@ const Dashboard = () => {
             color="#1890ff"
           />
         </Col>
-        <Col xs={24} sm={8}>
+        <Col xs={24} sm={24} md={8}>
           <StatCard
-            icon={<span className="text-purple-600 text-xl">📚</span>}
+            icon={
+              <span className="text-purple-600 text-lg md:text-xl">📚</span>
+            }
             title="Total Class"
             value={classes.length}
             subText="This week"
@@ -296,9 +294,9 @@ const Dashboard = () => {
             color="#722ed1"
           />
         </Col>
-        <Col xs={24} sm={8}>
+        <Col xs={24} sm={24} md={8}>
           <StatCard
-            icon={<span className="text-green-500 text-xl">📝</span>}
+            icon={<span className="text-green-500 text-lg md:text-xl">📝</span>}
             title="Total Sessions"
             value={totalSessions}
             subText="This week"
@@ -310,33 +308,34 @@ const Dashboard = () => {
 
       {/* Student Performance Section */}
       <div className="mb-6">
-        <div className="flex justify-between items-center mb-2">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-2 gap-3 md:gap-0">
           <div>
-            <Title level={4} style={{ margin: 0 }}>
+            <Title level={4} className="text-lg md:text-xl lg:text-2xl m-0">
               Class List
             </Title>
-            <Text className="text-gray-500">
+            <Text className="text-gray-500 text-sm md:text-base">
               View and manage all available classes.
             </Text>
           </div>
-          <div className="flex gap-3">
+          <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
             <Button
               type="primary"
               onClick={() => exportToPDF(classes)}
               icon={<DownloadOutlined />}
+              className="w-full sm:w-auto"
             >
               Export as PDF
             </Button>
             <Input
               placeholder="Search by class code"
               prefix={<SearchOutlined />}
-              style={{ width: 220 }}
+              className="w-full sm:w-auto md:w-[220px]"
               onChange={(e) => setSearchText(e.target.value)}
             />
           </div>
         </div>
 
-        <Card className="shadow-sm" bordered={false}>
+        <Card className="shadow-sm overflow-x-auto" bordered={false}>
           <Table
             columns={classColumns}
             dataSource={filteredClasses}
@@ -344,10 +343,13 @@ const Dashboard = () => {
             pagination={{
               pageSize: 10,
               showSizeChanger: true,
+              size: "small",
               showTotal: (total) =>
                 `Showing 1-${Math.min(total, 10)} of ${total}`,
             }}
             className="custom-table"
+            scroll={{ x: "max-content" }}
+            size="middle"
           />
         </Card>
       </div>

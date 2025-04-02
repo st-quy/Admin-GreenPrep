@@ -1,18 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "antd";
-import {Input } from  "antd";
-const ClassModal = ({ isOpen, onClose, onSubmit, title, description, buttonText, initialClassName = "", error }) => {
+import { Input } from "antd";
+
+const ClassModal = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  title,
+  description,
+  buttonText,
+  initialClassName = "",
+  error,
+  isLoading = false,
+}) => {
   const [className, setClassName] = useState(initialClassName);
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => setIsVisible(true), 10); 
+      setTimeout(() => setIsVisible(true), 10);
     } else {
       setIsVisible(false);
     }
   }, [isOpen]);
-  
+
   const handleSubmit = () => {
     onSubmit({ name: className });
   };
@@ -40,12 +51,14 @@ const ClassModal = ({ isOpen, onClose, onSubmit, title, description, buttonText,
           >
             Class name <span className="text-[#EF4444]">*</span>
           </label>
-          <Input id="className"
-                 type="text" 
-                 value={className}
-                 onChange={(e) => setClassName(e.target.value)}
-                 placeholder="Enter class name"
-                 className="w-full h-[46px] px-4 py-2 border border-[#D0D5DD] rounded-[8px] text-[16px] leading-[24px] text-[#212B36] hover:!border-gray-300 focus:!border-gray-300 focus:!shadow-none"
+          <Input
+            id="className"
+            type="text"
+            value={className}
+            onChange={(e) => setClassName(e.target.value)}
+            placeholder="Enter class name"
+            className="w-full h-[46px] px-4 py-2 border border-[#D0D5DD] rounded-[8px] text-[16px] leading-[24px] text-[#212B36] hover:!border-gray-300 focus:!border-gray-300 focus:!shadow-none"
+            disabled={isLoading}
           />
           {/* Error display */}
           {error && <p className="text-[#EF4444] text-[16px] mt-2">{error}</p>}
@@ -56,6 +69,7 @@ const ClassModal = ({ isOpen, onClose, onSubmit, title, description, buttonText,
             onClick={onClose}
             type="default"
             className="w-[113px] h-[40px] !text-[#003087] shadow-[0_0_0_2px_rgba(255,255,255,0.3)] !border-gray-120 rounded-[50px] font-inter font-medium text-[16px] leading-[24px] bg-[#FFFFFF] text-[#003087]  hover:!text-[#003087] focus:!bg-[#FFFFFF] focus:!text-[#003087] hover:!border-[#D0D5DD]"
+            disabled={isLoading}
           >
             Cancel
           </Button>
@@ -63,6 +77,7 @@ const ClassModal = ({ isOpen, onClose, onSubmit, title, description, buttonText,
             onClick={handleSubmit}
             type="primary"
             className="w-[113px] h-[40px] rounded-[50px] font-inter font-medium text-[16px] leading-[24px] bg-[#003087] text-[#FFFFFF] hover:!bg-[#003087] hover:!text-[#FFFFFF] focus:!bg-[#003087] focus:!text-[#FFFFFF]"
+            loading={isLoading}
           >
             {buttonText}
           </Button>

@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
-import ClassManagement from "@features/auth/classManagement/ui/classMangment.jsx";
+import ClassManagement from "@pages/ClassManagement/classManagement.jsx";
 import Dashboard from "@pages/Dashboard/Dashboard.jsx";
 
 const PrivateRoute = [
