@@ -7,7 +7,7 @@ import {
   matchRoutes,
   useParams,
 } from "react-router-dom";
-import { StepForwardOutlined, LogoutOutlined } from "@ant-design/icons";
+import LogoutButton from "@shared/ui/LogoutButton"
 import { Breadcrumb } from "../../components/Breadcrumb/Breadcrumb";
 import PrivateRoute from "../PrivateRoute";
 
@@ -76,8 +76,8 @@ export const ProtectedRoute = () => {
           ]}
           onClick={(e) => navigateTo(e.key)}
         />
-        <StepForwardOutlined className="text-2xl cursor-pointer" />
-      </Header>
+        <LogoutButton />
+      </Header> 
       <Content className="p-10 pt-4">
         <Breadcrumb paths={breadcrumbPaths} />
         <Outlet />

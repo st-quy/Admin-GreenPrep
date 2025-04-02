@@ -1,17 +1,17 @@
 // @ts-nocheck
-import React, { useEffect } from "react";
-import { Form, Input, Button, Modal, message } from "antd";
-import { passwordSchema } from "../../schema/profileButtonsSchema";
-import { changePasswordFromApi } from "../../api";
-import { useMutation } from "@tanstack/react-query";
-import { getUserFromToken } from "../../api";
-import { useQuery } from "@tanstack/react-query";
+import React, { useEffect } from 'react';
+import { Form, Input, Button, Modal, message } from 'antd';
+import { passwordSchema } from '../../schema/profileButtonsSchema';
+import { changePasswordFromApi } from '../../api';
+import { useMutation } from '@tanstack/react-query';
+import { getUserFromToken } from '../../api';
+import { useQuery } from '@tanstack/react-query';
 
 const ChangePassword = ({ isOpen, onClose }) => {
   const [form] = Form.useForm();
 
   const { data: userData } = useQuery({
-    queryKey: ["userProfile"],
+    queryKey: ['userProfile'],
     queryFn: getUserFromToken,
     enabled: isOpen,
   });
@@ -24,7 +24,7 @@ const ChangePassword = ({ isOpen, onClose }) => {
       onClose();
     },
     onError: (error) => {
-      console.error("Error changing password:", error);
+      console.error('Error changing password:', error);
       if (error.response?.status === 400) {
         form.setFields([
           {
@@ -33,8 +33,9 @@ const ChangePassword = ({ isOpen, onClose }) => {
           },
         ]);
       }
-    },
+    }
   });
+
 
   useEffect(() => {
     if (isOpen) {
@@ -52,9 +53,11 @@ const ChangePassword = ({ isOpen, onClose }) => {
 
       changePasswordMutation.mutate({
         userId: userData.ID,
-        data: { oldPassword, newPassword },
+        data: { oldPassword, newPassword }
       });
-    } catch (err) {}
+    } catch (err) {
+     
+    }
   };
 
   return (
@@ -90,7 +93,7 @@ const ChangePassword = ({ isOpen, onClose }) => {
             }
             name="oldPassword"
             rules={[
-              { required: true, message: "Please enter your current password" },
+              { required: true, message: 'Please enter your current password' }
             ]}
           >
             <Input.Password
@@ -107,8 +110,8 @@ const ChangePassword = ({ isOpen, onClose }) => {
             }
             name="newPassword"
             rules={[
-              { required: true, message: "Please enter your new password" },
-              { min: 6, message: "Password must be at least 6 characters" },
+              { required: true, message: 'Please enter your new password' },
+              { min: 6, message: 'Password must be at least 6 characters' }
             ]}
           >
             <Input.Password
@@ -124,17 +127,15 @@ const ChangePassword = ({ isOpen, onClose }) => {
               </span>
             }
             name="confirmPassword"
-            dependencies={["newPassword"]}
+            dependencies={['newPassword']}
             rules={[
-              { required: true, message: "Please confirm your new password" },
+              { required: true, message: 'Please confirm your new password' },
               ({ getFieldValue }) => ({
                 validator(_, value) {
-                  if (!value || getFieldValue("newPassword") === value) {
+                  if (!value || getFieldValue('newPassword') === value) {
                     return Promise.resolve();
                   }
-                  return Promise.reject(
-                    new Error("The two passwords do not match")
-                  );
+                  return Promise.reject(new Error('The two passwords do not match'));
                 },
               }),
             ]}
@@ -167,4 +168,4 @@ const ChangePassword = ({ isOpen, onClose }) => {
   );
 };
 
-export default ChangePassword;
+export default ChangePassword; 
