@@ -1,10 +1,11 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useMemo } from "react";
 import { Table, message } from "antd";
 import CheckCircleIcon from "@/assets/icons/check-circle.svg";
 import CloseCircleIcon from "@/assets/icons/close-circle.svg";
 import ConfirmationModal from "@shared/Modal/ConfirmationModal";
-import axios from "axios";
-import { API_BASE_URL, SESSION_ID, API_ENDPOINTS } from "../api";
+import axios from "@shared/config/axios";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { SESSION_ID, API_ENDPOINTS } from "../api";
 
 const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
@@ -18,64 +19,81 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
     okButtonColor: "",
     onConfirm: () => {},
   });
-  const [dataSource, setDataSource] = useState([]);
-  const [totalItems, setTotalItems] = useState(0);
+
+  const queryClient = useQueryClient();
 
   // Searching functionality
-  const filteredData = useMemo(() => {
-    if (!searchKeyword) return dataSource;
-    return dataSource.filter(
-      (item) =>
-        item.studentName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-        item.className.toLowerCase().includes(searchKeyword.toLowerCase())
-    );
-  }, [searchKeyword, dataSource]);
+  // const filteredData = useMemo(() => {
+  //   if (!searchKeyword) return dataSource;
+  //   return dataSource.filter(
+  //     (item) =>
+  //       item.studentName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+  //       item.className.toLowerCase().includes(searchKeyword.toLowerCase())
+  //   );
+  // }, [searchKeyword, dataSource]);
 
   const fetchSessionRequests = async () => {
-    if (!sessionId) return;
-    try {
-      const response = await axios.get(
-        `${API_BASE_URL}${API_ENDPOINTS.SESSION_REQUESTS(sessionId)}`
-      );
-
-      const requestsData = response.data.data || [];
-      const mapData = requestsData
-        .filter((req) => req.status === "pending")
-        .map((req, index) => ({
-          key: req.ID || index.toString(),
-          studentName: req.User?.fullName || "null",
-          studentId: req.User?.studentCode || "null",
-          className: req.User?.class || "null",
-          requestId: req.ID,
-        }));
-      let pendingRequests = mapData;
-      if (searchKeyword) {
-        pendingRequests = mapData.filter(
-          (item) =>
-            item.studentName
-              .toLowerCase()
-              .includes(searchKeyword.toLowerCase()) ||
-            item.className.toLowerCase().includes(searchKeyword.toLowerCase())
-        );
-      }
-      setDataSource(pendingRequests);
-      setTotalItems(pendingRequests.length);
-    } catch (error) {
-      message.error("Error fetching request list: " + error.message);
-    }
+    if (!sessionId) return [];
+    const response = await axios.get(API_ENDPOINTS.SESSION_REQUESTS(sessionId));
+    const requestsData = response.data.data || [];
+    const pendingRequests = requestsData
+      .filter((req) => req.status === "pending")
+      .map((req, index) => ({
+        key: req.ID || index.toString(),
+        studentName: req.User?.fullName || "null",
+        studentId: req.User?.studentCode || "null",
+        className: req.User?.class || "null",
+        requestId: req.ID,
+      }));
+    return pendingRequests;
   };
-  useEffect(() => {
-    fetchSessionRequests();
-  }, [searchKeyword]);
-  useEffect(() => {
-    if (sessionId) {
-      fetchSessionRequests();
-      const interval = setInterval(() => {
-        fetchSessionRequests();
-      }, 10000);
-      return () => clearInterval(interval);
-    }
-  }, [sessionId]);
+
+  const { data: dataSource = [], isLoading } = useQuery({
+    queryKey: ["sessionRequests", sessionId],
+    queryFn: fetchSessionRequests,
+    refetchInterval: 10000,
+    enabled: !!sessionId,
+  });
+
+  // Mutation cho approve request
+  const approveMutation = useMutation({
+    mutationFn: (requestId) =>
+      axios.patch(API_ENDPOINTS.APPROVE_REQUEST(sessionId), {
+        requestId,
+      }),
+    onSuccess: (_, requestId) => {
+      message.success("Request has been approved!");
+      queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
+        if (Array.isArray(oldData)) {
+          return oldData.filter((req) => req.requestId !== requestId);
+        }
+        return [];
+      });
+    },
+    onError: (error) => {
+      message.error("Error approving request: " + error.message);
+    },
+  });
+
+  // Mutation cho reject request
+  const rejectMutation = useMutation({
+    mutationFn: (requestId) =>
+      axios.patch(API_ENDPOINTS.REJECT_REQUEST(sessionId), {
+        requestId,
+      }),
+    onSuccess: (_, requestId) => {
+      message.success("Request has been rejected!");
+      queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
+        if (Array.isArray(oldData)) {
+          return oldData.filter((req) => req.requestId !== requestId);
+        }
+        return [];
+      });
+    },
+    onError: (error) => {
+      message.error("Error rejecting request: " + error.message);
+    },
+  });
 
   const handleApprove = (record) => {
     setModalConfig({
@@ -84,20 +102,8 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
         "After you approve this student, this account will be able to take the test.",
       okText: "Approve",
       okButtonColor: "#22AD5C",
-      onConfirm: async () => {
-        try {
-          await axios.patch(
-            `${API_BASE_URL}${API_ENDPOINTS.APPROVE_REQUEST(sessionId)}`,
-            { requestId: record.requestId }
-          );
-          message.success("Request has been approved!");
-          setDataSource((prev) =>
-            prev.filter((req) => req.requestId !== record.requestId)
-          );
-          setTotalItems((prev) => prev - 1);
-        } catch (error) {
-          message.error("Error approving request: " + error.message);
-        }
+      onConfirm: () => {
+        approveMutation.mutate(record.requestId);
         setModalOpen(false);
       },
     });
@@ -111,20 +117,8 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
         "After you reject this student, this account will no longer be available in this pending list.",
       okText: "Reject",
       okButtonColor: "#F23030",
-      onConfirm: async () => {
-        try {
-          await axios.patch(
-            `${API_BASE_URL}${API_ENDPOINTS.REJECT_REQUEST(sessionId)}`,
-            { requestId: record.requestId }
-          );
-          message.success("Request has been rejected!");
-          setDataSource((prev) =>
-            prev.filter((req) => req.requestId !== record.requestId)
-          );
-          setTotalItems((prev) => prev - 1);
-        } catch (error) {
-          message.error("Error rejecting request: " + error.message);
-        }
+      onConfirm: () => {
+        rejectMutation.mutate(record.requestId);
         setModalOpen(false);
       },
     });
@@ -145,17 +139,10 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
           );
           await Promise.all(
             selectedRequests.map((req) =>
-              axios.patch(
-                `${API_BASE_URL}${API_ENDPOINTS.APPROVE_REQUEST(sessionId)}`,
-                { requestId: req.requestId }
-              )
+              approveMutation.mutateAsync(req.requestId)
             )
           );
           message.success("All selected requests have been approved!");
-          setDataSource((prev) =>
-            prev.filter((req) => !selectedRowKeys.includes(req.key))
-          );
-          setTotalItems((prev) => prev - selectedRowKeys.length);
           setSelectedRowKeys([]);
         } catch (error) {
           message.error("Error approving multiple requests: " + error.message);
@@ -180,17 +167,10 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
           );
           await Promise.all(
             selectedRequests.map((req) =>
-              axios.patch(
-                `${API_BASE_URL}${API_ENDPOINTS.REJECT_REQUEST(sessionId)}`,
-                { requestId: req.requestId }
-              )
+              rejectMutation.mutateAsync(req.requestId)
             )
           );
           message.success("All selected requests have been rejected!");
-          setDataSource((prev) =>
-            prev.filter((req) => !selectedRowKeys.includes(req.key))
-          );
-          setTotalItems((prev) => prev - selectedRowKeys.length);
           setSelectedRowKeys([]);
         } catch (error) {
           message.error("Error rejecting multiple requests: " + error.message);
@@ -271,7 +251,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
   const paginationConfig = {
     current: currentPage,
     pageSize: pageSize,
-    total: filteredData.length,
+    total: dataSource.length,
     showSizeChanger: true,
     onShowSizeChange: onShowSizeChange,
     onChange: (page) => setCurrentPage(page),
@@ -285,6 +265,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
 
   return (
     <div className="w-full">
+      {isLoading && <p>Loading...</p>}
       <div className="flex items-center mb-4">
         {selectedRowKeys.length > 0 && (
           <div className="flex">
@@ -309,7 +290,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
         rowSelection={rowSelection}
         // @ts-ignore
         columns={columns}
-        dataSource={filteredData}
+        dataSource={dataSource}
         pagination={paginationConfig}
         className="border border-gray-200 rounded-lg overflow-hidden"
         rowClassName="hover:bg-gray-50"
