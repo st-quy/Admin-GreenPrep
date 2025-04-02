@@ -138,7 +138,7 @@ export default function AudioPlayer({
           </div>
         )}
       </div>
-
+      
       {/* Duration */}
       <span className="text-xs w-10">{formatTime(duration)}</span>
 
