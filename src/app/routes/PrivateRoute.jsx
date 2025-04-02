@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
-import SessionLayout from "../../features/auth/ui/SessionLayout.jsx";
+import SessionLayout from "../../pages/SessionManagement/SessionLayout.jsx";
 import SessionInformation from "@pages/SessionManagement/SessionInformation.jsx";
 import { TableType } from "@features/session/constraint/TableEnum.js";
 import ClassDetail from "@pages/class-detail/ClassDetail.jsx";

@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Input } from "antd";
 import "./index.css";
-import StudentMonitoring from "@/features/session/ui/StudentModering.jsx";
+import StudentMonitoring from "@features/session/ui/StudentModering";
 import StudentSessionTable from "@/features/session/ui/StudentSessionTable.jsx";
 import SearchInput from "@/app/components/SearchInput.jsx";
-import Details from "@features/auth/ui/Details/Details";
+import Details from "@pages/SessionManagement/Details/Details.jsx";
+import { FilterFilled } from "@ant-design/icons";
+import { TableType } from "@features/session/constraint/TableEnum";
 import { useParams, useNavigate } from "react-router-dom";
+
 const SessionInformation = ({ type }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const { id } = useParams();
+  const [pendingCount, setPendingCount] = useState(0);
   const navigate = useNavigate();
+
+  const handlePendingCountChange = (count) => {
+    setPendingCount(count);
+  };
   const onSearchChange = (event) => {
     setSearchKeyword(event.target.value);
   };
@@ -32,10 +40,21 @@ const SessionInformation = ({ type }) => {
       ),
     },
     {
-      label: <span className="">Pending Request</span>,
+      label: (
+        <span className="relavtive">
+          Pending Request
+          {pendingCount > 0 && (
+            <div className="bg-redDark w-[13px] h-[13px] absolute top-4 right-6 rounded-full"></div>
+          )}
+        </span>
+      ),
       key: "item-2",
       children: (
-        <StudentMonitoring sessionId={id} searchKeyword={searchKeyword} />
+        <StudentMonitoring
+          sessionId={id}
+          searchKeyword={searchKeyword}
+          onPendingCountChange={handlePendingCountChange}
+        />
       ),
     },
   ];

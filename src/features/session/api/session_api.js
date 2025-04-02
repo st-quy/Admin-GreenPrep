@@ -1,4 +1,4 @@
-import axiosInstance from "../../../shared/config/axios";
+import axiosInstance from "@shared/config/axios";
 
 export const fetchSessionParticipants = async (sessionId) => {
   const response = await axiosInstance.get(`/session-participants/${sessionId}`);

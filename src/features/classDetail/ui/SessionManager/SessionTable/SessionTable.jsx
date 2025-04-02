@@ -3,6 +3,7 @@ import { Pagination } from "antd";
 import ActionModal from "../../SessionModal/ActionModal/ActionModal";
 import { formatDateTime } from "@shared/lib/utils/formatString";
 import DeleteModal from "../../SessionModal/DeleteModal/DeleteModal";
+import { useNavigate } from "react-router-dom";
 
 const SessionTable = ({ dataSource }) => {
   const tableHeaders = [
@@ -14,7 +15,10 @@ const SessionTable = ({ dataSource }) => {
     "STATUS",
     "ACTION",
   ];
-
+  const navigate = useNavigate();
+  const handleNavigate = (id) => {
+    navigate(`/class/session/${id}`);
+  };
   return (
     <>
       <table className="w-full overflow-hidden border border-[#E0E0E0] rounded-tl-[10px] rounded-tr-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.2)]">
@@ -37,7 +41,11 @@ const SessionTable = ({ dataSource }) => {
                 key={index}
                 className="text-[14px] font-[500] text-[#637381] md:text-[14px] lg:text-[16px]"
               >
-                <td className="p-4 text-[#003087]">{item.sessionName}</td>
+                <td className="p-4 text-[#003087]">
+                  <a onClick={() => handleNavigate(item.ID)}>
+                    {item.sessionName}
+                  </a>
+                </td>
                 <td className="p-4">{item.sessionKey}</td>
                 <td className="p-4">{formatDateTime(item.startTime)}</td>
                 <td className="p-4">{formatDateTime(item.endTime)}</td>
