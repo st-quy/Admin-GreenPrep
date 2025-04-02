@@ -1,6 +1,7 @@
+import { classInfo, sessionsData } from "@features/classDetail/exampleData";
 import { useClassDetailQuery } from "@features/classDetail/hooks/useClassDetail";
 import ClassInfo from "@features/classDetail/ui/ClassInfo/ClassInfo";
-import FormValidate from "@features/classDetail/ui/FormValidate";
+
 import SessionManager from "@features/classDetail/ui/SessionManager/SessionManager";
 import { Spin } from "antd";
 import React from "react";
@@ -11,7 +12,7 @@ const ClassDetail = () => {
     data: classDetail,
     isLoading,
     isError,
-  } = useClassDetailQuery("5dd9f969-1e5c-42b6-9376-eed02e74525e");
+  } = useClassDetailQuery("04573d32-e1da-4aa3-b02d-3a101c33d3bb");
 
   if (isLoading)
     return (
@@ -30,7 +31,6 @@ const ClassDetail = () => {
     <div className="pb-12">
       <ClassInfo data={classDetail} />
       <SessionManager data={classDetail} />
-      {/* <FormValidate /> */}
     </div>
   );
 };

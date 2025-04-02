@@ -15,7 +15,11 @@ const { RangePicker } = DatePicker;
 import { yupSync } from "@shared/lib/utils";
 import { sessionSchema } from "@features/classDetail/validate";
 import { ClassDetailApi } from "@features/classDetail/classAPI";
-import { useCreateSessionMutation } from "@features/classDetail/hooks/useClassDetail";
+import {
+  useCreateSessionMutation,
+  useGenerateSessionKeyMutation,
+} from "@features/classDetail/hooks/useClassDetail";
+import dayjs from "dayjs";
 
 const ActionModal = ({
   isEdit = false,
@@ -25,7 +29,7 @@ const ActionModal = ({
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const createSession = useCreateSessionMutation();
+  const generateKey = useGenerateSessionKeyMutation();
 
   const showModal = () => {
     setOpen(true);
@@ -34,6 +38,51 @@ const ActionModal = ({
   const handleCancel = () => {
     setOpen(false);
     form.resetFields();
+  };
+
+  const handleGenerateSessionKey = async () => {
+    const data = await generateKey.mutateAsync();
+    form.setFieldsValue({ sessionKey: data.key });
+  };
+
+  const onCreate = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        const sessionData = {
+          sessionName: values.sessionName,
+          sessionKey: values.sessionKey,
+          startTime: values.dateRange
+            ? values.dateRange[0].toISOString()
+            : null,
+          endTime: values.dateRange ? values.dateRange[1].toISOString() : null,
+          examSet: values.examSet,
+        };
+        console.log(JSON.stringify(sessionData));
+      })
+      .catch((errorInfo) => {
+        console.error("Validation Failed:", errorInfo);
+      });
+  };
+
+  const onUpdate = () => {
+    form
+      .validateFields()
+      .then((values) => {
+        const sessionData = {
+          sessionName: values.sessionName,
+          sessionKey: values.sessionKey,
+          startTime: values.dateRange
+            ? values.dateRange[0].toISOString()
+            : null,
+          endTime: values.dateRange ? values.dateRange[1].toISOString() : null,
+          examSet: values.examSet,
+        };
+        console.log(JSON.stringify(sessionData));
+      })
+      .catch((errorInfo) => {
+        console.error("Validation Failed:", errorInfo);
+      });
   };
 
   return (
@@ -74,7 +123,20 @@ const ActionModal = ({
               ? "Modify and extend the current session."
               : "Set up a new session quickly and easily."}
           </p>
-          <Form form={form} className="mb-14" layout="vertical">
+          <Form
+            form={form}
+            className="mb-14"
+            layout="vertical"
+            initialValues={{
+              sessionName: isEdit ? initialData?.sessionName : "",
+              sessionKey: isEdit ? initialData?.sessionKey : "",
+              examSet: isEdit ? initialData?.examSet : "",
+              dateRange:
+                isEdit && initialData?.startTime && initialData?.endTime
+                  ? [dayjs(initialData.startTime), dayjs(initialData.endTime)]
+                  : undefined,
+            }}
+          >
             <Form.Item
               label="Session Name"
               // @ts-ignore
@@ -89,12 +151,18 @@ const ActionModal = ({
               rules={[yupSync(sessionSchema)]}
               name="sessionKey"
             >
-              <Space.Compact className="!w-full">
-                <Input placeholder="Session Key" className="!h-[46px] " />
-                <Button className="!h-[46px]">
-                  <img src={GenerateIcon} alt="Generate Icon" />
-                </Button>
-              </Space.Compact>
+              <Input
+                placeholder="Session Key"
+                className="!h-[46px]"
+                suffix={
+                  <img
+                    src={GenerateIcon}
+                    alt="Generate Icon"
+                    className="hover:cursor-pointer"
+                    onClick={handleGenerateSessionKey}
+                  />
+                }
+              />
             </Form.Item>
             <Form.Item
               layout="vertical"
@@ -106,10 +174,10 @@ const ActionModal = ({
               <Select
                 className="!h-[46px] !w-full"
                 options={[
-                  { label: "Math Exam", value: "math" },
-                  { label: "Science Exam", value: "science" },
-                  { label: "History Exam", value: "history" },
-                  { label: "English Exam", value: "english" },
+                  { label: "Exam 1", value: "english" },
+                  { label: "Exam 2", value: "math" },
+                  { label: "Exam 3", value: "history" },
+                  { label: "Exam 4", value: "museum" },
                 ]}
               />
             </Form.Item>
@@ -122,6 +190,7 @@ const ActionModal = ({
               <RangePicker
                 className="!w-full !h-[46px] py-[12px] pr-[16px] ps-[20px]"
                 showTime
+                format="YYYY-MM-DD HH:mm:ss"
               />
             </Form.Item>
             <Form.Item>
@@ -133,6 +202,7 @@ const ActionModal = ({
                   Cancel
                 </Button>
                 <Button
+                  onClick={isEdit ? onCreate : onUpdate}
                   htmlType="submit"
                   className="h-[52px] w-[124px] rounded-[50px] bg-[#003087] text-white lg:text-[16px] md:text-[14px]"
                 >

@@ -12,6 +12,15 @@ export const useClassDetailQuery = (classID) => {
   });
 };
 
+export const useGenerateSessionKeyMutation = () => {
+  return useMutation({
+    mutationFn: async () => {
+      const response = await ClassDetailApi.generateSessionKey();
+      return response.data;
+    },
+  });
+};
+
 export const useCreateSessionMutation = () => {
   const queryClient = useQueryClient();
 
