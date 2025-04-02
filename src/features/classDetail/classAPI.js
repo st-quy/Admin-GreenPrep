@@ -19,4 +19,7 @@ export const ClassDetailApi = {
   deleteSession: (sessionId) => {
     return axiosInstance.delete(`/sessions/${sessionId}`);
   },
+  getSessionById: (sessionId) => {
+    return axiosInstance.get(`/sessions/${sessionId}`);
+  },
 };

@@ -1,13 +1,4 @@
-import {
-  Modal,
-  Button,
-  DatePicker,
-  Select,
-  Input,
-  message,
-  Space,
-  Form,
-} from "antd";
+import { Modal, Button, DatePicker, Select, Input, message, Form } from "antd";
 import React, { useState, useEffect } from "react";
 import EditIcon from "@assets/icons/class-detail/edit.png";
 import GenerateIcon from "@assets/icons/class-detail/generate.png";
@@ -65,14 +56,42 @@ const ActionModal = ({
       setOpen(false);
       form.resetFields();
     } catch (error) {
+      message.error("Please field all the fields correctly.");
+    } finally {
+      setConfirmLoading(false);
+    }
+  };
+
+  const onUpdate = async () => {
+    try {
+      // Validate form fields
+      const values = await form.validateFields();
+
+      // Prepare session data
+      const sessionData = {
+        sessionName: values.sessionName,
+        sessionKey: values.sessionKey,
+        startTime: values.dateRange ? values.dateRange[0].toISOString() : null,
+        endTime: values.dateRange ? values.dateRange[1].toISOString() : null,
+        examSet: values.examSet,
+        ClassID: classId,
+      };
+
+      await ClassDetailApi.updateSession(
+        initialData.ID,
+        JSON.stringify(sessionData)
+      );
+      queryClient.invalidateQueries({ queryKey: ["classDetail"] });
+      message.success("Session created successfully!");
+      setOpen(false);
+      form.resetFields();
+    } catch (error) {
       console.error("Error creating session:", error);
       message.error("Failed to create session. Please try again.");
     } finally {
       setConfirmLoading(false);
     }
   };
-
-  const onUpdate = async () => {};
 
   return (
     <>
@@ -179,7 +198,7 @@ const ActionModal = ({
               <RangePicker
                 className="!w-full !h-[46px] py-[12px] pr-[16px] ps-[20px]"
                 showTime
-                format="YYYY-MM-DD HH:mm:ss"
+                format="DD-MM-YYYY HH:mm:ss"
               />
             </Form.Item>
             <Form.Item>

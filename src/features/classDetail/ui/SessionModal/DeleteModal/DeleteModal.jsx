@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import { Button, message, Modal } from "antd";
 import DeleteIcon from "@assets/icons/class-detail/delete.png";
 import Warning from "@assets/icons/class-detail/warning.png";
-import { useDeleteSessionMutation } from "@features/classDetail/hooks/useClassDetail";
+import {
+  useDeleteSessionMutation,
+  useSessionByIdQuery,
+} from "@features/classDetail/hooks/useClassDetail";
 
 const DeleteModal = ({ sessionID }) => {
   const deleteSession = useDeleteSessionMutation();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
+  const { data: session } = useSessionByIdQuery(sessionID);
 
   const showModal = () => {
     setOpen(true);
@@ -32,9 +36,13 @@ const DeleteModal = ({ sessionID }) => {
 
   return (
     <>
-      <Button className="!hover:border-none" onClick={showModal}>
-        <img src={DeleteIcon} alt="Delete" width={20} height={20} />
-      </Button>
+      {session?.SessionParticipants.length > 0 ? (
+        ""
+      ) : (
+        <Button className="!hover:border-none" onClick={showModal}>
+          <img src={DeleteIcon} alt="Delete" width={20} height={20} />
+        </Button>
+      )}
       <Modal
         open={open}
         closable={false}

@@ -12,6 +12,17 @@ export const useClassDetailQuery = (classID) => {
   });
 };
 
+export const useSessionByIdQuery = (sessionId) => {
+  return useQuery({
+    queryKey: ["session", sessionId],
+    enabled: !!sessionId,
+    queryFn: async () => {
+      const response = await ClassDetailApi.getSessionById(sessionId);
+      return response.data.data;
+    },
+  });
+};
+
 export const useGenerateSessionKeyMutation = () => {
   return useMutation({
     mutationFn: async () => {
@@ -20,8 +31,6 @@ export const useGenerateSessionKeyMutation = () => {
     },
   });
 };
-
-export const useUpdateSessionMutation = () => {};
 
 export const useDeleteSessionMutation = () => {
   const queryClient = useQueryClient();
