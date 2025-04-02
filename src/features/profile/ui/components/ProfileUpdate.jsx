@@ -11,23 +11,20 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
   const updateMutation = useMutation({
     mutationFn: (data) => updateDataFromApi(userData.ID, data),
     onMutate: async (newData) => {
-      // Cancel any outgoing refetches
+      
       await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.USER_PROFILE] });
 
-      // Snapshot the previous value
       const previousData = queryClient.getQueryData([QUERY_KEYS.USER_PROFILE]);
 
-      // Optimistically update to the new value
       queryClient.setQueryData([QUERY_KEYS.USER_PROFILE], {
         ...previousData,
         ...newData
       });
 
-      // Return a context object with the snapshotted value
       return { previousData };
     },
     onError: (err, newData, context) => {
-      // If the mutation fails, use the context returned from onMutate to roll back
+   
       queryClient.setQueryData([QUERY_KEYS.USER_PROFILE], context.previousData);
       message.error("Failed to update profile. Please try again.");
     },
@@ -36,7 +33,7 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
       onClose();
     },
     onSettled: () => {
-      // Always refetch after error or success to make sure our optimistic update is correct
+      
       queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER_PROFILE] });
     }
   });

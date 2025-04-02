@@ -4,7 +4,6 @@ import axios from 'axios';
 
 const API_URL = 'https://dev-api-greenprep.onrender.com/api';
 
-// Query keys for React Query
 export const QUERY_KEYS = {
   USER_PROFILE: 'userProfile',
 };
@@ -25,8 +24,6 @@ export const getUserFromToken = async () => {
     if (!token) return null;
 
     const decodedToken = jwtDecode(token);
-    
-    // Fetch complete user data using the user ID from token
     try {
       const userData = await getDataFromApi(decodedToken.userId);
       return userData;
@@ -40,7 +37,7 @@ export const getUserFromToken = async () => {
   }
 };
 
-// Hàm helper để tạo config với token
+
 const getAuthConfig = () => {
   const token = getAccessToken();
   return {
@@ -51,7 +48,7 @@ const getAuthConfig = () => {
   };
 };
 
-// Lấy thông tin user từ API
+
 export const getDataFromApi = async (userId) => {
   try {
     const config = getAuthConfig();
@@ -63,7 +60,7 @@ export const getDataFromApi = async (userId) => {
   }
 };
 
-// Cập nhật thông tin user
+
 export const updateDataFromApi = async (userId, userData) => {
   try {
     const config = getAuthConfig();
@@ -75,7 +72,7 @@ export const updateDataFromApi = async (userId, userData) => {
   }
 };
 
-// Cập nhật mật khẩu
+
 export const changePasswordFromApi = async (userId, { oldPassword, newPassword }) => {
   try {
     const config = getAuthConfig();
