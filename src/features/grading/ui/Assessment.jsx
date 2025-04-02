@@ -3,17 +3,41 @@ import { QuestionAnswer } from "./QuestionAnswer";
 import ScoreCommentForm from "./ScoreCommentForm";
 import { Card, Tabs, Button } from "antd";
 import "./index.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const Assessment = ({ isSpeaking, data }) => {
   const [activeTab, setActiveTab] = useState("1");
   const [totalScore, setTotalScore] = useState(100);
+  const [partData, setPartData] = useState({});
 
   const handleTabChange = (key) => {
     setActiveTab(key);
-    
-    // In the future, this would fetch questions for the selected part from API
   };
+
+  useEffect(() => {
+    setActiveTab("1");
+    handleDataChange();
+  }, [isSpeaking]);
+  useEffect(() => {
+    handleDataChange();
+  }, [activeTab]);
+
+  const handleDataChange = () => {
+    try {
+      const parts = data.data.Parts;
+      if (parts && parts.length > 0) {
+        const currentPart = `PART ${activeTab}`;
+        console.log(currentPart);
+        const currentPartIndex = parts.findIndex((p) =>
+          p.Content.toLowerCase().includes(currentPart.toLowerCase())
+        );
+        setPartData(parts[currentPartIndex]);
+      }
+    } catch (error) {
+      console.error("Error parsing speaking data:", error);
+    }
+  };
+
 
   const handleSaveAsDraft = () => {
     // Future functionality: Save score as draft to database
@@ -95,8 +119,6 @@ export const Assessment = ({ isSpeaking, data }) => {
           styles={{ body: { padding: 0 } }}
         >
           asdasdasasdasdsa
-
-          
         </Card>
         <div className="flex gap-10 relative">
           {/* map data here */}
