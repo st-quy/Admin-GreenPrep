@@ -3,7 +3,7 @@ import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
 import SessionLayout from "../../features/auth/ui/SessionLayout.jsx";
 import SessionInformation from "@pages/SessionManagement/SessionInformation.jsx";
 import { TableType } from "@features/session/constraint/TableEnum.js";
-
+import ClassDetail from "@pages/class-detail/ClassDetail.jsx";
 const PrivateRoute = [
   {
     path: "/",
@@ -25,7 +25,7 @@ const PrivateRoute = [
           },
           {
             path: "detail",
-            element: <div>Class Detail</div>,
+            element: <ClassDetail />,
             breadcrumb: "Class Detail",
           },
           {
