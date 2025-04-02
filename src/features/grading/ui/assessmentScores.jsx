@@ -3,15 +3,8 @@ import { Tabs, Table } from 'antd';
 import { EditOutlined, AudioOutlined } from '@ant-design/icons';
 import "./index.css";
 
-const { TabPane } = Tabs;
-
-const AssessmentComponent = ({data}) => {
+const AssessmentScores = ({data}) => {
   const [activeTab, setActiveTab] = useState('writing');
-
-//   const data = {
-//     writing: [8, 3, 3, 15],
-//     speaking: [7, 4, 5, 10],
-//   };
 
   const columns = [
     {
@@ -84,19 +77,40 @@ const AssessmentComponent = ({data}) => {
         </p>
 
         <Tabs
-          activeKey={activeTab}
-          onChange={setActiveTab}
-          className="flex flex-row-reverse"
-        >
-          <TabPane
-            tab={<span style={{ width: 185, height: 63, padding: '18px 40px', gap: 10, borderBottomWidth: 2 }} className={`${activeTab === 'writing' ? 'text-[#003087] bg-[#E6F0FA] border-b-2 border-[#003087]' : 'text-gray-500'}`}> <EditOutlined />Writing</span>}
-            key="writing"
-          />
-          <TabPane
-            tab={<span style={{ width: 215, height: 63, padding: '18px 40px', gap: 10, borderBottomWidth: 2 }} className={`${activeTab === 'speaking' ? 'text-[#003087] bg-[#E6F0FA] border-b-2 border-[#003087]' : 'text-gray-500'}`}><AudioOutlined />Speaking</span>}
-            key="speaking"
-          />
-        </Tabs>
+              activeKey={activeTab}
+              onChange={setActiveTab}
+              className="flex flex-row-reverse"
+              // onChange={handleTabClick}
+              items={[
+                {
+                  key: "writing",
+                  label: (
+                    <span
+                      style={{ width: 185, height: 63, padding: "18px 40px", gap: 10, borderBottomWidth: 2 }}
+                      className={`${
+                        activeTab === "writing" ? "text-[#003087] bg-[#E6F0FA] border-b-2 border-[#003087]" : "text-gray-500"
+                      }`}
+                    >
+                      <EditOutlined /> Writing
+                    </span>
+                  ),
+                },
+                {
+                  key: "speaking",
+                  label: (
+                    <span
+                      style={{ width: 215, height: 63, padding: "18px 40px", gap: 10, borderBottomWidth: 2 }}
+                      className={`${
+                        activeTab === "speaking" ? "text-[#003087] bg-[#E6F0FA] border-b-2 border-[#003087]" : "text-gray-500"
+                      }`}
+                    >
+                      <AudioOutlined /> Speaking
+                    </span>
+                  ),
+                },
+              ]}
+            />
+
       </div>
 
 
@@ -114,4 +128,4 @@ const AssessmentComponent = ({data}) => {
   );
 };
 
-export default AssessmentComponent;
+export default AssessmentScores;

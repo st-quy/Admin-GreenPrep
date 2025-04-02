@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Assessment } from "@features/grading/ui/Assessment";
+import AssessmentScores from "@features/grading/ui/AssessmentScores";
 import AssessmentScore from "@features/grading/ui/AssessmentScores";
 import StudentInfoCard from "@features/grading/ui/StudentInfoCard";
 import StudentListModal from "@features/grading/ui/StudentListModal";
