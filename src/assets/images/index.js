@@ -12,6 +12,7 @@ import WaitingApprovalImg from "./waiting.png";
 import RejectedImg from "./RejectedImg.png";
 import RecordIcon from "./Record.png";
 import ForgotPw from "./Forgotpw.png"
+import Warning from "./Warning.png";
 
 export {
   GreenPREP,
@@ -28,4 +29,5 @@ export {
   RejectedImg,
   RecordIcon,
   ForgotPw,
+  Warning,
 };
