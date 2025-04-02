@@ -11,8 +11,14 @@ const SessionInformation = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [pendingRequestData, setPendingRequestData] = useState([]);
 
+  const idSession = "51444374-4162-49fe-823f-015c4d6a1731";
+
   const onSearchChange = (event) => {
     setSearchKeyword(event.target.value);
+  };
+
+  const handleNavigate = (id, action) => {
+    console.log(`Navigating to ${action} for participant with ID: ${id}`);
   };
 
   useEffect(() => {
@@ -31,7 +37,10 @@ const SessionInformation = () => {
     {
       label: "Participant List",
       key: "item-1",
-      children: <StudentSessionTable searchKeyword={searchKeyword} type="session" />,
+      children: <StudentSessionTable searchKeyword={searchKeyword} 
+                  type="session" 
+                  id={idSession}
+                  onNavigate={handleNavigate} />,
     },
     {
       label: (
@@ -55,7 +64,7 @@ const SessionInformation = () => {
 
   return (
     <div className="flex flex-col">
-      <Details type="session" id="5d3740d4-bc75-485e-9d72-a3448735c111" />
+      <Details type="session" id={idSession} />
 
       <div className="">
         <div className="flex justify-between">

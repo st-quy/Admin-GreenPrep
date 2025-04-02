@@ -5,20 +5,42 @@ import {
   useSessionParticipants,
   useStudentParticipants,
 } from "../hooks/useSession";
+import axios from "axios";
 
 const StudentSessionTable = ({
   id,
-  data,
   searchKeyword,
   type,
   status = "draft",
   onAllQuestionGraded = () => {},
   onNavigate,
   onStudentClick = (data) => {},
-  isLoading = false, // Add isLoading as a prop with a default value
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSessionParticipants = async () => {
+      try {
+        setIsLoading(true);
+        const response = await axios.get(
+          `https://dev-api-greenprep.onrender.com/api/sessions/${id}`
+        );
+        const participants = response.data.data.SessionParticipants || [];
+        setData(participants);
+      } catch (error) {
+        console.error("Error fetching session participants:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchSessionParticipants();
+    }
+  }, [id]);
 
   const initialLevels = useMemo(
     () =>
@@ -32,12 +54,20 @@ const StudentSessionTable = ({
   const [levels, setLevels] = useState(initialLevels);
 
   const processedData = useMemo(() => {
-    // Process the data as needed, for example:
     return data.map((item) => ({
       ...item,
       Total: item.GrammarVocab + item.Listening + item.Reading,
     }));
   }, [data]);
+
+  const filteredData = useMemo(() => {
+    if (!searchKeyword) return processedData;
+    return processedData.filter(
+      (item) =>
+        item.Level?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+        item.UserID?.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
+  }, [processedData, searchKeyword]);
 
   const checkIsAllQuestionGraded = useCallback(() => {
     if (!processedData.length) return;
@@ -169,11 +199,11 @@ const StudentSessionTable = ({
   return (
     <Table
       columns={columns}
-      dataSource={paginatedData.map((item) => ({ ...item, key: item.ID }))}
+      dataSource={filteredData.map((item) => ({ ...item, key: item.ID }))}
       pagination={{
         current: currentPage,
         pageSize: pageSize,
-        total: data.length,
+        total: filteredData.length,
         showSizeChanger: true,
         pageSizeOptions: ["5", "10", "15", "20"],
         showTotal: (total, range) =>
