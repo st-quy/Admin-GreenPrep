@@ -47,23 +47,23 @@ const ActionModal = ({
 
   const onCreate = () => {
     // GP-138 Todo: Add session creation logic here
-    form
-      .validateFields()
-      .then((values) => {
-        const sessionData = {
-          sessionName: values.sessionName,
-          sessionKey: values.sessionKey,
-          startTime: values.dateRange
-            ? values.dateRange[0].toISOString()
-            : null,
-          endTime: values.dateRange ? values.dateRange[1].toISOString() : null,
-          examSet: values.examSet,
-        };
-        console.log(JSON.stringify(sessionData));
-      })
-      .catch((errorInfo) => {
-        console.error("Validation Failed:", errorInfo);
-      });
+    // form
+    //   .validateFields()
+    //   .then((values) => {
+    //     const sessionData = {
+    //       sessionName: values.sessionName,
+    //       sessionKey: values.sessionKey,
+    //       startTime: values.dateRange
+    //         ? values.dateRange[0].toISOString()
+    //         : null,
+    //       endTime: values.dateRange ? values.dateRange[1].toISOString() : null,
+    //       examSet: values.examSet,
+    //     };
+    //     console.log(JSON.stringify(sessionData));
+    //   })
+    //   .catch((errorInfo) => {
+    //     console.error("Validation Failed:", errorInfo);
+    //   });
   };
 
   const onUpdate = () => {
