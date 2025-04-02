@@ -5,12 +5,13 @@ import { Card, Tabs, Button } from "antd";
 import "./index.css";
 import { useState } from "react";
 
-export const Assessment = ({ data }) => {
+export const Assessment = ({ isSpeaking, data }) => {
   const [activeTab, setActiveTab] = useState("1");
   const [totalScore, setTotalScore] = useState(100);
 
   const handleTabChange = (key) => {
     setActiveTab(key);
+    
     // In the future, this would fetch questions for the selected part from API
   };
 
@@ -94,6 +95,8 @@ export const Assessment = ({ data }) => {
           styles={{ body: { padding: 0 } }}
         >
           asdasdasasdasdsa
+
+          
         </Card>
         <div className="flex gap-10 relative">
           {/* map data here */}

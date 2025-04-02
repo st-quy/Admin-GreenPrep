@@ -3,8 +3,18 @@ import { Tabs, Table } from 'antd';
 import { EditOutlined, AudioOutlined } from '@ant-design/icons';
 import "./index.css";
 
-const AssessmentScores = ({data}) => {
+const AssessmentScores = ({data, onTabChange }) => {
   const [activeTab, setActiveTab] = useState('writing');
+
+  const [data1, setData1] = useState(null);
+
+  const handleTabClick = (key) => {
+    setActiveTab(key);
+    if (key === "writing") {
+        onTabChange(false);
+      }
+      else onTabChange(true);
+  }
 
   const columns = [
     {
@@ -78,9 +88,8 @@ const AssessmentScores = ({data}) => {
 
         <Tabs
               activeKey={activeTab}
-              onChange={setActiveTab}
               className="flex flex-row-reverse"
-              // onChange={handleTabClick}
+              onChange={handleTabClick}
               items={[
                 {
                   key: "writing",
