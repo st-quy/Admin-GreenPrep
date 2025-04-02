@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "antd";
 import { Input } from "antd";
+import {Spin} from "antd";
 
 const ClassModal = ({
   isOpen,
@@ -14,15 +15,12 @@ const ClassModal = ({
   isLoading = false,
 }) => {
   const [className, setClassName] = useState(initialClassName);
-  const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
-      setTimeout(() => setIsVisible(true), 10);
-    } else {
-      setIsVisible(false);
+      setClassName(initialClassName);
     }
-  }, [isOpen]);
+  }, [isOpen, initialClassName]);
 
   const handleSubmit = () => {
     onSubmit({ name: className });
@@ -31,7 +29,12 @@ const ClassModal = ({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+      {isLoading &&(
+        <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-40 z-50">
+          <Spin size="large" tip="Loading..." />
+        </div>
+      )}
       <div className="bg-[#FFFFFF] w-[647.35px] h-[auto] rounded-[20px] shadow-lg p-8 flex flex-col">
         {/* Title */}
         <div className="flex items-center justify-between mb-4">
