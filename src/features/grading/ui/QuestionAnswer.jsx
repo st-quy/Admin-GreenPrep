@@ -5,7 +5,6 @@ export const QuestionAnswer = ({
   quesntionsAnswerData = {},
   isSpeaking = false,
   fileName = "",
-  part = 0,
   speakingPartFour = [],
 }) => {
   const studentAnswers = () => {
