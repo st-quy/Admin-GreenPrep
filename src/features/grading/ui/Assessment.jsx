@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Tabs, Button } from "antd";
 import "antd/dist/reset.css";
 import ScoreTabs from "./Navigation";
+import AssessmentComponent from "./assessmentScores";
 export const Assessment = () => {
   return (
     <div className="w-screen h-full px-[6rem]">

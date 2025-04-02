@@ -1,6 +1,5 @@
 // Define public routes accessible to all users
-
-import { Assessment } from "@features/grading/Assessment";
+import {GradingPage} from "@pages/grading/GradingPage";
 
 const PublicRoute = [
   {
@@ -9,7 +8,7 @@ const PublicRoute = [
   },
   {
     path: "testing",
-    element: <Assessment/>,
+    element: <GradingPage />,
   },
 ];
 
