@@ -1,17 +1,12 @@
-import { useState } from "react";
-import { Table } from "antd";
+import { useState, useEffect } from "react";
+import { Table, message } from "antd";
 import CheckCircleIcon from "@/assets/icons/check-circle.svg";
 import CloseCircleIcon from "@/assets/icons/close-circle.svg";
-import ConfirmationModal from "@app/components/Modal/ConfirmationModal";
-// Mock data
-const dataSource = Array.from({ length: 50 }, (_, index) => ({
-  key: index.toString(),
-  studentName: `Student ${index + 1}`,
-  studentId: (index + 1).toString(),
-  className: `CLASS${(index % 5) + 1}`,
-}));
+import ConfirmationModal from "@shared/Modal/ConfirmationModal";
+import axios from "axios";
+import { API_BASE_URL, SESSION_ID, API_ENDPOINTS } from "../api";
 
-const StudentMonitoring = () => {
+const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -23,17 +18,68 @@ const StudentMonitoring = () => {
     okButtonColor: "",
     onConfirm: () => {},
   });
+  const [dataSource, setDataSource] = useState([]);
+  const [totalItems, setTotalItems] = useState(0);
 
-  const totalItems = dataSource.length;
+  const fetchSessionRequests = async () => {
+    if (!sessionId) return;
+    try {
+      const response = await axios.get(
+        `${API_BASE_URL}${API_ENDPOINTS.SESSION_REQUESTS(sessionId)}`
+      );
+
+      const requestsData = response.data.data || [];
+      const pendingRequests = requestsData
+        .filter((req) => req.status === "pending")
+        .map((req, index) => ({
+          key: req.ID || index.toString(),
+          studentName: req.User?.fullName || "null",
+          studentId: req.User?.studentCode || "null",
+          className: req.User?.class || "null",
+          requestId: req.ID,
+        }));
+
+      console.log("Requests Data:", requestsData);
+      console.log("Pending Requests:", pendingRequests);
+
+      setDataSource(pendingRequests);
+      setTotalItems(pendingRequests.length);
+    } catch (error) {
+      message.error("Error fetching request list: " + error.message);
+    }
+  };
+
+  useEffect(() => {
+    if (sessionId) {
+      fetchSessionRequests();
+      const interval = setInterval(() => {
+        fetchSessionRequests();
+      }, 10000);
+      return () => clearInterval(interval);
+    }
+  }, [sessionId]);
 
   const handleApprove = (record) => {
     setModalConfig({
       title: "Are you sure you want to approve this student?",
-      message: `After you approve this student, this account will be able to take the test.`,
+      message:
+        "After you approve this student, this account will be able to take the test.",
       okText: "Approve",
       okButtonColor: "#22AD5C",
-      onConfirm: () => {
-        console.log("Approved:", record);
+      onConfirm: async () => {
+        try {
+          await axios.patch(
+            `${API_BASE_URL}${API_ENDPOINTS.APPROVE_REQUEST(sessionId)}`,
+            { requestId: record.requestId }
+          );
+          message.success("Request has been approved!");
+          setDataSource((prev) =>
+            prev.filter((req) => req.requestId !== record.requestId)
+          );
+          setTotalItems((prev) => prev - 1);
+        } catch (error) {
+          message.error("Error approving request: " + error.message);
+        }
         setModalOpen(false);
       },
     });
@@ -43,10 +89,24 @@ const StudentMonitoring = () => {
   const handleReject = (record) => {
     setModalConfig({
       title: "Are you sure you want to reject this student?",
-      message: `After you reject this student, this account will no longer available is this pending list.`,
+      message:
+        "After you reject this student, this account will no longer be available in this pending list.",
       okText: "Reject",
       okButtonColor: "#F23030",
-      onConfirm: () => {
+      onConfirm: async () => {
+        try {
+          await axios.patch(
+            `${API_BASE_URL}${API_ENDPOINTS.REJECT_REQUEST(sessionId)}`,
+            { requestId: record.requestId }
+          );
+          message.success("Request has been rejected!");
+          setDataSource((prev) =>
+            prev.filter((req) => req.requestId !== record.requestId)
+          );
+          setTotalItems((prev) => prev - 1);
+        } catch (error) {
+          message.error("Error rejecting request: " + error.message);
+        }
         setModalOpen(false);
       },
     });
@@ -55,11 +115,33 @@ const StudentMonitoring = () => {
 
   const handleBulkApprove = () => {
     setModalConfig({
-      title: "Are you sure you want to approve all students?",
-      message: `Once you approve all students, all accounts will be able to take the test.`,
+      title: "Are you sure you want to approve all selected students?",
+      message:
+        "Once you approve all students, all selected accounts will be able to take the test.",
       okText: "Approve",
       okButtonColor: "#22AD5C",
-      onConfirm: () => {
+      onConfirm: async () => {
+        try {
+          const selectedRequests = dataSource.filter((req) =>
+            selectedRowKeys.includes(req.key)
+          );
+          await Promise.all(
+            selectedRequests.map((req) =>
+              axios.patch(
+                `${API_BASE_URL}${API_ENDPOINTS.APPROVE_REQUEST(sessionId)}`,
+                { requestId: req.requestId }
+              )
+            )
+          );
+          message.success("All selected requests have been approved!");
+          setDataSource((prev) =>
+            prev.filter((req) => !selectedRowKeys.includes(req.key))
+          );
+          setTotalItems((prev) => prev - selectedRowKeys.length);
+          setSelectedRowKeys([]);
+        } catch (error) {
+          message.error("Error approving multiple requests: " + error.message);
+        }
         setModalOpen(false);
       },
     });
@@ -68,11 +150,33 @@ const StudentMonitoring = () => {
 
   const handleBulkReject = () => {
     setModalConfig({
-      title: "Are you sure you want to reject all students?",
-      message: `After you reject all students, all accounts will no longer be available on this pending list.`,
+      title: "Are you sure you want to reject all selected students?",
+      message:
+        "After you reject all students, all selected accounts will no longer be available on this pending list.",
       okText: "Reject",
       okButtonColor: "#F23030",
-      onConfirm: () => {
+      onConfirm: async () => {
+        try {
+          const selectedRequests = dataSource.filter((req) =>
+            selectedRowKeys.includes(req.key)
+          );
+          await Promise.all(
+            selectedRequests.map((req) =>
+              axios.patch(
+                `${API_BASE_URL}${API_ENDPOINTS.REJECT_REQUEST(sessionId)}`,
+                { requestId: req.requestId }
+              )
+            )
+          );
+          message.success("All selected requests have been rejected!");
+          setDataSource((prev) =>
+            prev.filter((req) => !selectedRowKeys.includes(req.key))
+          );
+          setTotalItems((prev) => prev - selectedRowKeys.length);
+          setSelectedRowKeys([]);
+        } catch (error) {
+          message.error("Error rejecting multiple requests: " + error.message);
+        }
         setModalOpen(false);
       },
     });
@@ -163,7 +267,6 @@ const StudentMonitoring = () => {
 
   return (
     <div className="w-full">
-      {/* Controls */}
       <div className="flex items-center mb-4">
         {selectedRowKeys.length > 0 && (
           <div className="flex">
@@ -183,7 +286,6 @@ const StudentMonitoring = () => {
           </div>
         )}
       </div>
-      {/* Table */}
       <Table
         scroll={{ y: 400 }}
         rowSelection={rowSelection}
@@ -204,8 +306,6 @@ const StudentMonitoring = () => {
           },
         }}
       />
-
-      {/* Confirmation Modal */}
       <ConfirmationModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
