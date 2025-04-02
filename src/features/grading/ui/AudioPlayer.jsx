@@ -85,12 +85,31 @@ export default function AudioPlayer({
 
   const downloadAudio = async () => {
     // This approach works if the server hosting the file allows direct downloads/Access-Control-Allow-Origin.
-    const a = document.createElement("a");
-    a.href = audioUrl;
-    a.download = `${audioFileName}.mp3`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
+    // const a = document.createElement("a");
+    // a.href = audioUrl;
+    // a.download = `${audioFileName}.mp3`;
+    // document.body.appendChild(a);
+    // a.click();
+    // document.body.removeChild(a);
+
+    // This is just for test pls remove it later
+    // Should work for CORS issues but should avoid using it in production as they may introduce security risks.
+    const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+    try {
+      const response = await fetch(proxyUrl + audioUrl); // Use proxy to fetch the file
+      const blob = await response.blob();
+
+      const blobUrl = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = `${audioFileName}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Failed to download audio:", error);
+    }
   };
 
   // Calculate slider percentage
@@ -138,7 +157,7 @@ export default function AudioPlayer({
           </div>
         )}
       </div>
-      
+
       {/* Duration */}
       <span className="text-xs w-10">{formatTime(duration)}</span>
 

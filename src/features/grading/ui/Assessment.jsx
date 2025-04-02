@@ -53,17 +53,18 @@ export const Assessment = ({ isSpeaking, data }) => {
       const partFourQuestions = partData.Questions || [];
       return <div className="flex gap-10 relative" >
         <div className="w-[80%] h-fit shadow-md rounded-lg">
-          <QuestionAnswer isSpeaking={isSpeaking} fileName={`${isSpeaking ? "speaking" : "writing"}_part_${activeTab}`} speakingPartFour={partFourQuestions} />
+          <QuestionAnswer isSpeaking={isSpeaking} fileName="LoL" speakingPartFour={partFourQuestions} currentPart={activeTab} currentQuestionIndex={0} />
         </div>
         <div className="w-[20%] h-[15.9375rem] shadow-md sticky top-0 rounded-lg">
           <ScoreCommentForm />
         </div>
       </div >
     }
-    return partData.Questions?.map((question, index) => (
+    return partData.Questions?.map((question, index) =>
+    (
       <div className="flex gap-10 relative" key={index}>
         <div className="w-[80%] h-fit shadow-md rounded-lg">
-          <QuestionAnswer isSpeaking={isSpeaking} fileName={`${isSpeaking ? "speaking" : "writing"}_part_${activeTab}`} quesntionsAnswerData={question} />
+          <QuestionAnswer isSpeaking={isSpeaking} fileName="haha" quesntionsAnswerData={question} currentPart={activeTab} currentQuestionIndex={index} />
         </div>
         <div className="w-[20%] h-[15.9375rem] shadow-md sticky top-0 rounded-lg">
           <ScoreCommentForm />
