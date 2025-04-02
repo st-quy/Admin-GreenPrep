@@ -10,6 +10,7 @@ import {
   deleteClass,
   fetchSessionsByClassId,
 } from "../../features/auth/classManagement/services/classAPI";
+import { Link } from "react-router-dom";
 
 const ClassManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -185,7 +186,9 @@ const ClassManagement = () => {
                             className="text-[14px] text-[#0B3B6A] font-['Inter'] font-medium leading-[22px] tracking-[0px] 
                           underline decoration-solid decoration-[0%] decoration-auto hover:cursor-pointer"
                           >
-                            {classItem.name}
+                            <Link to={`class-detail/${classItem.id}`}>
+                              {classItem.name}
+                            </Link>
                           </div>
                         </td>
                         <td className="py-[15px] px-2 whitespace-nowrap text-center">

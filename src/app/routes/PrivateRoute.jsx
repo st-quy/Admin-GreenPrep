@@ -2,7 +2,7 @@ import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
 import ClassManagement from "@pages/ClassManagement/classManagement.jsx";
 import Dashboard from "@pages/Dashboard/Dashboard.jsx";
-import ClassDetail from "@pages/class-detail/ClassDetail.jsx";
+import ClassDetail from "@pages/ClassDetail/ClassDetail.jsx";
 const PrivateRoute = [
   {
     path: "/",
@@ -23,7 +23,7 @@ const PrivateRoute = [
             element: <ClassManagement />,
           },
           {
-            path: "class-detail/:id",
+            path: ":id",
             element: <ClassDetail />,
             breadcrumb: "Class Detail",
           },
