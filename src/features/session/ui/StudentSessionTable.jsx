@@ -39,16 +39,16 @@ const StudentSessionTable = ({
     );
   }, [processedData]);
 
-
-
-
   const filteredData = useMemo(() => {
     if (!searchKeyword) return processedData;
-    return processedData.filter(
-      (item) =>
+    return processedData.filter((item) => {
+      const fullName = item.User?.fullName || "";
+      return (
+        fullName.toLowerCase().includes(searchKeyword.toLowerCase()) || 
         item.Level?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
         item.UserID?.toLowerCase().includes(searchKeyword.toLowerCase())
-    );
+      );
+    });
   }, [processedData, searchKeyword]);
 
   const checkIsAllQuestionGraded = useCallback(() => {

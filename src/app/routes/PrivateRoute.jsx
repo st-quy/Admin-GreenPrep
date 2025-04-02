@@ -1,6 +1,6 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
-import SessionLayout from "../../features/auth/ui/SessionLayout.jsx";
+import SessionLayout from "../../pages/SessionManagement/SessionLayout.jsx";
 import SessionInformation from "@pages/SessionManagement/SessionInformation.jsx";
 
 const PrivateRoute = [

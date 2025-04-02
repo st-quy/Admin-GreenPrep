@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Table, message } from "antd";
 import CheckCircleIcon from "@/assets/icons/check-circle.svg";
 import CloseCircleIcon from "@/assets/icons/close-circle.svg";
@@ -7,7 +7,7 @@ import axios from "@shared/config/axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { SESSION_ID, API_ENDPOINTS } from "../api";
 
-const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
+const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword, onPendingCountChange }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -21,16 +21,6 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
   });
 
   const queryClient = useQueryClient();
-
-  // Searching functionality
-  // const filteredData = useMemo(() => {
-  //   if (!searchKeyword) return dataSource;
-  //   return dataSource.filter(
-  //     (item) =>
-  //       item.studentName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-  //       item.className.toLowerCase().includes(searchKeyword.toLowerCase())
-  //   );
-  // }, [searchKeyword, dataSource]);
 
   const fetchSessionRequests = async () => {
     if (!sessionId) return [];
@@ -54,6 +44,24 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
     refetchInterval: 10000,
     enabled: !!sessionId,
   });
+
+    // Searching functionality
+    const filteredData = useMemo(() => {
+      if (!searchKeyword) return dataSource;
+      return dataSource.filter((item) => {
+        return (
+          item.studentName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+          item.studentId.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+          item.className.toLowerCase().includes(searchKeyword.toLowerCase())
+        );
+      });
+    }, [dataSource, searchKeyword]);
+
+    useEffect(() => {
+      if (onPendingCountChange) {
+        onPendingCountChange(filteredData.length);
+      }
+    }, [filteredData, onPendingCountChange]);
 
   // Mutation cho approve request
   const approveMutation = useMutation({
@@ -251,7 +259,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
   const paginationConfig = {
     current: currentPage,
     pageSize: pageSize,
-    total: dataSource.length,
+    total: filteredData.length,
     showSizeChanger: true,
     onShowSizeChange: onShowSizeChange,
     onChange: (page) => setCurrentPage(page),
@@ -265,8 +273,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
 
   return (
     <div className="w-full">
-      {isLoading && <p>Loading...</p>}
-      <div className="flex items-center mb-4">
+      <div className="flex items-center">
         {selectedRowKeys.length > 0 && (
           <div className="flex">
             <div
@@ -290,7 +297,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
         rowSelection={rowSelection}
         // @ts-ignore
         columns={columns}
-        dataSource={dataSource}
+        dataSource={filteredData}
         pagination={paginationConfig}
         className="border border-gray-200 rounded-lg overflow-hidden"
         rowClassName="hover:bg-gray-50"

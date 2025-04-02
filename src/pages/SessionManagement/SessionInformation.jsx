@@ -5,12 +5,17 @@ import StudentMonitoring from "@features/session/ui/StudentModering";
 import StudentSessionTable from "@/features/session/ui/StudentSessionTable.jsx";
 const { Search } = Input;
 import SearchInput from "@/app/components/SearchInput.jsx";
-import Details from "@features/auth/ui/Details/Details";
+import Details from "@pages/SessionManagement/Details/Details.jsx";
 import { FilterFilled } from "@ant-design/icons";
 import { TableType } from "@features/session/constraint/TableEnum";
 
 const SessionInformation = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
+  const [pendingCount, setPendingCount] = useState(0);
+
+  const handlePendingCountChange = (count) => {
+    setPendingCount(count);
+  };
 
   const idSession = "48ad7513-61ee-4069-a886-e16d39573cd1";
 
@@ -25,19 +30,32 @@ const SessionInformation = () => {
     {
       label: "Participant List",
       key: "item-1",
-      children: <StudentSessionTable searchKeyword={searchKeyword} 
-                  type={TableType.SESSION}
-                  id={idSession}
-                  onNavigate={handleNavigate} />,
+      children: (
+        <StudentSessionTable
+          searchKeyword={searchKeyword}
+          type={TableType.SESSION}
+          id={idSession}
+          onNavigate={handleNavigate}
+        />
+      ),
     },
     {
       label: (
-        <span className="">
+        <span className="relavtive">
           Pending Request
+          {pendingCount > 0 && (
+            <div className="bg-redDark w-[13px] h-[13px] absolute top-4 right-6 rounded-full"></div>
+          )}
         </span>
       ),
       key: "item-2",
-      children: <StudentMonitoring sessionId={idSession} searchKeyword={searchKeyword} />,
+      children: (
+        <StudentMonitoring
+          sessionId={idSession}
+          searchKeyword={searchKeyword}
+          onPendingCountChange={handlePendingCountChange}
+        />
+      ),
     },
   ];
 
@@ -54,33 +72,45 @@ const SessionInformation = () => {
       <div className="">
         <div className="flex justify-between">
           <div>
-            <p className="text-[30px] text-black font-bold">Student Monitoring</p>
+            <p className="text-[30px] text-black font-bold">
+              Student Monitoring
+            </p>
             <p className="text-[18px] text-[#637381] font-medium mt-[10px]">
               Track student request and participation.
             </p>
           </div>
           <div>
             {buttonState === "publishScore" && (
-              <button className="bg-[#E5E7EB] text-[#6B7280] font-bold rounded-full px-[28px] py-[13px] text-base border-none" disabled>
+              <button
+                className="bg-[#E5E7EB] text-[#6B7280] font-bold rounded-full px-[28px] py-[13px] text-base border-none"
+                disabled
+              >
                 Publish Score
               </button>
             )}
             {buttonState === "readyToPublish" && (
-              <button className="bg-secondaryColor text-white font-bold rounded-full px-[28px] py-[13px] text-base border-none" onClick={handlePublishScore}>
+              <button
+                className="bg-secondaryColor text-white font-bold rounded-full px-[28px] py-[13px] text-base border-none"
+                onClick={handlePublishScore}
+              >
                 Ready to Publish
               </button>
             )}
             {buttonState === "publishedScore" && (
-              <button className="bg-[#E5E7EB] text-[#6B7280] font-bold rounded-full px-[28px] py-[13px] text-base border-none" disabled>
+              <button
+                className="bg-[#E5E7EB] text-[#6B7280] font-bold rounded-full px-[28px] py-[13px] text-base border-none"
+                disabled
+              >
                 Published
               </button>
             )}
           </div>
         </div>
         <div className="mt-[34px]">
-          <SearchInput placeholder="Search by name, class,..." 
-          onSearchChange={onSearchChange}
-          className="absolute z-10"
+          <SearchInput
+            placeholder="Search by name, class,..."
+            onSearchChange={onSearchChange}
+            className="absolute z-10"
           />
         </div>
         <Tabs defaultActiveKey="item-1" items={items} />
