@@ -45,10 +45,10 @@ const PrivateRoute = [
               },
               {
                 path: "student",
+                breadcrumb: "Student Detail",
                 children: [
                   {
                     path: ":id",
-                    breadcrumb: ":studentId",
                     children: [
                       {
                         index: true,
@@ -56,15 +56,11 @@ const PrivateRoute = [
                           <SessionInformation type={TableType.STUDENT} />
                         ),
                       },
-                      {
-                        path: "grade",
-                        element: <GradingPage />,
-                        breadcrumb: "Grade",
-                      },
+                     
                     ],
                   },
                 ],
-                breadcrumb: "Student Detail",
+
               },
             ],
           },

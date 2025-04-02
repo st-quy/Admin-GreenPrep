@@ -9,7 +9,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 const SessionInformation = ({ type }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
-  const { id } = useParams(); 
+  const { id } = useParams();
   const [pendingCount, setPendingCount] = useState(0);
   const navigate = useNavigate();
 
@@ -23,6 +23,9 @@ const SessionInformation = ({ type }) => {
   const handleStudentNavigate = (id, action) => {
     navigate(`/class/session/student/${id}`);
   };
+  const handleStudentPartNavigate = (id, part) => {
+    navigate(`/class/session/student/${id}/grade/${part}`);
+  };
   const items = [
     {
       label: "Participant List",
@@ -33,7 +36,7 @@ const SessionInformation = ({ type }) => {
           type={type}
           id={id}
           onStudentClick={handleStudentNavigate}
-          onNavigate={() => {}}
+          onNavigate={handleStudentPartNavigate}
         />
       ),
     },

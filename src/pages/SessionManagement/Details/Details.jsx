@@ -12,7 +12,7 @@ const Details = ({ type, id }) => {
         if (type === "session") {
           url = `https://dev-api-greenprep.onrender.com/api/sessions/${id}`;
         } else if (type === "student") {
-          url = `https://dev-api-greenprep.onrender.com/api/students/${id}`;
+          url = `https://dev-api-greenprep.onrender.com/api/users/${id}`;
         }
   
         const response = await axios.get(url);

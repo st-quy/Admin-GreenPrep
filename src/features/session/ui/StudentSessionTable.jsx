@@ -5,7 +5,24 @@ import {
   useSessionParticipants,
   useStudentParticipants,
 } from "../hooks/useSession";
+function getSkillLevel(score, skill) {
+  const levels = ["A1", "A2", "B1", "B2", "C"];
+  const thresholds = {
+    Listening: [8, 16, 24, 34, 42],
+    Reading: [8, 16, 26, 38, 46],
+    Writing: [6, 18, 26, 40, 48],
+    Speaking: [4, 16, 26, 41, 48],
+  };
 
+  if (!thresholds[skill]) {
+    throw new Error("Invalid skill");
+  }
+
+  let levelIndex = thresholds[skill].findIndex(
+    (threshold) => score < threshold
+  );
+  return levelIndex === -1 ? "C" : levels[levelIndex];
+}
 const StudentSessionTable = ({
   id,
   searchKeyword,
@@ -19,7 +36,7 @@ const StudentSessionTable = ({
   const [pageSize, setPageSize] = useState(5);
   const [levels, setLevels] = useState({});
   const { data, isLoading } =
-    type == TableType.SESSION 
+    type == TableType.SESSION
       ? useSessionParticipants(id)
       : useStudentParticipants(id);
 
@@ -45,7 +62,7 @@ const StudentSessionTable = ({
     return processedData.filter((item) => {
       const fullName = item.User?.fullName || "";
       return (
-        fullName.toLowerCase().includes(searchKeyword.toLowerCase()) || 
+        fullName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
         item.Level?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
         item.UserID?.toLowerCase().includes(searchKeyword.toLowerCase())
       );
@@ -64,7 +81,6 @@ const StudentSessionTable = ({
       onAllQuestionGraded?.();
     }
   }, [processedData, levels]);
-
   useEffect(() => {
     if (type === TableType.SESSION && status !== StatusType.PUBLISHED) {
       checkIsAllQuestionGraded();
@@ -81,8 +97,26 @@ const StudentSessionTable = ({
       dataIndex: "GrammarVocab",
       key: "GrammarVocab",
     },
-    { title: "LISTENING", dataIndex: "Listening", key: "Listening" },
-    { title: "READING", dataIndex: "Reading", key: "Reading" },
+    {
+      title: "LISTENING",
+      dataIndex: "Listening",
+      key: "Listening",
+      render: (text, record) => (
+        <span className="text-[14px]  text-[#637381]">
+          {text + "I" + getSkillLevel(text, "Listening") || "Ungraded"}
+        </span>
+      ),
+    },
+    {
+      title: "READING",
+      dataIndex: "Reading",
+      key: "Reading",
+      render: (text, record) => (
+        <span className="text-[14px]  text-[#637381]">
+          {text + "I" + getSkillLevel(text, "Reading") || "Ungraded"}
+        </span>
+      ),
+    },
     {
       title: "SPEAKING",
       dataIndex: "Speaking",
@@ -91,13 +125,13 @@ const StudentSessionTable = ({
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
             onClick={() => onNavigate(record.ID, "speaking")}
-            className="cursor-pointer underline text-[14px] hover:opacity-80"
+            className="cursor-pointer underline text-[14px]  hover:opacity-80"
           >
-            {text || "Ungraded"}
+            {text + "I" + getSkillLevel(text, "Speaking") || "Ungraded"}
           </a>
         ) : (
-          <span className="text-[14px] text-[#637381]">
-            {text || "Ungraded"}
+          <span className="text-[14px]  text-[#637381]">
+            {text + "I" + getSkillLevel(text, "Speaking") || "Ungraded"}
           </span>
         ),
     },
@@ -109,13 +143,13 @@ const StudentSessionTable = ({
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
             onClick={() => onNavigate(record.ID, "writing")}
-            className="cursor-pointer underline text-[14px] hover:opacity-80"
+            className="cursor-pointer underline text-[14px]  hover:opacity-80"
           >
-            {text || "Ungraded"}
+            {text + "I" + getSkillLevel(text, "Writing") || "Ungraded"}
           </a>
         ) : (
-          <span className="text-[14px] text-[#637381]">
-            {text || "Ungraded"}
+          <span className="text-[14px]  text-[#637381]">
+            {text + "I" + getSkillLevel(text, "Writing") || "Ungraded"}
           </span>
         ),
     },
@@ -142,7 +176,7 @@ const StudentSessionTable = ({
             ))}
           </Select>
         ) : (
-          <span className="text-[14px] text-[#637381]">{level}</span>
+          <span className="text-[14px]  text-[#637381]">{level}</span>
         ),
     },
   ];
@@ -156,10 +190,10 @@ const StudentSessionTable = ({
           key: "fullName",
           render: (text, record) => (
             <a
-              onClick={() => onStudentClick(record.ID)}
-              className="cursor-pointer underline text-[14px] hover:opacity-80"
+              onClick={() => onStudentClick(record.UserID)}
+              className="cursor-pointer underline text-[14px]  hover:opacity-80"
             >
-              {text}
+              {text || "Unknown"}
             </a>
           ),
         },
@@ -171,6 +205,7 @@ const StudentSessionTable = ({
           title: "SESSION NAME",
           dataIndex: ["Session", "sessionName"],
           key: "SessionID",
+          render: (text) => <span>{text || "Unknown"}</span>,
         },
         ...commonColumns,
       ];
