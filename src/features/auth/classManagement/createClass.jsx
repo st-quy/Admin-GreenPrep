@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import ClassModal from "./components/ClassModal";
-import { Button } from "antd";
+import { Button, notification } from "antd";
 import { createClass } from "./services/classAPI";
 
 const CreateClass = ({ onAddClass, existingClasses }) => {
@@ -37,17 +37,24 @@ const CreateClass = ({ onAddClass, existingClasses }) => {
     }
 
     setIsCreating(true);
-    try {
-      const createdClass = await createClass(newClass);
-      onAddClass(createdClass);
-      setIsModalOpen(false);
-    } catch (error) {
-      setError("An error occurred while creating the class. Please try again.");
-      console.error("Error creating class:", error);
-    } finally {
-      setIsCreating(false);
-    }
+    setTimeout(async () => {
+      try {
+        const createdClass = await createClass(newClass);
+        onAddClass(createdClass);
+        setIsModalOpen(false);
+        notification.success({
+          message: "Class created successfully",
+          description: `Class "${createdClass.name}" has been created.`,
+        });
+      } catch (error) {
+        setError("An error occurred while creating the class. Please try again.");
+        console.error("Error creating class:", error);
+      } finally {
+        setIsCreating(false);
+      }
+    }, 2000);
   };
+  
 
   return (
     <>

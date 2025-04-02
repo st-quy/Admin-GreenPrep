@@ -1,12 +1,16 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ClassModal from "./components/ClassModal";
-import { Button } from "antd";
+import { Button, notification } from "antd";
 import { updateClass } from "./services/classAPI";
 
 const UpdateClass = ({ classData, onUpdateClass, existingClasses }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [error, setError] = useState("");
   const [isUpdating, setIsUpdating] = useState(false);
+
+  useEffect(() => {
+    console.log("Classes updated:", existingClasses);
+  }, [existingClasses]);
 
   const handleOpenModal = () => {
     setError("");
@@ -21,45 +25,28 @@ const UpdateClass = ({ classData, onUpdateClass, existingClasses }) => {
   };
 
   const handleSubmit = async (updatedClass) => {
-    if (!updatedClass.name.trim()) {
-      setError("Class name is required.");
-      return;
-    }
-
-    if (updatedClass.name.length < 3 || updatedClass.name.length > 50) {
-      setError("Class must be between 3 and 50 characters.");
-      return;
-    }
-
-    if (
-      existingClasses.some(
-        (cls) =>
-          cls.name.toLowerCase() === updatedClass.name.toLowerCase() &&
-          cls.id !== classData.id
-      )
-    ) {
-      setError("Class name already exists. Please choose a different name.");
-      return;
-    }
-
-    if (!/^[a-zA-Z0-9]+$/.test(updatedClass.name)) {
-      setError("Class name can only contain letters and numbers.");
-      return;
-    }
-
     setIsUpdating(true);
-    try {
-      const updatedData = await updateClass(classData.id, updatedClass);
-      onUpdateClass(updatedData);
-      setIsModalOpen(false);
-    } catch (error) {
-      setError("An error occurred while updating the class. Please try again.");
-      console.error("Error updating class:", error);
-    } finally {
-      setIsUpdating(false);
-    }
+      // Trì hoãn reload trang 2 giây
+      setTimeout(async() => {
+        try {
+          const updatedData = await updateClass(classData.id, updatedClass);
+          onUpdateClass(updatedData); // Gọi hàm cập nhật danh sách class
+          setIsModalOpen(false);
+      
+          notification.success({
+            message: "Class updated successfully",
+            description: `Class "${updatedClass.name}" has been updated.`,
+          });
+        } catch (error) {
+          setError("An error occurred while updating the class. Please try again.");
+          console.error("Error updating class:", error);
+        } finally {
+          setIsUpdating(false);
+        }
+      }, 2000); // 2000ms = 2 giây
+  
   };
-
+  
   return (
     <>
       <Button

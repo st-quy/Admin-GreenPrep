@@ -1,9 +1,35 @@
-import React from "react";
+import React, { useState } from "react";
 import { Dialog } from "@headlessui/react";
 import { Warning } from "../../../../assets/images";
-import { Button } from "antd";
+import { Button, notification, Spin } from "antd";
+import { CloseCircleOutlined } from "@ant-design/icons"; 
 
 const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDelete = async () => {
+    setIsDeleting(true);
+    setTimeout(async () => {
+      try {
+        await onConfirm();
+        notification.success({
+          message: "Class deleted successfully",
+          description: "The class has been deleted.",
+        });
+        onClose(); 
+      } catch (error) {
+        notification.error({
+          message: "Error deleting class",
+          description: "An error occurred while deleting the class. Please try again.",
+          icon: <CloseCircleOutlined style={{ color: "#ff4d4f" }} />, // Biểu tượng dấu X màu đỏ
+        });
+        console.error("Error deleting class:", error);
+      } finally {
+        setIsDeleting(false); 
+      }
+    }, 2000); 
+  };
+
   return (
     <Dialog open={isOpen} onClose={onClose} className="relative z-50">
       {/* Semi-transparent background overlay */}
@@ -38,16 +64,18 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
               onClick={onClose}
               type="default"
               className="w-[113px] h-[40px] !text-[#003087] shadow-[0_0_0_2px_rgba(255,255,255,0.3)] !border-gray-120 rounded-[50px] font-inter font-medium text-[16px] leading-[24px] bg-[#FFFFFF] text-[#003087] hover:!text-[#003087] focus:!bg-[#FFFFFF] focus:!text-[#003087] hover:!border-[#D0D5DD]"
+              disabled={isDeleting}
             >
               Cancel
             </Button>
             <Button
-              onClick={onConfirm}
+              onClick={handleDelete}
               type="primary"
               danger
               className="w-[113px] h-[40px] rounded-[50px] font-inter font-medium text-[16px] leading-[24px] bg-[#E10E0E] text-[#FFFFFF] hover:!bg-[#c70c0c] hover:!text-[#FFFFFF] focus:!bg-[#E10E0E] focus:!text-[#FFFFFF]"
+              loading={isDeleting} 
             >
-              Delete
+              {isDeleting ? <Spin size="small" /> : "Delete"}
             </Button>
           </div>
         </Dialog.Panel>
