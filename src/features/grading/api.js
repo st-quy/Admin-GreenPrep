@@ -1,4 +1,5 @@
 import axiosInstance from "@shared/config/axios";
+
 export const SpeakingApi = {
     getSpeaking: () => {
         return axiosInstance.get(
@@ -6,6 +7,7 @@ export const SpeakingApi = {
         );
     },
 };
+
 export const WritingApi = {
     getWriting: () => {
         return axiosInstance.get(

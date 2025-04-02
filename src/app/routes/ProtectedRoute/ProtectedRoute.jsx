@@ -7,7 +7,7 @@ import {
   matchRoutes,
   useParams,
 } from "react-router-dom";
-import { StepForwardOutlined } from "@ant-design/icons";
+import { StepForwardOutlined, LogoutOutlined } from "@ant-design/icons";
 import { Breadcrumb } from "../../components/Breadcrumb/Breadcrumb";
 import PrivateRoute from "../PrivateRoute";
 
@@ -15,19 +15,33 @@ const { Header, Content } = Layout;
 
 export const ProtectedRoute = () => {
   const location = useLocation();
-  const { id } = useParams();
+  const { studentId } = useParams();
 
   const navigate = useNavigate();
 
   // Generate breadcrumb paths based on route matches
   const routes = matchRoutes(PrivateRoute, location.pathname) || [];
-  const breadcrumbPaths = routes.map(({ route }) => ({
-    name: route.breadcrumb || "",
-    link: route.path
-      ? location.pathname.split(route.path)[0] + route.path
-      : null,
-    param: id,
-  }));
+
+  const breadcrumbPaths = routes.map(({ pathname, params, route }) => {
+    let breadcrumb = route.breadcrumb;
+
+    // Replace route parameters with actual values
+    if (
+      studentId &&
+      breadcrumb &&
+      breadcrumb.includes(`:${Object.keys(params)[0]}`)
+    ) {
+      breadcrumb = breadcrumb.replace(`:${Object.keys(params)[0]}`, studentId);
+    }
+
+    return {
+      name: breadcrumb,
+      link: pathname,
+      index: route.children
+        ? route.children.some((child) => child.index)
+        : route.index,
+    };
+  });
 
   // Function to handle navigation
   const navigateTo = (key) => {
@@ -47,14 +61,14 @@ export const ProtectedRoute = () => {
   };
 
   return (
-    <Layout>
-      <Header className="flex items-center h-[7rem] bg-white shadow-xl">
-        <img src={Logo} className="max-w-44" />
+    <Layout className="min-h-screen">
+      <Header className="flex items-center h-28 bg-white shadow-xl">
+        <img src={Logo} className="max-w-[11rem]" />
         <Menu
           theme="light"
           mode="horizontal"
           defaultSelectedKeys={["1"]}
-          style={{ flex: 1, minWidth: 0, justifyContent: "center" }}
+          className="flex-1 justify-center "
           items={[
             { key: "1", label: "Dashboard" },
             { key: "2", label: "Class Management" },
@@ -62,9 +76,9 @@ export const ProtectedRoute = () => {
           ]}
           onClick={(e) => navigateTo(e.key)}
         />
-        <StepForwardOutlined style={{ fontSize: "24px", cursor: "pointer" }} />
+        <StepForwardOutlined className="text-2xl cursor-pointer" />
       </Header>
-      <Content style={{ padding: "0 48px" }}>
+      <Content className="p-10 pt-4">
         <Breadcrumb paths={breadcrumbPaths} />
         <Outlet />
       </Content>

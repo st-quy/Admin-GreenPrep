@@ -13,7 +13,10 @@ export default function AudioPlayer({
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [hoverTime, setHoverTime] = useState(null);
+  const [tooltipPosition, setTooltipPosition] = useState({ left: 0 });
   const audioRef = useRef(null);
+  const sliderRef = useRef(null);
 
   useEffect(() => {
     const audio = audioRef.current;
@@ -26,7 +29,6 @@ export default function AudioPlayer({
       setCurrentTime(audio.currentTime);
     };
 
-    // Event listeners
     audio.addEventListener("loadeddata", setAudioData);
     audio.addEventListener("timeupdate", setAudioTime);
     audio.addEventListener("ended", () => setIsPlaying(false));
@@ -62,6 +64,25 @@ export default function AudioPlayer({
     audioRef.current.currentTime = newTime;
   };
 
+  const handleSliderHover = (e) => {
+    if (!sliderRef.current || !duration) return;
+
+    const sliderRect = sliderRef.current.getBoundingClientRect();
+    const offsetX = Math.max(
+      0,
+      Math.min(e.clientX - sliderRect.left, sliderRect.width)
+    );
+    const percentage = (offsetX / sliderRect.width) * 100;
+    const time = (percentage / 100) * duration;
+
+    setHoverTime(time);
+    setTooltipPosition({ left: offsetX });
+  };
+
+  const handleSliderLeave = () => {
+    setHoverTime(null);
+  };
+
   const downloadAudio = async () => {
     // This approach works if the server hosting the file allows direct downloads/Access-Control-Allow-Origin.
     const a = document.createElement("a");
@@ -77,7 +98,6 @@ export default function AudioPlayer({
 
   return (
     <div className="flex items-center space-x-4 w-full max-w-md p-4">
-      {/* Audio element (hidden) */}
       <audio ref={audioRef} src={audioUrl} preload="metadata" />
 
       <Button
@@ -92,16 +112,33 @@ export default function AudioPlayer({
       <span className="text-xs w-10">{formatTime(currentTime)}</span>
 
       {/* Progress bar */}
-      <Slider
-        value={sliderValue}
-        onChange={handleSliderChange}
-        style={{ width: "29.625rem" }}
-        styles={{
-          track: { backgroundColor: "#003087", height: 4 },
-          rail: { backgroundColor: "#8899A8", height: 4 },
-        }}
-      />
+      <div
+        className="relative w-[29.625rem]"
+        ref={sliderRef}
+        onMouseMove={handleSliderHover}
+        onMouseLeave={handleSliderLeave}
+      >
+        <Slider
+          value={sliderValue}
+          onChange={handleSliderChange}
+          tooltip={{ formatter: null }}
+          styles={{
+            track: { backgroundColor: "#003087", height: 4 },
+            rail: { backgroundColor: "#8899A8", height: 4 },
+          }}
+        />
 
+        {/* Custom tooltip that follows cursor */}
+        {hoverTime !== null && (
+          <div
+            className="absolute top-[-30px] transform -translate-x-1/2 bg-black text-white px-2 py-1 rounded text-xs"
+            style={{ left: `${tooltipPosition.left}px` }}
+          >
+            {formatTime(hoverTime)}
+          </div>
+        )}
+      </div>
+      
       {/* Duration */}
       <span className="text-xs w-10">{formatTime(duration)}</span>
 

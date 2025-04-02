@@ -32,3 +32,6 @@
     margin-left: 0 !important;
 }
   
+.ant-table-wrapper .ant-table {
+  scrollbar-color: rgb(0, 48, 135) rgba(0, 0, 0, 0) !important;
+}

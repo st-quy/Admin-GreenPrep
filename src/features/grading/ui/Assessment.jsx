@@ -12,9 +12,9 @@ export const Assessment = () => {
         <div className="flex gap-10 relative">
           {/* map data here */}
           <div className="w-[70%] h-fit shadow-md">
-            <QuestionAnswer isSpeaking={false} fileName={"test"} />
+            <QuestionAnswer isSpeaking={true} fileName={"test"} />
           </div>
-          <div className="w-[326px] h-[255px] shadow-md sticky top-0">
+          <div className="w-[20.375rem] h-[15.9375rem] shadow-md sticky top-0">
             {/* put component of score here */}
           </div>
         </div>
