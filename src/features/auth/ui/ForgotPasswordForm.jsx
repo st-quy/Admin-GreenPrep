@@ -1,24 +1,26 @@
-import React, { useState, useEffect } from "react";
-import { Form, Button, Input, message } from "antd";
-import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+// @ts-nocheck
+
+import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 import { ForgotPw } from "@assets/images";
-import { emailSchema } from "../schemas/forgotPasswordSchema";
-import { AuthApi } from "../api";
 import { useMutation } from "@tanstack/react-query";
+import { Button, Form, Input, message } from "antd";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { AuthApi } from "../api";
+import { emailSchema } from "../schemas/forgotPasswordSchema";
 
 const ForgotPasswordForm = () => {
   const [form] = Form.useForm();
   const [searchParams] = useSearchParams();
   const [isReset, setIsReset] = useState(false);
   const navigate = useNavigate();
-  const resetToken = searchParams.get('token');
+  const resetToken = searchParams.get("token");
 
   useEffect(() => {
-    if (location.pathname === '/reset-password') {
+    if (location.pathname === "/reset-password") {
       if (!resetToken) {
-        message.error('Invalid or missing reset token');
-        navigate('/forgot-password');
+        message.error("Invalid or missing reset token");
+        navigate("/forgot-password");
         return;
       }
       setIsReset(true);
@@ -28,13 +30,16 @@ const ForgotPasswordForm = () => {
   const forgotPasswordMutation = useMutation({
     mutationFn: (email) => AuthApi.forgotPassword(email),
     onSuccess: (response) => {
-      message.success(response.message || "Password reset link sent to your email");
+      message.success(
+        response.message || "Password reset link sent to your email"
+      );
     },
     onError: (error) => {
       message.error(
-        error.response?.data?.message || "Failed to process request. Please try again."
+        error.response?.data?.message ||
+          "Failed to process request. Please try again."
       );
-    }
+    },
   });
 
   const resetPasswordMutation = useMutation({
@@ -45,9 +50,10 @@ const ForgotPasswordForm = () => {
     },
     onError: (error) => {
       message.error(
-        error.response?.data?.message || "Failed to process request. Please try again."
+        error.response?.data?.message ||
+          "Failed to process request. Please try again."
       );
-    }
+    },
   });
 
   const handleEmailSubmit = (values) => {
@@ -59,15 +65,15 @@ const ForgotPasswordForm = () => {
       message.error("Passwords do not match");
       return;
     }
-    
+
     if (!resetToken) {
       message.error("Reset token is missing");
       return;
     }
 
-    resetPasswordMutation.mutate({ 
-      token: resetToken, 
-      password: values.password 
+    resetPasswordMutation.mutate({
+      token: resetToken,
+      password: values.password,
     });
   };
 
@@ -114,10 +120,14 @@ const ForgotPasswordForm = () => {
                       } catch (err) {
                         throw new Error(err.message);
                       }
-                    }
-                  }
-                ]}>
-                <Input className="h-[40px]" placeholder="Enter your email here" />
+                    },
+                  },
+                ]}
+              >
+                <Input
+                  className="h-[40px]"
+                  placeholder="Enter your email here"
+                />
               </Form.Item>
             ) : (
               <>
@@ -129,23 +139,53 @@ const ForgotPasswordForm = () => {
                   }
                   name="password"
                   required={false}
-                  validateTrigger={['onChange', 'onBlur']}
+                  validateTrigger={["onChange", "onBlur"]}
                   help={
-                    form.getFieldValue('password') ? (
+                    form.getFieldValue("password") ? (
                       <ul className="list-none pl-0 mt-1 text-sm space-y-1">
-                        <li className={form.getFieldValue('password')?.length >= 8 ? 'text-green-500' : 'text-red-500'}>
+                        <li
+                          className={
+                            form.getFieldValue("password")?.length >= 8
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
                           • At least 8 characters
                         </li>
-                        <li className={/[A-Z]/.test(form.getFieldValue('password')) ? 'text-green-500' : 'text-red-500'}>
+                        <li
+                          className={
+                            /[A-Z]/.test(form.getFieldValue("password"))
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
                           • One uppercase letter
                         </li>
-                        <li className={/[a-z]/.test(form.getFieldValue('password')) ? 'text-green-500' : 'text-red-500'}>
+                        <li
+                          className={
+                            /[a-z]/.test(form.getFieldValue("password"))
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
                           • One lowercase letter
                         </li>
-                        <li className={/[0-9]/.test(form.getFieldValue('password')) ? 'text-green-500' : 'text-red-500'}>
+                        <li
+                          className={
+                            /[0-9]/.test(form.getFieldValue("password"))
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
                           • One number
                         </li>
-                        <li className={/[@$!%*?&]/.test(form.getFieldValue('password')) ? 'text-green-500' : 'text-red-500'}>
+                        <li
+                          className={
+                            /[@$!%*?&]/.test(form.getFieldValue("password"))
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
                           • One special character (@$!%*?&)
                         </li>
                       </ul>
@@ -157,40 +197,53 @@ const ForgotPasswordForm = () => {
                         if (!value) {
                           throw new Error("New password is required");
                         }
-                        
+
                         const errors = [];
-                        
+
                         if (value.length < 8) {
                           errors.push("Password must be at least 8 characters");
                         }
                         if (!/[A-Z]/.test(value)) {
-                          errors.push("Password must contain at least one uppercase letter");
+                          errors.push(
+                            "Password must contain at least one uppercase letter"
+                          );
                         }
                         if (!/[a-z]/.test(value)) {
-                          errors.push("Password must contain at least one lowercase letter");
+                          errors.push(
+                            "Password must contain at least one lowercase letter"
+                          );
                         }
                         if (!/[0-9]/.test(value)) {
-                          errors.push("Password must contain at least one number");
+                          errors.push(
+                            "Password must contain at least one number"
+                          );
                         }
                         if (!/[@$!%*?&]/.test(value)) {
-                          errors.push("Password must contain at least one special character (@$!%*?&)");
+                          errors.push(
+                            "Password must contain at least one special character (@$!%*?&)"
+                          );
                         }
-                        
+
                         if (errors.length > 0) {
                           throw new Error(errors.join(", "));
                         }
-                      }
-                    }
+                      },
+                    },
                   ]}
                 >
-                  <Input.Password 
-                    className="h-[40px]" 
-                    placeholder="********" 
+                  <Input.Password
+                    className="h-[40px]"
+                    placeholder="********"
                     onChange={() => {
-                      form.validateFields(['confirmPassword']);
-                      form.setFieldValue('password', form.getFieldValue('password'));
+                      form.validateFields(["confirmPassword"]);
+                      form.setFieldValue(
+                        "password",
+                        form.getFieldValue("password")
+                      );
                     }}
-                    iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)} 
+                    iconRender={(visible) =>
+                      visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
+                    }
                     onCopy={(e) => e.preventDefault()}
                   />
                 </Form.Item>
@@ -204,25 +257,27 @@ const ForgotPasswordForm = () => {
                   name="confirmPassword"
                   required={false}
                   dependencies={["password"]}
-                  validateTrigger={['onChange', 'onBlur']}
+                  validateTrigger={["onChange", "onBlur"]}
                   rules={[
                     {
                       validator: async (_, value) => {
                         if (!value) {
                           throw new Error("Please confirm your new password");
                         }
-                        const password = form.getFieldValue('password');
+                        const password = form.getFieldValue("password");
                         if (value !== password) {
                           throw new Error("The two passwords do not match");
                         }
-                      }
-                    }
+                      },
+                    },
                   ]}
                 >
-                  <Input.Password 
-                    className="h-[40px]" 
-                    placeholder="********" 
-                    iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)} 
+                  <Input.Password
+                    className="h-[40px]"
+                    placeholder="********"
+                    iconRender={(visible) =>
+                      visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
+                    }
                     onCopy={(e) => e.preventDefault()}
                   />
                 </Form.Item>
@@ -232,7 +287,10 @@ const ForgotPasswordForm = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-                loading={forgotPasswordMutation.isPending || resetPasswordMutation.isPending}
+                loading={
+                  forgotPasswordMutation.isPending ||
+                  resetPasswordMutation.isPending
+                }
                 className="w-[250px] h-[50px] bg-[#3758F9] text-white rounded-[50px] mt-4 flex justify-center items-center"
               >
                 {isReset ? "Submit" : "Reset password"}
