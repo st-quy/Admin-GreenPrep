@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Table, message } from "antd";
 import CheckCircleIcon from "@/assets/icons/check-circle.svg";
 import CloseCircleIcon from "@/assets/icons/close-circle.svg";
@@ -6,7 +6,7 @@ import ConfirmationModal from "@shared/Modal/ConfirmationModal";
 import axios from "axios";
 import { API_BASE_URL, SESSION_ID, API_ENDPOINTS } from "../api";
 
-const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
+const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -20,6 +20,16 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
   });
   const [dataSource, setDataSource] = useState([]);
   const [totalItems, setTotalItems] = useState(0);
+
+  // Searching functionality
+  const filteredData = useMemo(() => {
+    if (!searchKeyword) return dataSource;
+    return dataSource.filter(
+      (item) =>
+        item.studentName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+        item.className.toLowerCase().includes(searchKeyword.toLowerCase())
+    );
+  }, [searchKeyword, dataSource]);
 
   const fetchSessionRequests = async () => {
     if (!sessionId) return;
@@ -38,9 +48,6 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
           className: req.User?.class || "null",
           requestId: req.ID,
         }));
-
-      console.log("Requests Data:", requestsData);
-      console.log("Pending Requests:", pendingRequests);
 
       setDataSource(pendingRequests);
       setTotalItems(pendingRequests.length);
@@ -253,7 +260,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
   const paginationConfig = {
     current: currentPage,
     pageSize: pageSize,
-    total: totalItems,
+    total: filteredData.length,
     showSizeChanger: true,
     onShowSizeChange: onShowSizeChange,
     onChange: (page) => setCurrentPage(page),
@@ -291,7 +298,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
         rowSelection={rowSelection}
         // @ts-ignore
         columns={columns}
-        dataSource={dataSource}
+        dataSource={filteredData}
         pagination={paginationConfig}
         className="border border-gray-200 rounded-lg overflow-hidden"
         rowClassName="hover:bg-gray-50"

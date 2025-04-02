@@ -1,17 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Input } from "antd";
 import "./index.css";
-import StudentMonitoring from "@/features/session/ui/student-modering.jsx";
+import StudentMonitoring from "@features/session/ui/StudentModering";
 import StudentSessionTable from "@/features/session/ui/StudentSessionTable.jsx";
 const { Search } = Input;
 import SearchInput from "@/app/components/SearchInput.jsx";
 import Details from "@features/auth/ui/Details/Details";
+import { FilterFilled } from "@ant-design/icons";
 
 const SessionInformation = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [pendingRequestData, setPendingRequestData] = useState([]);
 
-  const idSession = "51444374-4162-49fe-823f-015c4d6a1731";
+  const idSession = "48ad7513-61ee-4069-a886-e16d39573cd1";
 
   const onSearchChange = (event) => {
     setSearchKeyword(event.target.value);
@@ -22,22 +23,27 @@ const SessionInformation = () => {
   };
 
   useEffect(() => {
-    const fetchPendingRequestData = async () => {
-      const data = [
-        { id: 1, name: "Request 1" },
-        { id: 2, name: "Request 2" },
-      ];
-      setPendingRequestData(data);
-    };
+    console.log("Length:", pendingRequestData);
+  }, [pendingRequestData]);
 
-    fetchPendingRequestData();
-  }, []);
+  // useEffect(() => {
+  //   const fetchPendingRequestData = async () => {
+  //     const data = [
+  //       { id: 1, name: "Request 1" },
+  //       { id: 2, name: "Request 2" },
+  //     ];
+  //     setPendingRequestData(data);
+  //   };
+
+  //   fetchPendingRequestData();
+  // }, []);
 
   const items = [
     {
       label: "Participant List",
       key: "item-1",
-      children: <StudentSessionTable searchKeyword={searchKeyword} 
+      children: <StudentSessionTable 
+                  searchKeyword={searchKeyword} 
                   type="session" 
                   id={idSession}
                   onNavigate={handleNavigate} />,
