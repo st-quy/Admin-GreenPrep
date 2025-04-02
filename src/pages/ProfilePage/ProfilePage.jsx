@@ -1,8 +1,11 @@
-import React, { useState, useRef } from 'react';
+// @ts-nocheck
+import React, { useRef, useState } from 'react';
 import { Button, Typography, Avatar, message, Form } from 'antd';
 import { UserOutlined, CameraOutlined } from '@ant-design/icons';
 import defaultAvatar from '@assets/images/avatar.png';
 import ProfileTeacher from '@features/profile/ui/ProfileTeacher';
+import { getUserFromToken, QUERY_KEYS } from '@features/profile/api';
+import { useQuery } from '@tanstack/react-query';
 
 const { Title, Text } = Typography;
 
@@ -10,6 +13,15 @@ const ProfilePage = () => {
   const fileInputRef = useRef(null);
   const [avatar, setAvatar] = useState(defaultAvatar);
   const [form] = Form.useForm();
+
+  const { data: userData, isLoading } = useQuery({
+    queryKey: [QUERY_KEYS.USER_PROFILE],
+    queryFn: getUserFromToken,
+    onError: (error) => {
+      console.error('Error fetching user data:', error);
+      message.error('Có lỗi khi lấy thông tin người dùng');
+    }
+  });
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -29,7 +41,6 @@ const ProfilePage = () => {
       const reader = new FileReader();
       reader.onload = (e) => {
         setAvatar(e.target?.result);
-       
       };
       reader.readAsDataURL(file);
     }
@@ -43,10 +54,18 @@ const ProfilePage = () => {
     <div>
       <Text className="text-gray-500 text-sm block mb-1">{label}</Text>
       <Text className={value !== 'No information' ? 'text-gray-900 font-semibold' : 'text-gray-500'}>
-        {value}
+        {value || 'No information'}
       </Text>
     </div>
   );
+
+  if (isLoading) {
+    return <div className="p-6">Loading...</div>;
+  }
+
+  if (!userData) {
+    return <div className="p-6">No user data available</div>;
+  }
 
   return (
     <div className="p-6 space-y-6 max-w-[1920px] mx-auto">
@@ -55,7 +74,7 @@ const ProfilePage = () => {
           <Title level={4} className="m-0">My profile</Title>
           <Text className="text-gray-500">Summary of personal information.</Text>
         </div>
-        <ProfileTeacher />
+        <ProfileTeacher userData={userData} />
       </div>
 
       <div className="bg-white rounded-lg shadow-lg border border-gray-100 p-6 sm:p-8">
@@ -80,15 +99,9 @@ const ProfilePage = () => {
             />
           </div>
           <div>
-            <Form.Item name="fullName">
-              <Title level={4} className="m-0">{form.getFieldValue('fullName')}</Title>
-            </Form.Item>
-            <Form.Item name="role">
-              <Text className="text-gray-500 font-semibold">{form.getFieldValue('role')}</Text>
-            </Form.Item>
-            <Form.Item name="email">
-              <Text className="block text-gray-500 font-semibold">{form.getFieldValue('email')}</Text>
-            </Form.Item>
+            <Title level={4} className="m-0">{userData.firstName} {userData.lastName}</Title>
+            <Text className="text-gray-500 font-semibold">{userData.roleIDs?.[0] || 'N/A'}</Text>
+            <Text className="block text-gray-500 font-semibold">{userData.email}</Text>
           </div>
         </div>
       </div>
@@ -96,36 +109,24 @@ const ProfilePage = () => {
       <div className="bg-white rounded-[8px] shadow-lg border border-gray-100 w-full mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8">
           <div className="space-y-2">
-            <Form.Item name="firstName">
-              <InfoField label="First Name" value={form.getFieldValue('firstName')} />
-            </Form.Item>
+            <InfoField label="First Name" value={userData.firstName} />
           </div>
           <div className="space-y-2">
-            <Form.Item name="lastName">
-              <InfoField label="Last Name" value={form.getFieldValue('lastName')} />
-            </Form.Item>
+            <InfoField label="Last Name" value={userData.lastName} />
           </div>
           <div className="space-y-2">
-            <Form.Item name="email">
-              <InfoField label="Email" value={form.getFieldValue('email')} />
-            </Form.Item>
+            <InfoField label="Email" value={userData.email} />
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8 border-t border-gray-100">
           <div className="space-y-2">
-            <Form.Item name="bod">
-              <InfoField label="BOD" value={form.getFieldValue('bod') || 'No information'} />
-            </Form.Item>
+            <InfoField label="BOD" value={userData.bod || 'No information'} />
           </div>
           <div className="space-y-2">
-            <Form.Item name="phoneNumber">
-              <InfoField label="Phone number" value={form.getFieldValue('phoneNumber') || 'No information'} />
-            </Form.Item>
+            <InfoField label="Phone number" value={userData.phone || 'No information'} />
           </div>
           <div className="space-y-2">
-            <Form.Item name="address">
-              <InfoField label="Address" value={form.getFieldValue('address') || 'No information'} />
-            </Form.Item>
+            <InfoField label="Address" value={userData.address || 'No information'} />
           </div>
         </div>
       </div>
@@ -133,16 +134,12 @@ const ProfilePage = () => {
       <div className="bg-white rounded-[8px] shadow-lg border border-gray-100 w-full mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8">
           <div className="space-y-2">
-            <Form.Item name="code">
-              <InfoField label="Code" value={form.getFieldValue('code')} />
-            </Form.Item>
+            <InfoField label="Teacher Code" value={userData.teacherCode || 'No information'} />
           </div>
+          
           <div className="space-y-2">
-            <Form.Item name="role">
-              <InfoField label="Role" value={form.getFieldValue('role')} />
-            </Form.Item>
+            <InfoField label="Role" value={userData.roleIDs?.[0] || 'No information'} />
           </div>
-          <div></div>
         </div>
       </div>
     </div>

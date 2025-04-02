@@ -1,40 +1,75 @@
+// @ts-nocheck
 import React from 'react';
 import { Form, Input, Button, Modal, message } from 'antd';
-import { profileSchema } from '../../schema/profileButtonsSchema';
+import { updateDataFromApi, QUERY_KEYS } from '../../api';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 const ProfileUpdate = ({ isOpen, onClose, userData }) => {
   const [form] = Form.useForm();
+  const queryClient = useQueryClient();
 
-  const validateField = async (fieldName, value) => {
-    try {
-      await profileSchema.validateAt(fieldName, form.getFieldsValue());
-      form.setFields([{ name: fieldName, errors: [] }]);
-    } catch (err) {
-      form.setFields([{ name: fieldName, errors: [err.message] }]);
-    }
-  };
+  const updateMutation = useMutation({
+    mutationFn: (data) => updateDataFromApi(userData.ID, data),
+    onMutate: async (newData) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: [QUERY_KEYS.USER_PROFILE] });
 
-  const handleSubmit = async (values) => {
-    try {
-      await profileSchema.validate(values, { abortEarly: false });
-      console.log("Form submitted successfully:", values);
+      // Snapshot the previous value
+      const previousData = queryClient.getQueryData([QUERY_KEYS.USER_PROFILE]);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData([QUERY_KEYS.USER_PROFILE], {
+        ...previousData,
+        ...newData
+      });
+
+      // Return a context object with the snapshotted value
+      return { previousData };
+    },
+    onError: (err, newData, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      queryClient.setQueryData([QUERY_KEYS.USER_PROFILE], context.previousData);
+      message.error("Failed to update profile. Please try again.");
+    },
+    onSuccess: (updatedData) => {
       message.success("Profile updated successfully");
       onClose();
-    } catch (err) {
-      const errors = {};
-      err.inner.forEach((error) => {
-        errors[error.path] = error.message;
-      });
-      Object.keys(errors).forEach((field) => {
-        form.setFields([
-          {
-            name: field,
-            errors: [errors[field]],
-          },
-        ]);
-      });
-      message.error("Please check your input and try again");
+    },
+    onSettled: () => {
+      // Always refetch after error or success to make sure our optimistic update is correct
+      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USER_PROFILE] });
     }
+  });
+
+  React.useEffect(() => {
+    if (isOpen && userData) {
+      form.setFieldsValue({
+        fullname: userData.lastName + ' ' + userData.firstName,
+        email: userData.email,
+        code: userData.teacherCode,
+        phoneNumber: userData.phone !== "No information" ? userData.phone : "",
+        bod: userData.bod !== "No information" ? userData.bod : "",
+        address: userData.address !== "No information" ? userData.address : "",
+      });
+    }
+  }, [isOpen, userData, form]);
+
+  const handleSubmit = async (values) => {
+    const nameParts = values.fullname.trim().split(' ');
+    const lastName = nameParts[0];
+    const firstName = nameParts.slice(1).join(' ');
+
+    const updateData = {
+      firstName,
+      lastName,
+      email: values.email,
+      phone: values.phoneNumber || "No information",
+      teacherCode: values.code,
+      bod: values.bod || "No information",
+      address: values.address || "No information"
+    };
+
+    updateMutation.mutate(updateData);
   };
 
   return (
@@ -59,13 +94,12 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
         layout="vertical"
         className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4"
         initialValues={{
-          fullname: userData?.fullName || "",
-          email: userData?.email || "",
-          code: userData?.code || "",
-          phoneNumber:
-            userData?.phoneNumber !== "No information" ? userData?.phoneNumber : "",
-          bod: userData?.bod !== "No information" ? userData?.bod : "",
-          address: userData?.address !== "No information" ? userData?.address : "",
+          fullname: "",
+          email: "",
+          code: "",
+          phoneNumber: "",
+          bod: "",
+          address: "",
         }}
       >
         <Form.Item
@@ -75,13 +109,9 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
             </span>
           }
           name="fullname"
-          validateTrigger={["onChange", "onBlur"]}
-          validateFirst
+          rules={[{ required: true, message: 'Please input your fullname!' }]}
         >
-          <Input 
-            className="h-[46px] rounded-lg" 
-            onChange={(e) => validateField("fullname", e.target.value)}
-          />
+          <Input className="h-[46px] rounded-lg" />
         </Form.Item>
 
         <Form.Item
@@ -91,13 +121,12 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
             </span>
           }
           name="email"
-          validateTrigger={["onChange", "onBlur"]}
-          validateFirst
+          rules={[
+            { required: true, message: 'Please input your email!' },
+            { type: 'email', message: 'Please enter a valid email!' }
+          ]}
         >
-          <Input 
-            className="h-[46px] rounded-lg"
-            onChange={(e) => validateField("email", e.target.value)}
-          />
+          <Input className="h-[46px] rounded-lg" disabled />
         </Form.Item>
 
         <Form.Item
@@ -107,50 +136,37 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
             </span>
           }
           name="code"
-          validateTrigger={["onChange", "onBlur"]}
-          validateFirst
+          rules={[{ required: true, message: 'Please input your code!' }]}
         >
-          <Input 
-            className="h-[46px] rounded-lg"
-            onChange={(e) => validateField("code", e.target.value)}
-          />
+          <Input className="h-[46px] rounded-lg" disabled />
         </Form.Item>
 
         <Form.Item
           label="Phone number"
           name="phoneNumber"
-          validateTrigger={["onChange", "onBlur"]}
-          validateFirst
+          rules={[
+            { required: true, message: 'Please input your phone number!' },
+            { pattern: /^[0-9]{10}$/, message: 'Phone number must be 10 digits!' }
+          ]}
         >
-          <Input 
-            className="h-[46px] rounded-lg"
-            onChange={(e) => validateField("phoneNumber", e.target.value)}
-          />
+          <Input className="h-[46px] rounded-lg" />
         </Form.Item>
 
         <Form.Item
           label="Date of Birth"
           name="bod"
-          validateTrigger={["onChange", "onBlur"]}
-          validateFirst
         >
           <Input 
             placeholder="dd/mm/yyyy" 
             className="h-[46px] rounded-lg"
-            onChange={(e) => validateField("bod", e.target.value)}
           />
         </Form.Item>
 
         <Form.Item 
           label="Address" 
           name="address"
-          validateTrigger={["onChange", "onBlur"]}
-          validateFirst
         >
-          <Input 
-            className="h-[46px] rounded-lg"
-            onChange={(e) => validateField("address", e.target.value)}
-          />
+          <Input className="h-[46px] rounded-lg" />
         </Form.Item>
 
         <div className="md:col-span-2 flex justify-end gap-4 mt-6">
@@ -164,6 +180,7 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
             type="primary"
             htmlType="submit"
             className="h-[50px] w-[113px] bg-[#003087] hover:bg-[#002A6B] rounded-full"
+            loading={updateMutation.isPending}
           >
             Update
           </Button>

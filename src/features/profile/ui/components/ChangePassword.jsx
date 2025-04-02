@@ -1,9 +1,49 @@
+// @ts-nocheck
 import React from 'react';
 import { Form, Input, Button, Modal, message } from 'antd';
 import { passwordSchema } from '../../schema/profileButtonsSchema';
+import { changePasswordFromApi } from '../../api';
+import { useMutation } from '@tanstack/react-query';
+import { getUserFromToken } from '../../api';
+import { useQuery } from '@tanstack/react-query';
 
 const ChangePassword = ({ isOpen, onClose }) => {
   const [form] = Form.useForm();
+
+  const { data: userData } = useQuery({
+    queryKey: ['userProfile'],
+    queryFn: getUserFromToken,
+    enabled: isOpen, // Chỉ fetch khi modal mở
+  });
+
+  const changePasswordMutation = useMutation({
+    mutationFn: ({ userId, data }) => changePasswordFromApi(userId, data),
+    onSuccess: () => {
+      message.success("Password changed successfully");
+      form.resetFields();
+      onClose();
+    },
+    onError: (error) => {
+      console.error('Error changing password:', error);
+      if (error.response?.status === 400) {
+        message.error("Incorrect current password");
+        form.setFields([
+          {
+            name: "oldPassword",
+            errors: ["Incorrect current password"],
+          },
+        ]);
+      } else {
+        message.error("Failed to change password. Please try again.");
+      }
+    }
+  });
+
+  React.useEffect(() => {
+    if (!isOpen) {
+      form.resetFields();
+    }
+  }, [isOpen, form]);
 
   const validateField = async (fieldName, value) => {
     try {
@@ -14,72 +54,23 @@ const ChangePassword = ({ isOpen, onClose }) => {
     }
   };
 
-  const verifyCurrentPassword = async (password) => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve(true);
-      }, 500);
-    });
-  };
-
   const handleSubmit = async (values) => {
     try {
-      await passwordSchema.validate(values, { abortEarly: false });
+      // Lấy chỉ các trường cần thiết từ form
+      const { oldPassword, newPassword } = values;
 
-      const isCurrentPasswordValid = await verifyCurrentPassword(
-        values.currentPassword
-      );
-      if (!isCurrentPasswordValid) {
-        form.setFields([
-          {
-            name: "currentPassword",
-            errors: ["Incorrect current password"],
-          },
-        ]);
+      if (!userData?.ID) {
+        message.error("Không thể lấy thông tin người dùng");
         return;
       }
 
-      const changePasswordPromise = new Promise((resolve, reject) => {
-        setTimeout(async () => {
-          try {
-            console.log("Password change submitted:", values);
-            resolve();
-          } catch (error) {
-            reject(new Error("Failed to change password"));
-          }
-        }, 1000);
+      // Gọi API thay đổi mật khẩu
+      changePasswordMutation.mutate({
+        userId: userData.ID,
+        data: { oldPassword, newPassword }
       });
-
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => {
-          reject(new Error("Request timeout"));
-        }, 3000);
-      });
-
-      await Promise.race([changePasswordPromise, timeoutPromise]);
-
-      message.success("Password changed successfully");
-      onClose();
-      form.resetFields();
     } catch (err) {
-      if (err.inner) {
-        const errors = {};
-        err.inner.forEach((error) => {
-          errors[error.path] = error.message;
-        });
-        Object.keys(errors).forEach((field) => {
-          form.setFields([
-            {
-              name: field,
-              errors: [errors[field]],
-            },
-          ]);
-        });
-      } else if (err.message === "Request timeout") {
-        message.error("Request timed out. Please try again.");
-      } else {
-        message.error("Failed to change password. Please try again.");
-      }
+      message.error("Failed to change password. Please try again.");
     }
   };
 
@@ -111,14 +102,14 @@ const ChangePassword = ({ isOpen, onClose }) => {
               Current password <span className="text-red-500">*</span>
             </span>
           }
-          name="currentPassword"
-          validateTrigger={["onChange", "onBlur"]}
-          validateFirst
+          name="oldPassword"
+          rules={[
+            { required: true, message: 'Please enter your current password' }
+          ]}
         >
           <Input.Password
             className="h-[46px] rounded-lg"
             placeholder="Enter your current password"
-            onChange={(e) => validateField("currentPassword", e.target.value)}
           />
         </Form.Item>
 
@@ -129,13 +120,14 @@ const ChangePassword = ({ isOpen, onClose }) => {
             </span>
           }
           name="newPassword"
-          validateTrigger={["onChange", "onBlur"]}
-          validateFirst
+          rules={[
+            { required: true, message: 'Please enter your new password' },
+            { min: 6, message: 'Password must be at least 6 characters' }
+          ]}
         >
           <Input.Password
             className="h-[46px] rounded-lg"
             placeholder="Enter your new password"
-            onChange={(e) => validateField("newPassword", e.target.value)}
           />
         </Form.Item>
 
@@ -146,13 +138,22 @@ const ChangePassword = ({ isOpen, onClose }) => {
             </span>
           }
           name="confirmPassword"
-          validateTrigger={["onChange", "onBlur"]}
-          validateFirst
+          dependencies={['newPassword']}
+          rules={[
+            { required: true, message: 'Please confirm your new password' },
+            ({ getFieldValue }) => ({
+              validator(_, value) {
+                if (!value || getFieldValue('newPassword') === value) {
+                  return Promise.resolve();
+                }
+                return Promise.reject(new Error('The two passwords do not match'));
+              },
+            }),
+          ]}
         >
           <Input.Password
             className="h-[46px] rounded-lg"
             placeholder="Confirm your new password"
-            onChange={(e) => validateField("confirmPassword", e.target.value)}
           />
         </Form.Item>
 
@@ -167,6 +168,7 @@ const ChangePassword = ({ isOpen, onClose }) => {
             type="primary"
             htmlType="submit"
             className="h-[46px] w-[113px] bg-[#003087] hover:bg-[#002A6B] rounded-full"
+            loading={changePasswordMutation.isPending}
           >
             Update
           </Button>
