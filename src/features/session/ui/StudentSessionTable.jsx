@@ -5,7 +5,6 @@ import {
   useSessionParticipants,
   useStudentParticipants,
 } from "../hooks/useSession";
-import axios from "axios";
 
 const StudentSessionTable = ({
   id,
@@ -23,7 +22,6 @@ const StudentSessionTable = ({
     type === TableType.SESSION
       ? useSessionParticipants(id)
       : useStudentParticipants(id);
-
       const processedData = useMemo(() => {
         return (data?.data || []).map((record) => ({
           ...record,
