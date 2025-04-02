@@ -10,7 +10,7 @@ const PrivateRoute = [
     breadcrumb: "Home",
     children: [
       {
-        path: "",
+        index: true,
         element: <div>Dashboard</div>,
         breadcrumb: "Dashboard",
       },
@@ -19,9 +19,8 @@ const PrivateRoute = [
         breadcrumb: "Class Management",
         children: [
           {
-            path: "",
+            index: true,
             element: <div>Class Management</div>,
-            breadcrumb: "",
           },
           {
             path: "detail",
@@ -41,19 +40,21 @@ const PrivateRoute = [
                 path: "student",
                 children: [
                   {
-                  path:"",
-                  children: [
-                    {
-                      path:"",
-                      element: <div>Student infor</div>,
-                    },
-                    {
-                      path:"grade",
-                      element: <div>Student Grade</div>,
-                    },
-                  ]
-                },
-               ],
+                    path: ":studentId",
+                    breadcrumb: ":studentId",
+                    children: [
+                      {
+                        index: true,
+                        element: <div>Student Detail</div>,
+                      },
+                      {
+                        path: "grade",
+                        element: <div>Student Grade</div>,
+                        breadcrumb: "Grade",
+                      },
+                    ],
+                  },
+                ],
                 breadcrumb: "Student Detail",
               },
             ],
