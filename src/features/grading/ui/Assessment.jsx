@@ -6,8 +6,10 @@ import ScoreTabs from "./Navigation";
 import AssessmentComponent from "./assessmentScores";
 export const Assessment = () => {
   return (
-    <div className="w-screen h-full px-[6rem]">
-      <div className="py-[2.3125rem]"><ScoreTabs/></div>
+    <div className="w-full">
+      <div className="py-[2.3125rem]">
+        <ScoreTabs />
+      </div>
       <div className="flex flex-col gap-6 w-full">
         <div className="flex gap-10 relative">
           {/* map data here */}
