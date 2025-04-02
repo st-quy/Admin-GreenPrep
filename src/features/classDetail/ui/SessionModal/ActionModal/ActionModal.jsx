@@ -20,16 +20,19 @@ import {
   useGenerateSessionKeyMutation,
 } from "@features/classDetail/hooks/useClassDetail";
 import dayjs from "dayjs";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ActionModal = ({
   isEdit = false,
   initialData = null,
   classId = null,
 }) => {
+  const queryClient = useQueryClient();
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const generateKey = useGenerateSessionKeyMutation();
+  const createSession = useCreateSessionMutation();
 
   const showModal = () => {
     setOpen(true);
@@ -45,46 +48,35 @@ const ActionModal = ({
     form.setFieldsValue({ sessionKey: data.key });
   };
 
-  const onCreate = () => {
-    // GP-138 Todo: Add session creation logic here
-    // form
-    //   .validateFields()
-    //   .then((values) => {
-    //     const sessionData = {
-    //       sessionName: values.sessionName,
-    //       sessionKey: values.sessionKey,
-    //       startTime: values.dateRange
-    //         ? values.dateRange[0].toISOString()
-    //         : null,
-    //       endTime: values.dateRange ? values.dateRange[1].toISOString() : null,
-    //       examSet: values.examSet,
-    //     };
-    //     console.log(JSON.stringify(sessionData));
-    //   })
-    //   .catch((errorInfo) => {
-    //     console.error("Validation Failed:", errorInfo);
-    //   });
+  const onCreate = async () => {
+    try {
+      // Validate form fields
+      const values = await form.validateFields();
+
+      // Prepare session data
+      const sessionData = {
+        sessionName: values.sessionName,
+        sessionKey: values.sessionKey,
+        startTime: values.dateRange ? values.dateRange[0].toISOString() : null,
+        endTime: values.dateRange ? values.dateRange[1].toISOString() : null,
+        examSet: values.examSet,
+        ClassID: classId,
+      };
+
+      await ClassDetailApi.createSession(classId, JSON.stringify(sessionData));
+      queryClient.invalidateQueries({ queryKey: ["classDetail"] });
+      message.success("Session created successfully!");
+      setOpen(false);
+      form.resetFields();
+    } catch (error) {
+      console.error("Error creating session:", error);
+      message.error("Failed to create session. Please try again.");
+    } finally {
+      setConfirmLoading(false);
+    }
   };
 
-  const onUpdate = () => {
-    form
-      .validateFields()
-      .then((values) => {
-        const sessionData = {
-          sessionName: values.sessionName,
-          sessionKey: values.sessionKey,
-          startTime: values.dateRange
-            ? values.dateRange[0].toISOString()
-            : null,
-          endTime: values.dateRange ? values.dateRange[1].toISOString() : null,
-          examSet: values.examSet,
-        };
-        console.log(JSON.stringify(sessionData));
-      })
-      .catch((errorInfo) => {
-        console.error("Validation Failed:", errorInfo);
-      });
-  };
+  const onUpdate = async () => {};
 
   return (
     <>
@@ -203,7 +195,7 @@ const ActionModal = ({
                   Cancel
                 </Button>
                 <Button
-                  onClick={isEdit ? onCreate : onUpdate}
+                  onClick={isEdit ? onUpdate : onCreate}
                   htmlType="submit"
                   className="h-[52px] w-[124px] rounded-[50px] bg-[#003087] text-white lg:text-[16px] md:text-[14px]"
                 >

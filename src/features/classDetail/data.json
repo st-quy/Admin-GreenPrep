@@ -1,8 +1,8 @@
 {
   "sessionName": "SESSION LONG",
-  "sessionKey": "ABCDEF",
-  "startTime": "2025-04-01T17:00:00.000Z",
-  "endTime": "2025-04-03T17:00:00.000Z",
-  "examSet": "math",
-  "ClassID": null
+  "sessionKey": "CCPIOPWStQ",
+  "startTime": "2025-04-03T17:00:00.000Z",
+  "endTime": "2025-04-18T17:00:00.000Z",
+  "examSet": "history",
+  "ClassID": "04573d32-e1da-4aa3-b02d-3a101c33d3bb"
 }
