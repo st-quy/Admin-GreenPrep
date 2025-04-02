@@ -91,7 +91,7 @@ const ActionModal = ({
             >
               <Space.Compact className="!w-full">
                 <Input placeholder="Session Key" className="!h-[46px] " />
-                <Button className="!h-[46px]" onClick={handleGenerateKey}>
+                <Button className="!h-[46px]">
                   <img src={GenerateIcon} alt="Generate Icon" />
                 </Button>
               </Space.Compact>
