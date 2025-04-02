@@ -23,6 +23,12 @@ dist-ssr
 *.sln
 *.sw?
 .env
+<<<<<<< HEAD
 package-lock.json
 yarn.lock
 .yarn.lock
+=======
+*.package-lock.json
+*.yarn.lock
+.qodo
+>>>>>>> e685fe3d7299bc06d5553e6bd1af7974e5ad9f6b

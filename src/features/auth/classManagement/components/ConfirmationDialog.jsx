@@ -15,6 +15,10 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
         notification.success({
           message: "Class deleted successfully",
           description: "The class has been deleted.",
+          placement: "topRight",
+          style: {
+            borderRadius: "8px",
+          },
         });
         onClose();
       } catch (error) {
@@ -22,7 +26,11 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
           message: "Error deleting class",
           description:
             "An error occurred while deleting the class. Please try again.",
-          icon: <CloseCircleOutlined style={{ color: "#ff4d4f" }} />, // Biểu tượng dấu X màu đỏ
+          icon: <CloseCircleOutlined style={{ color: "#ff4d4f" }} />,
+          placement: "topRight",
+          style: {
+            borderRadius: "8px",
+          },
         });
         console.error("Error deleting class:", error);
       } finally {

@@ -5,13 +5,11 @@ import StudentMonitoring from "@features/session/ui/StudentModering";
 import StudentSessionTable from "@/features/session/ui/StudentSessionTable.jsx";
 import SearchInput from "@/app/components/SearchInput.jsx";
 import Details from "@pages/SessionManagement/Details/Details.jsx";
-import { FilterFilled } from "@ant-design/icons";
-import { TableType } from "@features/session/constraint/TableEnum";
 import { useParams, useNavigate } from "react-router-dom";
 
 const SessionInformation = ({ type }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
-  const { id } = useParams();
+  const { id } = useParams(); 
   const [pendingCount, setPendingCount] = useState(0);
   const navigate = useNavigate();
 
