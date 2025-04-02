@@ -55,7 +55,7 @@ export const Assessment = ({ isSpeaking, data }) => {
         <div className="w-[80%] h-fit shadow-md rounded-lg">
           <QuestionAnswer isSpeaking={isSpeaking} fileName="LoL" speakingPartFour={partFourQuestions} currentPart={activeTab} currentQuestionIndex={0} />
         </div>
-        <div className="w-[20%] h-[15.9375rem] shadow-md sticky top-0 rounded-lg">
+        <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
           <ScoreCommentForm />
         </div>
       </div >
@@ -66,7 +66,7 @@ export const Assessment = ({ isSpeaking, data }) => {
         <div className="w-[80%] h-fit shadow-md rounded-lg">
           <QuestionAnswer isSpeaking={isSpeaking} fileName="haha" quesntionsAnswerData={question} currentPart={activeTab} currentQuestionIndex={index} />
         </div>
-        <div className="w-[20%] h-[15.9375rem] shadow-md sticky top-0 rounded-lg">
+        <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
           <ScoreCommentForm />
         </div>
       </div>
