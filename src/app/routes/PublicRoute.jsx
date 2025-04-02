@@ -15,13 +15,17 @@ import LoginPage from "../../features/auth/ui/LoginForm";
           {
             path: "forgot-password",
             element: <ForgotPasswordForm/>,
-          },   
+          },
+          {
+            path: "reset-password",
+            element: <ForgotPasswordForm />,
+          },
           {
             path: "reset-password-success",
-        element: <ResetPasswordSuccessfullyPage />,
+            element: <ResetPasswordSuccessfullyPage />,
+          }
+        ]
       }
     ]
-  }
-]
 
 export default PublicRoute;

@@ -5,6 +5,7 @@ import { jwtDecode } from "jwt-decode";
 export const AUTH_QUERY_KEYS = {
   USER_LOGIN: 'userLogin',
   USER_LOGOUT: 'userLogout',
+  FORGOT_PASSWORD: 'forgotPassword',
 };
 
 export const AuthApi = {
@@ -79,5 +80,34 @@ export const AuthApi = {
       localStorage.removeItem('refreshToken');
       throw error;
     }
-  }
+  },
+  
+  forgotPassword: async (email) => {
+    try {
+      const response = await axiosInstance.post(
+        "https://dev-api-greenprep.onrender.com/api/users/forgot-password",
+        { email }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Forgot password error:", error);
+      throw error;
+    }
+  },
+
+  resetPassword: async (token, newPassword) => {
+    try {
+      const response = await axiosInstance.post(
+        "https://dev-api-greenprep.onrender.com/api/users/reset-password",
+        { 
+          token,
+          newPassword
+        }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Reset password error:", error);
+      throw error;
+    }
+  },
 };

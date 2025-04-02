@@ -51,6 +51,7 @@ const getAuthConfig = () => {
 
 export const getDataFromApi = async (userId) => {
   try {
+    console.log("Fetching data for userId:", userId);
     const config = getAuthConfig();
     const response = await axios.get(`${API_URL}/users/${userId}`, config);
     return response.data;
