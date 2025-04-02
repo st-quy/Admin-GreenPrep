@@ -3,7 +3,9 @@ import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
 import SessionLayout from "../../pages/SessionManagement/SessionLayout.jsx";
 import SessionInformation from "@pages/SessionManagement/SessionInformation.jsx";
 import { TableType } from "@features/session/constraint/TableEnum.js";
-import ClassDetail from "@pages/class-detail/ClassDetail.jsx";
+import ClassManagement from "@pages/ClassManagement/classManagement.jsx";
+import Dashboard from "@pages/Dashboard/Dashboard.jsx";
+import ClassDetail from "@pages/ClassDetail/ClassDetail.jsx";
 const PrivateRoute = [
   {
     path: "/",
@@ -12,7 +14,7 @@ const PrivateRoute = [
     children: [
       {
         index: true,
-        element: <div>Dashboard</div>,
+        element: <Dashboard />,
         breadcrumb: "Dashboard",
       },
       {
@@ -21,10 +23,10 @@ const PrivateRoute = [
         children: [
           {
             index: true,
-            element: <div>Class Management</div>,
+            element: <ClassManagement />,
           },
           {
-            path: "class-detail/:id",
+            path: ":id",
             element: <ClassDetail />,
             breadcrumb: "Class Detail",
           },
