@@ -38,7 +38,19 @@ export const QuestionAnswer = ({
                 key={index}
                 src={image || ""}
                 alt="speaking image"
-                className="w-[35.8125rem]"
+                className="w-1/2"
+              />
+            ))}
+          </div>
+        )}
+        {speakingPartFour[0]?.ImageKeys?.length > 0 && (
+          <div className="mt-3 flex gap-1 flex-wrap">
+            {speakingPartFour[0]?.ImageKeys?.map((image, index) => (
+              <img
+                key={index}
+                src={image || ""}
+                alt="speaking image"
+                className="w-1/2"
               />
             ))}
           </div>

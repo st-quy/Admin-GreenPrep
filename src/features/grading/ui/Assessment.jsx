@@ -27,7 +27,6 @@ export const Assessment = ({ isSpeaking, data }) => {
       const parts = data.data.Parts;
       if (parts && parts.length > 0) {
         const currentPart = `PART ${activeTab}`;
-        console.log(currentPart);
         const currentPartIndex = parts.findIndex((p) =>
           p.Content.toLowerCase().includes(currentPart.toLowerCase())
         );
@@ -38,7 +37,6 @@ export const Assessment = ({ isSpeaking, data }) => {
     }
   };
 
-
   const handleSaveAsDraft = () => {
     // Future functionality: Save score as draft to database
     console.log("Saving score as draft:", totalScore);
@@ -48,6 +46,33 @@ export const Assessment = ({ isSpeaking, data }) => {
     // Future functionality: Submit final score to database
     console.log("Submitting final score:", totalScore);
   };
+
+  const handleDisplayPart = () => {
+    if (!partData) return "";
+    if (isSpeaking && activeTab == "4") {
+      const partFourQuestions = partData.Questions || [];
+      return <div className="flex gap-10 relative" >
+        <div className="w-[80%] h-fit shadow-md rounded-lg">
+          <QuestionAnswer isSpeaking={isSpeaking} fileName={`${isSpeaking ? "speaking" : "writing"}_part_${activeTab}`} speakingPartFour={partFourQuestions} />
+        </div>
+        <div className="w-[20%] h-[15.9375rem] shadow-md sticky top-0 rounded-lg">
+          <ScoreCommentForm />
+        </div>
+      </div >
+    }
+    return partData.Questions?.map((question, index) => (
+      <div className="flex gap-10 relative" key={index}>
+        <div className="w-[80%] h-fit shadow-md rounded-lg">
+          <QuestionAnswer isSpeaking={isSpeaking} fileName={`${isSpeaking ? "speaking" : "writing"}_part_${activeTab}`} quesntionsAnswerData={question} />
+        </div>
+        <div className="w-[20%] h-[15.9375rem] shadow-md sticky top-0 rounded-lg">
+          <ScoreCommentForm />
+        </div>
+      </div>
+    ));
+
+  }
+
   return (
     <div className="w-full">
       <div className="py-[2.3125rem]">
@@ -113,23 +138,15 @@ export const Assessment = ({ isSpeaking, data }) => {
         </div>
       </div>
       <div className="flex flex-col gap-6 w-full">
-        <Card
+        {!isSpeaking && partData && <Card
           variant="borderless"
           className="rounded-lg overflow-hidden w-[78%] px-[43px] py-[41px]"
           styles={{ body: { padding: 0 } }}
         >
-          asdasdasasdasdsa
-        </Card>
-        <div className="flex gap-10 relative">
-          {/* map data here */}
-          <div className="w-[80%] h-fit shadow-md rounded-lg">
-            <QuestionAnswer isSpeaking={true} fileName={"test"} />
-          </div>
-          <div className="w-[20%] h-[15.9375rem] shadow-md sticky top-0 rounded-lg">
-            {/* put component of score here */}
-            <ScoreCommentForm />
-          </div>
-        </div>
+          <div>{partData.Content || ""}</div>
+          <div className="text-gray-500 font-bold">{partData.SubContent || ""}</div>
+        </Card>}
+        {handleDisplayPart()}
       </div>
     </div>
   );
