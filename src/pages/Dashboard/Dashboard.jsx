@@ -13,12 +13,9 @@ import {
 } from "antd";
 import { DownloadOutlined, SearchOutlined } from "@ant-design/icons";
 import { fetchClassesWithSessionCount } from "../../features/auth/dashboard/services/classService";
-import {
-  fetchSessions,
-  getSessionStatusStatistics,
-} from "../../features/auth/dashboard/services/sessionService";
 import { fetchTotalUsers } from "../../features/auth/dashboard/services/userService";
 import { exportToPDF } from "../../features/auth/dashboard/services/pdfService";
+import axios from "axios";
 
 const { Title, Text } = Typography;
 
@@ -65,33 +62,57 @@ const StatCard = ({
   </div>
 );
 
-// Column Chart Component (Simplified version)
+// Modern Column Chart Component
 const ColumnChart = ({ data, title }) => {
+  const maxValue = Math.max(...data.map((item) => item.value));
+  const colors = {
+    bar: "#6366F1",
+    text: "#4B5563",
+    title: "#111827",
+    background: "#F9FAFB",
+    border: "#E5E7EB",
+  };
+
   return (
-    <Card title={title} className="shadow-sm" bordered={false}>
-      <div className="p-2 md:p-4">
+    <Card
+      title={
+        <Text strong className="text-lg" style={{ color: colors.title }}>
+          {title}
+        </Text>
+      }
+      className="shadow-sm hover:shadow-md transition-shadow duration-300"
+      bodyStyle={{ padding: "1.5rem" }}
+      bordered={false}
+    >
+      <div className="space-y-4">
         {data.length === 0 ? (
-          <div className="text-center text-gray-500 my-4">
+          <div className="text-center py-8">
             <Text type="secondary">No session data available</Text>
           </div>
         ) : (
-          <div className="flex flex-wrap">
+          <div className="space-y-4">
             {data.map((item, index) => (
-              <div key={index} className="mb-4 w-full sm:w-1/2 px-2">
-                <Text strong className="mb-1 block">
-                  {item.type}
-                </Text>
-                <div className="flex items-center">
+              <div key={index} className="relative">
+                <div className="flex items-center justify-between mb-2">
+                  <Text
+                    strong
+                    className="text-sm"
+                    style={{ color: colors.text }}
+                  >
+                    {item.type}
+                  </Text>
+                  <Text className="text-sm" style={{ color: colors.text }}>
+                    {item.value}
+                  </Text>
+                </div>
+                <div className="relative h-4 w-full bg-gray-100 rounded-full overflow-hidden">
                   <div
-                    className="mr-2 h-5 rounded-sm"
+                    className="absolute top-0 left-0 h-full rounded-full transition-all duration-500 ease-out"
                     style={{
-                      width: `${Math.min(item.value * 10, 80)}%`,
-                      backgroundColor: "#6a5acd",
+                      width: `${(item.value / maxValue) * 100}%`,
+                      backgroundColor: colors.bar,
+                      opacity: 0.9 - index * 0.1,
                     }}
-                  ></div>
-                  <Badge
-                    count={item.value}
-                    style={{ backgroundColor: "#6a5acd" }}
                   />
                 </div>
               </div>
@@ -103,38 +124,86 @@ const ColumnChart = ({ data, title }) => {
   );
 };
 
-// Status Chart Component
+// Modern Status Chart Component
 const StatusChart = ({ data, title }) => {
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+  const colors = {
+    NOT_STARTED: "#6366F1",
+    ON_GOING: "#10B981",
+    COMPLETED: "#F59E0B",
+    CANCELLED: "#EF4444",
+  };
+
   return (
-    <Card title={title} className="shadow-sm" bordered={false}>
-      <div className="p-2 md:p-4">
-        {data.length === 0 ? (
-          <div className="text-center text-gray-500 my-4">
-            <Text type="secondary">No status data available</Text>
-          </div>
-        ) : (
-          <div>
+    <Card
+      title={
+        <Text strong className="text-lg">
+          {title}
+        </Text>
+      }
+      className="shadow-sm hover:shadow-md transition-shadow duration-300"
+      bodyStyle={{ padding: "1.5rem" }}
+      bordered={false}
+    >
+      {data.length === 0 ? (
+        <div className="text-center py-8">
+          <Text type="secondary">No status data available</Text>
+        </div>
+      ) : (
+        <div className="space-y-6">
+          <div className="grid grid-cols-2 gap-4">
             {data.map((item, index) => (
-              <div key={index} className="mb-4">
-                <div className="flex justify-between mb-1">
-                  <Text>{item.type}</Text>
-                  <Text>{item.value}</Text>
+              <div
+                key={index}
+                className="bg-gray-50 rounded-lg p-4 hover:shadow-sm transition-shadow duration-300"
+              >
+                <div className="flex items-center space-x-2 mb-2">
+                  <div
+                    className="w-3 h-3 rounded-full"
+                    style={{ backgroundColor: colors[item.type] || "#6366F1" }}
+                  />
+                  <Text strong className="text-sm">
+                    {item.type}
+                  </Text>
                 </div>
-                <Progress
-                  percent={Math.min(item.value * 10, 100)}
-                  showInfo={false}
-                  strokeColor="#6a5acd"
-                  trailColor="#f0f0f0"
-                  strokeWidth={5}
-                />
+                <div className="space-y-1">
+                  <Text className="text-2xl font-semibold">{item.value}</Text>
+                  <Text className="text-xs text-gray-500">
+                    {Math.round((item.value / total) * 100)}% of total
+                  </Text>
+                </div>
+                <div className="mt-2 h-1 w-full bg-gray-200 rounded-full overflow-hidden">
+                  <div
+                    className="h-full rounded-full transition-all duration-500 ease-out"
+                    style={{
+                      width: `${(item.value / total) * 100}%`,
+                      backgroundColor: colors[item.type] || "#6366F1",
+                    }}
+                  />
+                </div>
               </div>
             ))}
           </div>
-        )}
-      </div>
+          <div className="pt-4 border-t border-gray-100">
+            <Text className="text-sm text-gray-500">
+              Total Sessions: {total}
+            </Text>
+          </div>
+        </div>
+      )}
     </Card>
   );
 };
+
+// Custom Table Header Cell Component
+const TableHeaderCell = ({ children, ...props }) => (
+  <th
+    {...props}
+    className="bg-gray-50 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
+  >
+    {children}
+  </th>
+);
 
 const Dashboard = () => {
   const [classes, setClasses] = useState([]);
@@ -145,28 +214,76 @@ const Dashboard = () => {
   const [sessionStats, setSessionStats] = useState([]);
   const [classSessionData, setClassSessionData] = useState([]);
 
+  // Fetch all sessions
+  const fetchAllSessions = async () => {
+    try {
+      const response = await axios.get(
+        "https://dev-api-greenprep.onrender.com/api/sessions/all"
+      );
+      return response.data.data;
+    } catch (error) {
+      console.error("Error fetching sessions:", error);
+      return [];
+    }
+  };
+
+  // Process sessions to get statistics
+  const processSessionStats = (sessions) => {
+    const statusCounts = sessions.reduce((acc, session) => {
+      acc[session.status] = (acc[session.status] || 0) + 1;
+      return acc;
+    }, {});
+
+    return Object.entries(statusCounts).map(([type, value]) => ({
+      type,
+      value,
+    }));
+  };
+
+  // Process class session data
+  const processClassSessionData = (sessions) => {
+    const classSessionCounts = sessions.reduce((acc, session) => {
+      const className = session.Classes.className;
+      acc[className] = (acc[className] || 0) + 1;
+      return acc;
+    }, {});
+
+    return Object.entries(classSessionCounts).map(([type, value]) => ({
+      type,
+      value,
+    }));
+  };
+
   // Fetch data from API
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Fetch classes with session count
-        const classData = await fetchClassesWithSessionCount();
-        setClasses(classData);
+        // Fetch all sessions
+        const sessionsData = await fetchAllSessions();
+        setSessions(sessionsData);
 
-        // Prepare data for class session chart
-        const chartData = classData.map((cls) => ({
-          type: cls.className,
-          value: cls.sessionCount || 0,
+        // Process sessions to get unique classes
+        const uniqueClasses = Array.from(
+          new Set(sessionsData.map((session) => session.Classes))
+        ).map((classInfo) => ({
+          ...classInfo,
+          sessionCount: sessionsData.filter(
+            (s) => s.Classes.ID === classInfo.ID
+          ).length,
         }));
+        setClasses(uniqueClasses);
+
+        // Process session statistics
+        const stats = processSessionStats(sessionsData);
+        setSessionStats(stats);
+
+        // Process class session data
+        const chartData = processClassSessionData(sessionsData);
         setClassSessionData(chartData);
 
         // Fetch total users
         const users = await fetchTotalUsers();
         setTotalUsers(users);
-
-        // Fetch session statistics
-        const stats = await getSessionStatusStatistics();
-        setSessionStats(stats);
 
         setLoading(false);
       } catch (error) {
@@ -179,19 +296,62 @@ const Dashboard = () => {
   }, []);
 
   // Calculate total sessions
-  const totalSessions = classes.reduce((sum, cls) => {
-    return sum + (cls.sessionCount || 0);
-  }, 0);
+  const totalSessions = sessions.length;
 
-  // Fetch session data for a specific class
-  const loadSessions = async (classId) => {
-    try {
-      const data = await fetchSessions(classId);
-      setSessions(data);
-    } catch (error) {
-      console.error("Error fetching sessions:", error);
-    }
+  // Status Badge Component
+  const StatusBadge = ({ count }) => {
+    let color = count > 5 ? "#10B981" : count > 0 ? "#6366F1" : "#9CA3AF";
+    return (
+      <div className="inline-flex items-center">
+        <span
+          className="w-2 h-2 rounded-full mr-2"
+          style={{ backgroundColor: color }}
+        />
+        <span
+          className="px-2.5 py-0.5 rounded-full text-sm font-medium"
+          style={{
+            backgroundColor: `${color}15`,
+            color: color,
+          }}
+        >
+          {count || 0}
+        </span>
+      </div>
+    );
   };
+
+  // Action Button Component
+  const ActionButton = ({ record }) => (
+    <div className="flex items-center gap-2">
+      <Button
+        type="primary"
+        ghost
+        size="small"
+        className="flex items-center gap-1 hover:scale-105 transition-transform"
+      >
+        <svg
+          className="w-4 h-4"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+          />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+          />
+        </svg>
+        Class Details
+      </Button>
+    </div>
+  );
 
   // Columns for class table
   const classColumns = [
@@ -199,14 +359,44 @@ const Dashboard = () => {
       title: "Class Code",
       dataIndex: "className",
       key: "className",
-      render: (text) => <Text strong>{text}</Text>,
+      render: (text, record) => (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-lg bg-indigo-50 flex items-center justify-center">
+            <span className="text-indigo-600 font-semibold">
+              {text.slice(0, 2)}
+            </span>
+          </div>
+          <div>
+            <Text strong className="text-gray-900">
+              {text}
+            </Text>
+            <Text className="text-gray-500 text-sm block">
+              ID: {record.ID.slice(0, 8)}
+            </Text>
+          </div>
+        </div>
+      ),
     },
     {
       title: "Created Date",
       dataIndex: "createdAt",
       key: "createdAt",
       render: (text) => (
-        <Text>{new Date(text).toLocaleDateString("en-US")}</Text>
+        <div className="flex flex-col">
+          <Text strong className="text-gray-900">
+            {new Date(text).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </Text>
+          <Text className="text-gray-500 text-sm">
+            {new Date(text).toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </Text>
+        </div>
       ),
     },
     {
@@ -214,29 +404,33 @@ const Dashboard = () => {
       dataIndex: "updatedAt",
       key: "updatedAt",
       render: (text) => (
-        <Text>{new Date(text).toLocaleDateString("en-US")}</Text>
+        <div className="flex flex-col">
+          <Text strong className="text-gray-900">
+            {new Date(text).toLocaleDateString("en-US", {
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+            })}
+          </Text>
+          <Text className="text-gray-500 text-sm">
+            {new Date(text).toLocaleTimeString("en-US", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </Text>
+        </div>
       ),
     },
     {
       title: "Total Sessions",
       dataIndex: "sessionCount",
       key: "sessionCount",
-      render: (text) => (
-        <Badge
-          count={text || 0}
-          showZero
-          style={{ backgroundColor: text ? "#1890ff" : "#d9d9d9" }}
-        />
-      ),
+      render: (text) => <StatusBadge count={text} />,
     },
     {
       title: "Action",
       key: "action",
-      render: (_, record) => (
-        <Button type="primary" ghost size="small" className="md:size-middle">
-          Class Details
-        </Button>
-      ),
+      render: (_, record) => <ActionButton record={record} />,
     },
   ];
 
@@ -306,15 +500,31 @@ const Dashboard = () => {
         </Col>
       </Row>
 
-      {/* Student Performance Section */}
+      {/* Charts Section */}
+      <Row gutter={[16, 16]} className="mb-6">
+        <Col xs={24} lg={12}>
+          <StatusChart data={sessionStats} title="Session Status Overview" />
+        </Col>
+        <Col xs={24} lg={12}>
+          <ColumnChart
+            data={classSessionData}
+            title="Sessions Distribution by Class"
+          />
+        </Col>
+      </Row>
+
+      {/* Class List Section */}
       <div className="mb-6">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 md:mb-2 gap-3 md:gap-0">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
           <div>
-            <Title level={4} className="text-lg md:text-xl lg:text-2xl m-0">
+            <Title
+              level={4}
+              className="text-xl font-semibold m-0 text-gray-900"
+            >
               Class List
             </Title>
-            <Text className="text-gray-500 text-sm md:text-base">
-              View and manage all available classes.
+            <Text className="text-gray-500 mt-1">
+              View and manage all available classes
             </Text>
           </div>
           <div className="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
@@ -322,20 +532,24 @@ const Dashboard = () => {
               type="primary"
               onClick={() => exportToPDF(classes)}
               icon={<DownloadOutlined />}
-              className="w-full sm:w-auto"
+              className="flex items-center justify-center gap-2 hover:scale-105 transition-transform"
             >
               Export as PDF
             </Button>
             <Input
               placeholder="Search by class code"
-              prefix={<SearchOutlined />}
-              className="w-full sm:w-auto md:w-[220px]"
+              prefix={<SearchOutlined className="text-gray-400" />}
+              className="w-full sm:w-64 hover:border-indigo-400 focus:border-indigo-400 transition-colors"
               onChange={(e) => setSearchText(e.target.value)}
+              allowClear
             />
           </div>
         </div>
 
-        <Card className="shadow-sm overflow-x-auto" bordered={false}>
+        <Card
+          className="shadow-sm hover:shadow-md transition-shadow duration-300 overflow-hidden"
+          bordered={false}
+        >
           <Table
             columns={classColumns}
             dataSource={filteredClasses}
@@ -343,13 +557,27 @@ const Dashboard = () => {
             pagination={{
               pageSize: 10,
               showSizeChanger: true,
-              size: "small",
-              showTotal: (total) =>
-                `Showing 1-${Math.min(total, 10)} of ${total}`,
+              showTotal: (total) => (
+                <Text className="text-gray-500">
+                  Showing{" "}
+                  <span className="font-medium text-gray-900">
+                    {Math.min(total, 10)}
+                  </span>{" "}
+                  of <span className="font-medium text-gray-900">{total}</span>{" "}
+                  classes
+                </Text>
+              ),
             }}
             className="custom-table"
             scroll={{ x: "max-content" }}
-            size="middle"
+            onRow={(record) => ({
+              className: "hover:bg-gray-50 transition-colors cursor-pointer",
+            })}
+            components={{
+              header: {
+                cell: TableHeaderCell,
+              },
+            }}
           />
         </Card>
       </div>

@@ -4,6 +4,7 @@ import UpdateClass from "../../features/auth/classManagement/updateClass";
 import ConfirmationDialog from "../../features/auth/classManagement/components/ConfirmationDialog";
 import useConfirmDelete from "../../features/auth/classManagement/hooks/useConfirmDelete";
 import SearchBar from "../../shared/components/SearchBar";
+// import Notification from "../../shared/components/Notification/Notification";
 import {
   fetchClasses,
   deleteClass,
@@ -69,6 +70,7 @@ const ClassManagement = () => {
 
   const handleAddClass = (newClass) => {
     setClasses((prevClasses) => [...prevClasses, newClass]);
+    // Notification.success("Class created successfully");
   };
 
   const handleUpdateClass = (updatedClass) => {
@@ -77,6 +79,7 @@ const ClassManagement = () => {
         cls.id === updatedClass.id ? { ...cls, ...updatedClass } : cls
       )
     );
+    // Notification.success("Class updated successfully");
   };
 
   const handleDelete = (id) => {
@@ -88,8 +91,10 @@ const ClassManagement = () => {
       await deleteClass(selectedId);
       setClasses(classes.filter((cls) => cls.id !== selectedId));
       closeDeleteDialog();
+      // Notification.success("Class deleted successfully");
     } catch (error) {
       console.error("Error deleting class:", error);
+      // Notification.error("Failed to delete class");
     }
   };
 
