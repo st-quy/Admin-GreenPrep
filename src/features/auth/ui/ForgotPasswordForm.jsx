@@ -45,8 +45,7 @@ const ForgotPasswordForm = () => {
   const resetPasswordMutation = useMutation({
     mutationFn: (data) => AuthApi.resetPassword(data.token, data.password),
     onSuccess: () => {
-      message.success("Your password has been successfully changed.");
-      navigate("/login");
+      navigate("/reset-password-success");
     },
     onError: (error) => {
       message.error(
