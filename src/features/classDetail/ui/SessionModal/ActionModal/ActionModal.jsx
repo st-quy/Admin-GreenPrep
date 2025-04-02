@@ -15,10 +15,7 @@ const { RangePicker } = DatePicker;
 import { yupSync } from "@shared/lib/utils";
 import { sessionSchema } from "@features/classDetail/validate";
 import { ClassDetailApi } from "@features/classDetail/classAPI";
-import {
-  useCreateSessionMutation,
-  useGenerateSessionKeyMutation,
-} from "@features/classDetail/hooks/useClassDetail";
+import { useGenerateSessionKeyMutation } from "@features/classDetail/hooks/useClassDetail";
 import dayjs from "dayjs";
 import { useQueryClient } from "@tanstack/react-query";
 
@@ -32,7 +29,6 @@ const ActionModal = ({
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const generateKey = useGenerateSessionKeyMutation();
-  const createSession = useCreateSessionMutation();
 
   const showModal = () => {
     setOpen(true);
