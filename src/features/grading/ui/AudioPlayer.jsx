@@ -19,6 +19,18 @@ export default function AudioPlayer({
   const sliderRef = useRef(null);
 
   useEffect(() => {
+    setIsPlaying(false);
+    setCurrentTime(0);
+    setDuration(0);
+
+    // If audio was playing, make sure it stops
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
+  }, [audioUrl]);
+
+  useEffect(() => {
     const audio = audioRef.current;
 
     const setAudioData = () => {
