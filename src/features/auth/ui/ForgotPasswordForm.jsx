@@ -1,41 +1,79 @@
-import React, { useState } from "react";
-import { Form, Button, Input, message } from "antd";
-import { EyeOutlined, EyeInvisibleOutlined, LeftOutlined,MailOutlined } from "@ant-design/icons";
-import { Link,useNavigate } from "react-router-dom";
-import { ForgotPw, Logo } from "@assets/images";
-import { emailSchema, passwordSchema, confirmPasswordSchema } from "../schemas/forgotPasswordSchema";
-import { yupSync } from "@shared/lib/utils/yupSync";
+// @ts-nocheck
+
+import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
+import { ForgotPw } from "@assets/images";
+import { useMutation } from "@tanstack/react-query";
+import { Button, Form, Input, message } from "antd";
+import { useEffect, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { AuthApi } from "../api";
+import { emailSchema } from "../schemas/forgotPasswordSchema";
 
 const ForgotPasswordForm = () => {
+  const [form] = Form.useForm();
+  const [searchParams] = useSearchParams();
   const [isReset, setIsReset] = useState(false);
   const navigate = useNavigate();
+  const resetToken = searchParams.get("token");
 
-  const handleEmailSubmit = async (values) => {
-    try {
-      console.log("Reset password for:", values.email);
-      await new Promise((resolve) => setTimeout(resolve, 300));
+  useEffect(() => {
+    if (location.pathname === "/reset-password") {
+      if (!resetToken) {
+        message.error("Invalid or missing reset token");
+        navigate("/forgot-password");
+        return;
+      }
       setIsReset(true);
-    } catch (error) {
-      message.error(
-        error.message || "Failed to process request. Please try again."
-      );
     }
+  }, [resetToken, location.pathname, navigate]);
+
+  const forgotPasswordMutation = useMutation({
+    mutationFn: (email) => AuthApi.forgotPassword(email),
+    onSuccess: (response) => {
+      message.success(
+        response.message || "Password reset link sent to your email"
+      );
+    },
+    onError: (error) => {
+      message.error(
+        error.response?.data?.message ||
+          "Failed to process request. Please try again."
+      );
+    },
+  });
+
+  const resetPasswordMutation = useMutation({
+    mutationFn: (data) => AuthApi.resetPassword(data.token, data.password),
+    onSuccess: () => {
+      navigate("/reset-password-success");
+    },
+    onError: (error) => {
+      message.error(
+        error.response?.data?.message ||
+          "Failed to process request. Please try again."
+      );
+    },
+  });
+
+  const handleEmailSubmit = (values) => {
+    forgotPasswordMutation.mutate(values.email);
   };
 
-  const handlePasswordSubmit = async (values) => {
-    try {
-      if (values.password !== values.confirmPassword) {
-        throw new Error("Passwords do not match");
-      }
-      console.log("New password set:", values.password);
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      message.success("Your password has been successfully changed.");
-      navigate("/reset-password-success");
-    } catch (error) {
-      message.error(
-        error.message || "Failed to process request. Please try again."
-      );
+  const handlePasswordSubmit = (values) => {
+    if (values.password !== values.confirmPassword) {
+      message.error("Passwords do not match");
+      return;
     }
+
+    if (!resetToken) {
+      message.error("Reset token is missing");
+      return;
+    }
+
+    resetPasswordMutation.mutate({
+      token: resetToken,
+      password: values.password,
+    });
   };
 
   return (
@@ -59,6 +97,7 @@ const ForgotPasswordForm = () => {
               : "Don't worry! Enter your email below to recover your password"}
           </p>
           <Form
+            form={form}
             onFinish={isReset ? handlePasswordSubmit : handleEmailSubmit}
             layout="vertical"
             className="space-y-6"
@@ -72,8 +111,22 @@ const ForgotPasswordForm = () => {
                 }
                 name="email"
                 required={false}
-                rules={[yupSync(emailSchema)]}>
-                <Input className="h-[40px]" placeholder="Enter your email here" suffix={<MailOutlined style={{ color: '#6B7280' }} />} />
+                rules={[
+                  {
+                    validator: async (_, value) => {
+                      try {
+                        await emailSchema.validate({ email: value });
+                      } catch (err) {
+                        throw new Error(err.message);
+                      }
+                    },
+                  },
+                ]}
+              >
+                <Input
+                  className="h-[40px]"
+                  placeholder="Enter your email here"
+                />
               </Form.Item>
             ) : (
               <>
@@ -85,10 +138,112 @@ const ForgotPasswordForm = () => {
                   }
                   name="password"
                   required={false}
-                  rules={[yupSync(passwordSchema)]}
+                  validateTrigger={["onChange", "onBlur"]}
+                  help={
+                    form.getFieldValue("password") ? (
+                      <ul className="list-none pl-0 mt-1 text-sm space-y-1">
+                        <li
+                          className={
+                            form.getFieldValue("password")?.length >= 8
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
+                          • At least 8 characters
+                        </li>
+                        <li
+                          className={
+                            /[A-Z]/.test(form.getFieldValue("password"))
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
+                          • One uppercase letter
+                        </li>
+                        <li
+                          className={
+                            /[a-z]/.test(form.getFieldValue("password"))
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
+                          • One lowercase letter
+                        </li>
+                        <li
+                          className={
+                            /[0-9]/.test(form.getFieldValue("password"))
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
+                          • One number
+                        </li>
+                        <li
+                          className={
+                            /[@$!%*?&]/.test(form.getFieldValue("password"))
+                              ? "text-green-500"
+                              : "text-red-500"
+                          }
+                        >
+                          • One special character (@$!%*?&)
+                        </li>
+                      </ul>
+                    ) : null
+                  }
+                  rules={[
+                    {
+                      validator: async (_, value) => {
+                        if (!value) {
+                          throw new Error("New password is required");
+                        }
+
+                        const errors = [];
+
+                        if (value.length < 8) {
+                          errors.push("Password must be at least 8 characters");
+                        }
+                        if (!/[A-Z]/.test(value)) {
+                          errors.push(
+                            "Password must contain at least one uppercase letter"
+                          );
+                        }
+                        if (!/[a-z]/.test(value)) {
+                          errors.push(
+                            "Password must contain at least one lowercase letter"
+                          );
+                        }
+                        if (!/[0-9]/.test(value)) {
+                          errors.push(
+                            "Password must contain at least one number"
+                          );
+                        }
+                        if (!/[@$!%*?&]/.test(value)) {
+                          errors.push(
+                            "Password must contain at least one special character (@$!%*?&)"
+                          );
+                        }
+
+                        if (errors.length > 0) {
+                          throw new Error(errors.join(", "));
+                        }
+                      },
+                    },
+                  ]}
                 >
-                  <Input.Password className="h-[40px]" placeholder="********" iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)} 
-                        onCopy={(e) => e.preventDefault()} // Ngăn sao chép mật khẩu
+                  <Input.Password
+                    className="h-[40px]"
+                    placeholder="********"
+                    onChange={() => {
+                      form.validateFields(["confirmPassword"]);
+                      form.setFieldValue(
+                        "password",
+                        form.getFieldValue("password")
+                      );
+                    }}
+                    iconRender={(visible) =>
+                      visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
+                    }
+                    onCopy={(e) => e.preventDefault()}
                   />
                 </Form.Item>
                 <Form.Item
@@ -101,10 +256,28 @@ const ForgotPasswordForm = () => {
                   name="confirmPassword"
                   required={false}
                   dependencies={["password"]}
-                   rules={[yupSync(confirmPasswordSchema)]}
+                  validateTrigger={["onChange", "onBlur"]}
+                  rules={[
+                    {
+                      validator: async (_, value) => {
+                        if (!value) {
+                          throw new Error("Please confirm your new password");
+                        }
+                        const password = form.getFieldValue("password");
+                        if (value !== password) {
+                          throw new Error("The two passwords do not match");
+                        }
+                      },
+                    },
+                  ]}
                 >
-                  <Input.Password className="h-[40px]" placeholder="********" iconRender={(visible) => (visible ? <EyeOutlined /> : <EyeInvisibleOutlined />)} 
-                      onCopy={(e) => e.preventDefault()} // Ngăn sao chép mật khẩu
+                  <Input.Password
+                    className="h-[40px]"
+                    placeholder="********"
+                    iconRender={(visible) =>
+                      visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
+                    }
+                    onCopy={(e) => e.preventDefault()}
                   />
                 </Form.Item>
               </>
@@ -113,7 +286,11 @@ const ForgotPasswordForm = () => {
               <Button
                 type="primary"
                 htmlType="submit"
-                className="w-[250px] h-[50px] bg-[#3758F9] text-white rounded-[50px] mt-4 flex justify-center items-center"
+                loading={
+                  forgotPasswordMutation.isPending ||
+                  resetPasswordMutation.isPending
+                }
+                className="w-[250px] h-[50px] bg-[#003087] text-white rounded-[50px] mt-4 flex justify-center items-center"
               >
                 {isReset ? "Submit" : "Reset password"}
               </Button>

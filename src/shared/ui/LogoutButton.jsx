@@ -21,7 +21,7 @@ export default function LogoutButton() {
         onSuccess: () => {
             
             queryClient.clear();
-            message.success("Đăng xuất thành công!");
+            message.success("Log out successfully!");
             navigate('/login', { 
                 replace: true,
                 state: { from: 'logout' } 
@@ -29,7 +29,7 @@ export default function LogoutButton() {
         },
         onError: (error) => {
             console.error("Logout error:", error);
-            message.error("Đã có lỗi xảy ra khi đăng xuất, nhưng bạn đã được đăng xuất.");
+            message.error("There was an error logging out, but you have been logged out.");
 
             queryClient.clear();
             navigate('/login', { 
