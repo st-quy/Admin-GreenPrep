@@ -9,6 +9,7 @@ import { SESSION_ID, API_ENDPOINTS } from "../api";
 
 const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword, onPendingCountChange }) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+  const [isBulkAction, setIsBulkAction] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [modalOpen, setModalOpen] = useState(false);
@@ -70,7 +71,9 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword, onPendingCou
         requestId,
       }),
     onSuccess: (_, requestId) => {
-      message.success("Request has been approved!");
+      if (!isBulkAction) {
+        message.success("Request has been approved!");
+      }
       queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
         if (Array.isArray(oldData)) {
           return oldData.filter((req) => req.requestId !== requestId);
@@ -90,7 +93,9 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword, onPendingCou
         requestId,
       }),
     onSuccess: (_, requestId) => {
-      message.success("Request has been rejected!");
+      if (!isBulkAction) {
+        message.success("Request has been rejected!");
+      }
       queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
         if (Array.isArray(oldData)) {
           return oldData.filter((req) => req.requestId !== requestId);
@@ -142,6 +147,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword, onPendingCou
       okButtonColor: "#22AD5C",
       onConfirm: async () => {
         try {
+          setIsBulkAction(true);
           const selectedRequests = dataSource.filter((req) =>
             selectedRowKeys.includes(req.key)
           );
@@ -154,6 +160,8 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword, onPendingCou
           setSelectedRowKeys([]);
         } catch (error) {
           message.error("Error approving multiple requests: " + error.message);
+        } finally {
+          setIsBulkAction(false);
         }
         setModalOpen(false);
       },
@@ -170,6 +178,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword, onPendingCou
       okButtonColor: "#F23030",
       onConfirm: async () => {
         try {
+          setIsBulkAction(true);
           const selectedRequests = dataSource.filter((req) =>
             selectedRowKeys.includes(req.key)
           );
@@ -182,6 +191,8 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword, onPendingCou
           setSelectedRowKeys([]);
         } catch (error) {
           message.error("Error rejecting multiple requests: " + error.message);
+        } finally {
+          setIsBulkAction(false);
         }
         setModalOpen(false);
       },
@@ -191,8 +202,8 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword, onPendingCou
 
   const rowSelection = {
     selectedRowKeys,
-    onChange: (selectedRowKeys) => {
-      setSelectedRowKeys(selectedRowKeys);
+    onChange: (newSelectedRowKeys, selectedRows, info) => {
+      setSelectedRowKeys(newSelectedRowKeys);
     },
     columnWidth: "50px",
     renderCell: (checked, record, index, originNode) => (
