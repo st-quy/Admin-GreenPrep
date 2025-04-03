@@ -41,7 +41,6 @@ const StudentMonitoring = ({
       }));
     return pendingRequests;
   };
-
   const { data: dataSource = [], isLoading } = useQuery({
     queryKey: ["sessionRequests", sessionId],
     queryFn: fetchSessionRequests,

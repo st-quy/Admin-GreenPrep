@@ -50,6 +50,7 @@ const SessionInformation = ({ type }) => {
           onPendingCountChange={handlePendingCountChange}
         />
       ),
+      forceRender: true, 
     },
   ];
 

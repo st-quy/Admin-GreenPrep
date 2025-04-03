@@ -89,59 +89,59 @@ const Details = ({ type, id }) => {
         {data.map((item, index) => (
           <div
             key={index}
-            className="w-full flex justify-between columns-2 bg-white rounded-lg p-16 mt-[34px] shadow-md"
+            className="w-full flex justify-around columns-2 bg-white rounded-lg p-16 mt-[34px] shadow-md"
           >
             <div className="w-full flex columns-2 text-left text-base">
-              <div className="w-1/4 flex flex-col">
+              <div className="lg:w-1/3 md:w-1/2 flex flex-col">
                 {type === "session" ? (
                   <>
-                    <p className="text-[#637381] font-medium m-[15px]">
+                    <p className="text-[#637381] lg:text-[16px] md:text-[12px] font-medium m-[15px]">
                       Session Name
                     </p>
-                    <p className="text-[#637381] font-medium m-[15px]">
+                    <p className="text-[#637381] lg:text-[16px] md:text-[12px] font-medium m-[15px]">
                       Number of participants
                     </p>
-                    <p className="text-[#637381] font-medium m-[15px]">
+                    <p className="text-[#637381] lg:text-[16px] md:text-[12px] font-medium m-[15px]">
                       Session Date
                     </p>
                   </>
                 ) : (
                   <>
-                    <p className="text-[#637381] font-medium m-[15px]">
+                    <p className="text-[#637381] lg:text-[16px] md:text-[12px] font-medium m-[15px]">
                       Student Name
                     </p>
-                    <p className="text-[#637381] font-medium m-[15px]">
+                    <p className="text-[#637381] lg:text-[16px] md:text-[12px] font-medium m-[15px]">
                       Student ID
                     </p>
-                    <p className="text-[#637381] font-medium m-[15px]">Class</p>
+                    <p className="text-[#637381] lg:text-[16px] md:text-[12px] font-medium m-[15px]">Class</p>
                   </>
                 )}
               </div>
               <div className="flex flex-col">
                 {type === "session" ? (
                   <>
-                    <p className="text-black font-semibold m-[15px]">
+                    <p className="text-black lg:text-[16px] md:text-[12px] font-semibold m-[15px]">
                       {item.sessionName || "Not Available"}
                     </p>
-                    <p className="text-black font-semibold m-[15px]">
+                    <p className="text-black lg:text-[16px] md:text-[12px] font-semibold m-[15px]">
                       {item.SessionParticipants &&
                       Array.isArray(item.SessionParticipants)
                         ? item.SessionParticipants.length
                         : "Not Available"}
                     </p>
-                    <p className="text-black font-semibold m-[15px]">
+                    <p className="text-black lg:text-[16px] md:text-[12px] font-semibold m-[15px]">
                       {formatDateTime(item.startTime) || "Not Available"}
                     </p>
                   </>
                 ) : (
                   <>
-                    <p className="text-black font-semibold m-[15px]">
+                    <p className="text-black lg:text-[16px] md:text-[12px] font-semibold m-[15px]">
                       {item.studentName || "Not Available"}
                     </p>
-                    <p className="text-black font-semibold m-[15px]">
+                    <p className="text-black lg:text-[16px] md:text-[12px] font-semibold m-[15px]">
                       {item.studentID || "Not Available"}
                     </p>
-                    <p className="text-black font-semibold m-[15px]">
+                    <p className="text-black lg:text-[16px] md:text-[12px] font-semibold m-[15px]">
                       {item.className || "Not Available"}
                     </p>
                   </>
@@ -149,45 +149,45 @@ const Details = ({ type, id }) => {
               </div>
             </div>
             <div className="w-full flex columns-2 text-left text-base">
-              <div className="w-1/4 flex flex-col">
+              <div className="lg:w-1/3 md:w-1/2 flex flex-col">
                 {type === "session" ? (
                   <>
-                    <p className="text-[#637381] font-medium m-[15px]">
+                    <p className="text-[#637381] lg:text-[16px] md:text-[12px] font-medium m-[15px]">
                       Session Key
                     </p>
-                    <p className="text-[#637381] font-medium m-[15px]">
+                    <p className="text-[#637381] lg:text-[16px] md:text-[12px] font-medium m-[15px]">
                       Status
                     </p>
-                    <p className="text-[#637381] font-medium m-[15px]">
+                    <p className="text-[#637381] lg:text-[16px] md:text-[12px] font-medium m-[15px]">
                       End Time
                     </p>
                   </>
                 ) : (
                   <>
-                    <p className="text-[#637381] font-medium m-[15px]">Email</p>
-                    <p className="text-[#637381] font-medium m-[15px]">Phone</p>
+                    <p className="text-[#637381] lg:text-[16px] md:text-[12px] font-medium m-[15px]">Email</p>
+                    <p className="text-[#637381] lg:text-[16px] md:text-[12px] font-medium m-[15px]">Phone</p>
                   </>
                 )}
               </div>
               <div className="flex flex-col">
                 {type === "session" ? (
                   <>
-                    <p className="text-black font-semibold m-[15px]">
+                    <p className="text-black lg:text-[16px] md:text-[12px] font-semibold m-[15px]">
                       {item.sessionKey || "Not Available"}
                     </p>
                     <div className={getStatusStyle(item.status)}>
                       {formatStatus(item.status) || "Not Available"}
                     </div>
-                    <p className="text-black font-semibold m-[15px]">
+                    <p className="text-black lg:text-[16px] md:text-[12px] font-semibold m-[15px]">
                       {formatDateTime(item.endTime) || "Not Available"}
                     </p>
                   </>
                 ) : (
                   <>
-                    <p className="text-black font-semibold m-[15px]">
+                    <p className="text-black lg:text-[16px] md:text-[12px] font-semibold m-[15px]">
                       {item.email || "Not Available"}
                     </p>
-                    <p className="text-black font-semibold m-[15px]">
+                    <p className="text-black lg:text-[16px] md:text-[12px] font-semibold m-[15px]">
                       {item.phone || "Not Available"}
                     </p>
                   </>
