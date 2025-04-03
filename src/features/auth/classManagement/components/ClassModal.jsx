@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button } from "antd";
 import { Input } from "antd";
-import {Spin} from "antd";
+import { Spin } from "antd";
 
 const ClassModal = ({
   isOpen,
@@ -30,7 +30,7 @@ const ClassModal = ({
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      {isLoading &&(
+      {isLoading && (
         <div className="absolute inset-0 flex justify-center items-center bg-black bg-opacity-40 z-50">
           <Spin size="large" tip="Loading..." />
         </div>
@@ -71,7 +71,7 @@ const ClassModal = ({
           <Button
             onClick={onClose}
             type="default"
-            className="w-[113px] h-[40px] !text-[#003087] shadow-[0_0_0_2px_rgba(255,255,255,0.3)] !border-gray-120 rounded-[50px] font-inter font-medium text-[16px] leading-[24px] bg-[#FFFFFF] text-[#003087]  hover:!text-[#003087] focus:!bg-[#FFFFFF] focus:!text-[#003087] hover:!border-[#D0D5DD]"
+            className="w-[113px] h-[40px] !text-[#003087] shadow-[0_0_0_2px_rgba(255,255,255,0.3)] !border-gray-120 rounded-[50px] font-inter font-medium text-[16px] leading-[24px] bg-[#FFFFFF]  hover:!text-[#003087] focus:!bg-[#FFFFFF] focus:!text-[#003087] hover:!border-[#D0D5DD]"
             disabled={isLoading}
           >
             Cancel
