@@ -7,7 +7,6 @@ import {
 } from "../hooks/useSession";
 import { useNavigate } from "react-router-dom";
 function getSkillLevel(score, skill) {
-  const levels = ["A1", "A2", "B1", "B2", "C"];
   const thresholds = {
     Listening: [8, 16, 24, 34, 42],
     Reading: [8, 16, 26, 38, 46],
@@ -22,7 +21,7 @@ function getSkillLevel(score, skill) {
   let levelIndex = thresholds[skill].findIndex(
     (threshold) => score < threshold
   );
-  return levelIndex === -1 ? "C" : levels[levelIndex];
+  return levelIndex === -1 ? "C" : LevelEnum[levelIndex];
 }
 const StudentSessionTable = ({
   id,
@@ -58,13 +57,18 @@ const StudentSessionTable = ({
   }, [processedData]);
 
   const filteredData = useMemo(() => {
-    if (!searchKeyword) return processedData;
+    const keyword = searchKeyword?.toLowerCase().trim() || "";
+    console.log(keyword);
+    if (!keyword) return processedData;
     return processedData.filter((item) => {
-      const fullName = item.User?.fullName || "";
+      const fullName = String(item.User?.fullName || "").toLowerCase();
+      const sessionName = String(item.Session?.sessionName || "").toLowerCase();
+      const level = String(item.Level || "").toLowerCase();
+
       return (
-        fullName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-        item.Level?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-        item.UserID?.toLowerCase().includes(searchKeyword.toLowerCase())
+        sessionName.includes(keyword) ||
+        fullName.includes(keyword) ||
+        level.includes(keyword)
       );
     });
   }, [processedData, searchKeyword]);
@@ -229,7 +233,7 @@ const StudentSessionTable = ({
     );
   }, [processedData, currentPage, pageSize]);
 
-  if (isLoading) return <Spin />;
+  // if (isLoading) return <Spin />;
 
   return (
     <Table

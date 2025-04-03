@@ -74,12 +74,14 @@ const StudentMonitoring = ({
       }),
     onSuccess: (_, requestId) => {
       message.success("Request has been approved!");
-      queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
-        if (Array.isArray(oldData)) {
-          return oldData.filter((req) => req.requestId !== requestId);
-        }
-        return [];
-      });
+      // queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
+      //   if (Array.isArray(oldData)) {
+      //     return oldData.filter((req) => req.requestId !== requestId);
+      //   }
+      //   return [];
+      // });
+      queryClient.invalidateQueries({queryKey:["sessionRequests"]});
+      queryClient.invalidateQueries({queryKey:["sessionParticipants"]});
     },
     onError: (error) => {
       message.error("Error approving request: " + error.message);
@@ -94,12 +96,13 @@ const StudentMonitoring = ({
       }),
     onSuccess: (_, requestId) => {
       message.success("Request has been rejected!");
-      queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
-        if (Array.isArray(oldData)) {
-          return oldData.filter((req) => req.requestId !== requestId);
-        }
-        return [];
-      });
+      // queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
+      //   if (Array.isArray(oldData)) {
+      //     return oldData.filter((req) => req.requestId !== requestId);
+      //   }
+      //   return [];
+      // });
+      queryClient.invalidateQueries({queryKey:["sessionRequests"]});
     },
     onError: (error) => {
       message.error("Error rejecting request: " + error.message);
