@@ -100,6 +100,7 @@ const StudentSessionTable = ({
       title: "GRAMMAR & VOCABULARY",
       dataIndex: "GrammarVocab",
       key: "GrammarVocab",
+      render: (text) => <div>{text || "No Data"}</div>,
     },
     {
       title: "LISTENING",
@@ -233,6 +234,7 @@ const StudentSessionTable = ({
     );
   }, [processedData, currentPage, pageSize]);
 
+  // if (isLoading) return <Spin />;
   // if (isLoading) return <Spin />;
 
   return (

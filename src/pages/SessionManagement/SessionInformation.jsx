@@ -29,7 +29,7 @@ const SessionInformation = ({ type }) => {
         <StudentSessionTable
           searchKeyword={searchKeyword}
           type={type}
-          id={id}
+          id={type == TableType.SESSION ? id : studentId}
         />
       ),
     },
@@ -105,7 +105,7 @@ const SessionInformation = ({ type }) => {
         </div>
         <div className="mt-[34px]">
           <SearchInput
-            placeholder="Search by name, class"
+            placeholder="Search by name"
             onSearchChange={onSearchChange}
             className={` ${type == TableType.SESSION ? "absolute z-10" : "mb-8"}`}
           />
