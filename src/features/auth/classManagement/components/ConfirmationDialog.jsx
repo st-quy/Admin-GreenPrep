@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Button, notification, Spin, Modal } from "antd";
+import { Modal, Button, notification, Spin } from "antd";
+import { Warning } from "../../../../assets/images";
 import { CloseCircleOutlined } from "@ant-design/icons";
-import { Warning } from "@assets/images";
 
 const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -14,6 +14,10 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
         notification.success({
           message: "Class deleted successfully",
           description: "The class has been deleted.",
+          placement: "topRight",
+          style: {
+            borderRadius: "8px",
+          },
         });
         onClose();
       } catch (error) {
@@ -21,7 +25,11 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
           message: "Error deleting class",
           description:
             "An error occurred while deleting the class. Please try again.",
-          icon: <CloseCircleOutlined style={{ color: "#ff4d4f" }} />, // Biểu tượng dấu X màu đỏ
+          icon: <CloseCircleOutlined style={{ color: "#ff4d4f" }} />,
+          placement: "topRight",
+          style: {
+            borderRadius: "8px",
+          },
         });
         console.error("Error deleting class:", error);
       } finally {
@@ -36,7 +44,7 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
       onCancel={onClose}
       footer={null}
       centered
-      width={500}
+      width={448}
       closable={false}
     >
       <div className="flex flex-col items-center text-center">
@@ -55,26 +63,26 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
         <p className="text-sm text-gray-600 mb-6">
           After you delete this class, you cannot view this class again.
         </p>
-      </div>
 
-      <div className="flex justify-center gap-4 mt-auto">
-        <Button
-          onClick={onClose}
-          type="default"
-          className="w-[113px] h-[40px] !text-[#003087] shadow-[0_0_0_2px_rgba(255,255,255,0.3)] !border-gray-120 rounded-[50px] font-inter font-medium text-[16px] leading-[24px] bg-[#FFFFFF] text-[#003087] hover:!text-[#003087] focus:!bg-[#FFFFFF] focus:!text-[#003087] hover:!border-[#D0D5DD]"
-          disabled={isDeleting}
-        >
-          Cancel
-        </Button>
-        <Button
-          onClick={handleDelete}
-          type="primary"
-          danger
-          className="w-[113px] h-[40px] rounded-[50px] font-inter font-medium text-[16px] leading-[24px] bg-[#E10E0E] text-[#FFFFFF] hover:!bg-[#c70c0c] hover:!text-[#FFFFFF] focus:!bg-[#E10E0E] focus:!text-[#FFFFFF]"
-          loading={isDeleting}
-        >
-          Delete
-        </Button>
+        <div className="flex justify-center gap-4 mt-auto">
+          <Button
+            onClick={onClose}
+            type="default"
+            className="w-[113px] h-[40px] !text-[#003087] shadow-[0_0_0_2px_rgba(255,255,255,0.3)] !border-gray-120 rounded-[50px] font-inter font-medium text-[16px] leading-[24px] bg-[#FFFFFF] text-[#003087] hover:!text-[#003087] focus:!bg-[#FFFFFF] focus:!text-[#003087] hover:!border-[#D0D5DD]"
+            disabled={isDeleting}
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDelete}
+            type="primary"
+            danger
+            className="w-[113px] h-[40px] rounded-[50px] font-inter font-medium text-[16px] leading-[24px] bg-[#E10E0E] text-[#FFFFFF] hover:!bg-[#c70c0c] hover:!text-[#FFFFFF] focus:!bg-[#E10E0E] focus:!text-[#FFFFFF]"
+            loading={isDeleting}
+          >
+            {isDeleting ? <Spin size="small" /> : "Delete"}
+          </Button>
+        </div>
       </div>
     </Modal>
   );
