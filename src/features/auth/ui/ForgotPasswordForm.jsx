@@ -290,7 +290,7 @@ const ForgotPasswordForm = () => {
                   forgotPasswordMutation.isPending ||
                   resetPasswordMutation.isPending
                 }
-                className="w-[250px] h-[50px] bg-[#3758F9] text-white rounded-[50px] mt-4 flex justify-center items-center"
+                className="w-[250px] h-[50px] bg-[#003087] text-white rounded-[50px] mt-4 flex justify-center items-center"
               >
                 {isReset ? "Submit" : "Reset password"}
               </Button>
