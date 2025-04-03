@@ -1,8 +1,13 @@
 import { Modal, Table, Button } from "antd";
 import { EditOutlined, AudioOutlined } from "@ant-design/icons";
-import "./index.css";
+import "./index.scss";
 
-const StudentListModal = ({ data, visible, onClose, handleSelect }) => {
+const StudentListModal = ({
+  data,
+  visible,
+  onClose,
+  handleSelect = () => {},
+}) => {
   // Define and customize the columns
   const columns = [
     {

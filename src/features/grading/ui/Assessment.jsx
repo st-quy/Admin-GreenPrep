@@ -2,7 +2,7 @@ import "antd/dist/reset.css";
 import { QuestionAnswer } from "./QuestionAnswer";
 import ScoreCommentForm from "./ScoreCommentForm";
 import { Card, Tabs, Button } from "antd";
-import "./index.css";
+import "./index.scss";
 import { useState, useEffect } from "react";
 
 export const Assessment = ({ isSpeaking, data }) => {
@@ -51,27 +51,36 @@ export const Assessment = ({ isSpeaking, data }) => {
     if (!partData) return "";
     if (isSpeaking && activeTab == "4") {
       const partFourQuestions = partData.Questions || [];
-      return <div className="flex gap-10 relative" >
-        <div className="w-[80%] h-fit shadow-md rounded-lg">
-          <QuestionAnswer isSpeaking={isSpeaking} fileName={`${isSpeaking ? "speaking" : "writing"}_part_${activeTab}`} speakingPartFour={partFourQuestions} />
+      return (
+        <div className="flex gap-10 relative">
+          <div className="w-[80%] h-fit shadow-md rounded-lg">
+            <QuestionAnswer
+              isSpeaking={isSpeaking}
+              fileName={`${isSpeaking ? "speaking" : "writing"}_part_${activeTab}`}
+              speakingPartFour={partFourQuestions}
+            />
+          </div>
+          <div className="w-[20%] h-[15.9375rem] shadow-md sticky top-0 rounded-lg">
+            <ScoreCommentForm />
+          </div>
         </div>
-        <div className="w-[20%] h-[15.9375rem] shadow-md sticky top-0 rounded-lg">
-          <ScoreCommentForm />
-        </div>
-      </div >
+      );
     }
-    return partData.Questions?.map((question, index) => (
+    return partData?.Questions?.map((question, index) => (
       <div className="flex gap-10 relative" key={index}>
         <div className="w-[80%] h-fit shadow-md rounded-lg">
-          <QuestionAnswer isSpeaking={isSpeaking} fileName={`${isSpeaking ? "speaking" : "writing"}_part_${activeTab}`} quesntionsAnswerData={question} />
+          <QuestionAnswer
+            isSpeaking={isSpeaking}
+            fileName={`${isSpeaking ? "speaking" : "writing"}_part_${activeTab}`}
+            quesntionsAnswerData={question}
+          />
         </div>
         <div className="w-[20%] h-[15.9375rem] shadow-md sticky top-0 rounded-lg">
           <ScoreCommentForm />
         </div>
       </div>
     ));
-
-  }
+  };
 
   return (
     <div className="w-full">
@@ -138,14 +147,18 @@ export const Assessment = ({ isSpeaking, data }) => {
         </div>
       </div>
       <div className="flex flex-col gap-6 w-full">
-        {!isSpeaking && partData && <Card
-          variant="borderless"
-          className="rounded-lg overflow-hidden w-[78%] px-[43px] py-[41px]"
-          styles={{ body: { padding: 0 } }}
-        >
-          <div>{partData.Content || ""}</div>
-          <div className="text-gray-500 font-bold">{partData.SubContent || ""}</div>
-        </Card>}
+        {!isSpeaking && partData && (
+          <Card
+            variant="borderless"
+            className="rounded-lg overflow-hidden w-[78%] px-[43px] py-[41px]"
+            styles={{ body: { padding: 0 } }}
+          >
+            <div>{partData.Content || ""}</div>
+            <div className="text-gray-500 font-bold">
+              {partData.SubContent || ""}
+            </div>
+          </Card>
+        )}
         {handleDisplayPart()}
       </div>
     </div>

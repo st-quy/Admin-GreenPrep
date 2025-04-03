@@ -7,7 +7,11 @@ import axios from "@shared/config/axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { SESSION_ID, API_ENDPOINTS } from "../api";
 
-const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword, onPendingCountChange }) => {
+const StudentMonitoring = ({
+  sessionId = SESSION_ID,
+  searchKeyword,
+  onPendingCountChange,
+}) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -45,23 +49,23 @@ const StudentMonitoring = ({ sessionId = SESSION_ID, searchKeyword, onPendingCou
     enabled: !!sessionId,
   });
 
-    // Searching functionality
-    const filteredData = useMemo(() => {
-      if (!searchKeyword) return dataSource;
-      return dataSource.filter((item) => {
-        return (
-          item.studentName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-          item.studentId.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-          item.className.toLowerCase().includes(searchKeyword.toLowerCase())
-        );
-      });
-    }, [dataSource, searchKeyword]);
+  // Searching functionality
+  const filteredData = useMemo(() => {
+    if (!searchKeyword) return dataSource;
+    return dataSource.filter((item) => {
+      return (
+        item.studentName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+        item.studentId.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+        item.className.toLowerCase().includes(searchKeyword.toLowerCase())
+      );
+    });
+  }, [dataSource, searchKeyword]);
 
-    useEffect(() => {
-      if (onPendingCountChange) {
-        onPendingCountChange(filteredData.length);
-      }
-    }, [filteredData, onPendingCountChange]);
+  useEffect(() => {
+    if (onPendingCountChange) {
+      onPendingCountChange(filteredData.length);
+    }
+  }, [filteredData, onPendingCountChange]);
 
   // Mutation cho approve request
   const approveMutation = useMutation({

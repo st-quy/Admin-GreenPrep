@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Input } from "antd";
-import "./index.css";
+import "./index.scss";
 import StudentMonitoring from "@features/session/ui/StudentModering";
 import StudentSessionTable from "@/features/session/ui/StudentSessionTable.jsx";
 import SearchInput from "@/app/components/SearchInput.jsx";
@@ -9,7 +9,7 @@ import { useParams, useNavigate } from "react-router-dom";
 
 const SessionInformation = ({ type }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
-  const { id } = useParams(); 
+  const { id, studentId } = useParams();
   const [pendingCount, setPendingCount] = useState(0);
   const navigate = useNavigate();
 
@@ -20,9 +20,6 @@ const SessionInformation = ({ type }) => {
     setSearchKeyword(event.target.value);
   };
 
-  const handleStudentNavigate = (id, action) => {
-    navigate(`/class/session/student/${id}`);
-  };
   const items = [
     {
       label: "Participant List",
@@ -32,8 +29,6 @@ const SessionInformation = ({ type }) => {
           searchKeyword={searchKeyword}
           type={type}
           id={id}
-          onStudentClick={handleStudentNavigate}
-          onNavigate={() => {}}
         />
       ),
     },
@@ -64,7 +59,7 @@ const SessionInformation = ({ type }) => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className=" session-container flex flex-col p-8">
       <Details type={type} id={id} />
 
       <div className="">
