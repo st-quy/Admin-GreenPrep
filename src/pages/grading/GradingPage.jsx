@@ -5,6 +5,7 @@ import AssessmentScores from "@features/grading/ui/AssessmentScores";
 import StudentInfoCard from "@features/grading/ui/StudentInfoCard";
 import StudentListModal from "@features/grading/ui/StudentListModal";
 import { SpeakingApi, WritingApi } from "@features/grading/api";
+import { Spin } from "antd";
 
 export const GradingPage = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
@@ -39,7 +40,7 @@ export const GradingPage = () => {
     phone: "123123123",
   };
 
-  if (isWritingPending || isSpeakingPending) return "Loading...";
+  if (isWritingPending || isSpeakingPending) return <Spin size="large" className="flex justify-center items-center h-60" />;
 
   return (
     <>
