@@ -1,13 +1,17 @@
-import { useState } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Table, message } from "antd";
 import CheckCircleIcon from "@/assets/icons/check-circle.svg";
 import CloseCircleIcon from "@/assets/icons/close-circle.svg";
 import ConfirmationModal from "@shared/Modal/ConfirmationModal";
 import axios from "@shared/config/axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { SESSION_ID, API_ENDPOINTS } from "../api";
+import { API_ENDPOINTS } from "../api";
 
-const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
+const StudentMonitoring = ({
+  sessionId,
+  searchKeyword,
+  onPendingCountChange,
+}) => {
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -37,7 +41,6 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
       }));
     return pendingRequests;
   };
-
   const { data: dataSource = [], isLoading } = useQuery({
     queryKey: ["sessionRequests", sessionId],
     queryFn: fetchSessionRequests,
@@ -45,17 +48,38 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
     enabled: !!sessionId,
   });
 
+  // Searching functionality
+  const filteredData = useMemo(() => {
+    if (!searchKeyword) return dataSource;
+    return dataSource.filter((item) => {
+      return (
+        item.studentName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+        item.studentId.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+        item.className.toLowerCase().includes(searchKeyword.toLowerCase())
+      );
+    });
+  }, [dataSource, searchKeyword]);
+
+  useEffect(() => {
+    if (onPendingCountChange) {
+      onPendingCountChange(filteredData.length);
+    }
+  }, [filteredData, onPendingCountChange]);
+
   // Mutation cho approve request
   const approveMutation = useMutation({
     mutationFn: (requestId) =>
       axios.patch(API_ENDPOINTS.APPROVE_REQUEST(sessionId), { requestId }),
     onSuccess: (_, requestId) => {
-      queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
-        if (Array.isArray(oldData)) {
-          return oldData.filter((req) => req.requestId !== requestId);
-        }
-        return [];
-      });
+      message.success("Request has been approved!");
+      // queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
+      //   if (Array.isArray(oldData)) {
+      //     return oldData.filter((req) => req.requestId !== requestId);
+      //   }
+      //   return [];
+      // });
+      queryClient.invalidateQueries({queryKey:["sessionRequests"]});
+      queryClient.invalidateQueries({queryKey:["sessionParticipants"]});
     },
     onError: (error) => {
       message.error("Error approving request: " + error.message);
@@ -67,12 +91,14 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
     mutationFn: (requestId) =>
       axios.patch(API_ENDPOINTS.REJECT_REQUEST(sessionId), { requestId }),
     onSuccess: (_, requestId) => {
-      queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
-        if (Array.isArray(oldData)) {
-          return oldData.filter((req) => req.requestId !== requestId);
-        }
-        return [];
-      });
+      message.success("Request has been rejected!");
+      // queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
+      //   if (Array.isArray(oldData)) {
+      //     return oldData.filter((req) => req.requestId !== requestId);
+      //   }
+      //   return [];
+      // });
+      queryClient.invalidateQueries({queryKey:["sessionRequests"]});
     },
     onError: (error) => {
       message.error("Error rejecting request: " + error.message);
@@ -191,7 +217,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
       key: "studentName",
       align: "center",
       render: (text) => (
-        <span className="text-[#637381] text-[14px]">{text}</span>
+        <span className="text-[#637381] text-[16px]">{text}</span>
       ),
     },
     {
@@ -200,7 +226,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
       key: "studentId",
       align: "center",
       render: (text) => (
-        <span className="text-[#637381] text-[14px]">{text}</span>
+        <span className="text-[#637381] text-[16px]">{text}</span>
       ),
     },
     {
@@ -209,7 +235,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
       key: "className",
       align: "center",
       render: (text) => (
-        <span className="text-[#637381] text-[14px]">{text}</span>
+        <span className="text-[#637381] text-[16px]">{text}</span>
       ),
     },
     {
@@ -243,7 +269,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
   const paginationConfig = {
     current: currentPage,
     pageSize: pageSize,
-    total: dataSource.length,
+    total: filteredData.length,
     showSizeChanger: true,
     onShowSizeChange: onShowSizeChange,
     onChange: (page) => setCurrentPage(page),
@@ -257,8 +283,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
 
   return (
     <div className="w-full">
-      {isLoading && <p>Loading...</p>}
-      <div className="flex items-center mb-4">
+      <div className="flex items-center">
         {selectedRowKeys.length > 0 && (
           <div className="flex">
             <div
@@ -282,7 +307,7 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
         rowSelection={rowSelection}
         // @ts-ignore
         columns={columns}
-        dataSource={dataSource}
+        dataSource={filteredData}
         pagination={paginationConfig}
         className="border border-gray-200 rounded-lg overflow-hidden"
         rowClassName="hover:bg-gray-50"
