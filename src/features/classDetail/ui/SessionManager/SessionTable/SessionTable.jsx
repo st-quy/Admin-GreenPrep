@@ -3,15 +3,10 @@ import { Table, Button, Pagination } from "antd";
 import { formatDateTime } from "@shared/lib/utils/formatString";
 import ActionModal from "../../SessionModal/ActionModal/ActionModal";
 import DeleteModal from "../../SessionModal/DeleteModal/DeleteModal";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const SessionTable = ({ dataSource }) => {
   const navigate = useNavigate();
-
-  // Navigate to session details
-  const handleNavigate = (id) => {
-    navigate(`/class/session/${id}`);
-  };
 
   // Define table columns
   const columns = [
@@ -21,9 +16,9 @@ const SessionTable = ({ dataSource }) => {
       key: "sessionName",
       className: "!text-center",
       render: (text, record) => (
-        <a onClick={() => handleNavigate(record.ID)} className="text-[#003087]">
+        <Link to={`/class/session/${record.ID}`} className="text-[#003087]">
           {text}
-        </a>
+        </Link>
       ),
     },
     {
