@@ -48,11 +48,8 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
   // Mutation cho approve request
   const approveMutation = useMutation({
     mutationFn: (requestId) =>
-      axios.patch(API_ENDPOINTS.APPROVE_REQUEST(sessionId), {
-        requestId,
-      }),
+      axios.patch(API_ENDPOINTS.APPROVE_REQUEST(sessionId), { requestId }),
     onSuccess: (_, requestId) => {
-      message.success("Request has been approved!");
       queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
         if (Array.isArray(oldData)) {
           return oldData.filter((req) => req.requestId !== requestId);
@@ -68,11 +65,8 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
   // Mutation cho reject request
   const rejectMutation = useMutation({
     mutationFn: (requestId) =>
-      axios.patch(API_ENDPOINTS.REJECT_REQUEST(sessionId), {
-        requestId,
-      }),
+      axios.patch(API_ENDPOINTS.REJECT_REQUEST(sessionId), { requestId }),
     onSuccess: (_, requestId) => {
-      message.success("Request has been rejected!");
       queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
         if (Array.isArray(oldData)) {
           return oldData.filter((req) => req.requestId !== requestId);
@@ -93,7 +87,11 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
       okText: "Approve",
       okButtonColor: "#22AD5C",
       onConfirm: () => {
-        approveMutation.mutate(record.requestId);
+        approveMutation.mutate(record.requestId, {
+          onSuccess: () => {
+            message.success("Request has been approved!");
+          },
+        });
         setModalOpen(false);
       },
     });
@@ -108,7 +106,11 @@ const StudentMonitoring = ({ sessionId = SESSION_ID }) => {
       okText: "Reject",
       okButtonColor: "#F23030",
       onConfirm: () => {
-        rejectMutation.mutate(record.requestId);
+        rejectMutation.mutate(record.requestId, {
+          onSuccess: () => {
+            message.success("Request has been rejected!");
+          },
+        });
         setModalOpen(false);
       },
     });
