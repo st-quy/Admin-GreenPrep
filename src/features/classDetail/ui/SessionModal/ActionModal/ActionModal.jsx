@@ -82,12 +82,14 @@ const ActionModal = ({
         JSON.stringify(sessionData)
       );
       queryClient.invalidateQueries({ queryKey: ["classDetail"] });
-      message.success("Session created successfully!");
+      message.success(`Session ${isEdit ? "update" : "create"} successfully!`);
       setOpen(false);
       form.resetFields();
     } catch (error) {
-      console.error("Error creating session:", error);
-      message.error("Failed to create session. Please try again.");
+      console.error(`Error  ${isEdit ? "update" : "create"}  session:`, error);
+      message.error(
+        `Failed to  ${isEdit ? "update" : "create"}  session. Please try again.`
+      );
     } finally {
       setConfirmLoading(false);
     }

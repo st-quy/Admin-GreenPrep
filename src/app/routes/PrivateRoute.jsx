@@ -46,6 +46,7 @@ const PrivateRoute = [
               },
               {
                 path: "student",
+                breadcrumb: "Student Detail",
                 children: [
                   {
                     path: ":studentId",
@@ -53,17 +54,13 @@ const PrivateRoute = [
                     children: [
                       {
                         index: true,
-                        element: <StudentDetail />,
+                        element: <SessionInformation type={TableType.STUDENT} />,
                       },
-                      {
-                        path: "grade",
-                        element: <GradingPage />,
-                        breadcrumb: "Grade",
-                      },
+                     
                     ],
                   },
                 ],
-                breadcrumb: "Student Detail",
+
               },
             ],
           },
