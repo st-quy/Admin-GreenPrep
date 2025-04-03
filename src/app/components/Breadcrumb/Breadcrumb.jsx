@@ -19,7 +19,7 @@ export const Breadcrumb = ({ paths }) => {
   return (
     <AntBreadcrumb
       separator=">"
-      className="p-6 bg-white my-8 rounded-xl border border-slate-300 border-solid"
+      className="p-6 bg-white m-8 mb-0 rounded-xl border border-slate-300 border-solid"
       items={breadcrumbItems}
     />
   );

@@ -12,11 +12,11 @@ const ClassInfo = ({ data }) => {
           View class details
         </p>
       </div>
-      <div className="flex items-center justify-center gap-4 rounded-[10px] border border-[#3758F9] bg-[#E6F0FA] p-4 xl:h-[60px] xl:w-[200px]">
+      <div className="flex !items-center justify-center gap-4 rounded-[10px] border border-[#3758F9] bg-[#E6F0FA] p-4 xl:h-[60px] xl:w-[200px]">
         <img src={Group} width={36} height={31} alt="Group Icon" />
-        <h6 className="font-[500] uppercase lg:text-[24px] md:text-[22px]">
+        <div className="font-[500] uppercase lg:text-[24px] md:text-[22px]">
           {data.className}
-        </h6>
+        </div>
       </div>
     </div>
   );

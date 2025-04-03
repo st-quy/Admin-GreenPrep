@@ -7,7 +7,12 @@ import {
 
 const { Title, Text } = Typography;
 
-const StudentInfoCard = ({ student, onPrevious, onNext, onViewList }) => {
+const StudentInfoCard = ({
+  student,
+  onPrevious = () => {},
+  onNext = () => {},
+  onViewList = () => {},
+}) => {
   return (
     <div className="w-full">
       {/* Header */}
