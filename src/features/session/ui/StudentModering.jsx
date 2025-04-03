@@ -80,8 +80,8 @@ const StudentMonitoring = ({
       //   }
       //   return [];
       // });
-      queryClient.invalidateQueries({queryKey:["sessionRequests"]});
-      queryClient.invalidateQueries({queryKey:["sessionParticipants"]});
+      queryClient.invalidateQueries({ queryKey: ["sessionRequests"] });
+      queryClient.invalidateQueries({ queryKey: ["sessionParticipants"] });
     },
     onError: (error) => {
       message.error("Error approving request: " + error.message);
@@ -102,7 +102,7 @@ const StudentMonitoring = ({
       //   }
       //   return [];
       // });
-      queryClient.invalidateQueries({queryKey:["sessionRequests"]});
+      queryClient.invalidateQueries({ queryKey: ["sessionRequests"] });
     },
     onError: (error) => {
       message.error("Error rejecting request: " + error.message);
@@ -211,7 +211,6 @@ const StudentMonitoring = ({
       title: "Student Name",
       dataIndex: "studentName",
       key: "studentName",
-      align: "center",
       render: (text) => (
         <span className="text-[#637381] text-[16px]">{text}</span>
       ),
@@ -220,7 +219,6 @@ const StudentMonitoring = ({
       title: "Student ID",
       dataIndex: "studentId",
       key: "studentId",
-      align: "center",
       render: (text) => (
         <span className="text-[#637381] text-[16px]">{text}</span>
       ),
@@ -229,15 +227,13 @@ const StudentMonitoring = ({
       title: "Class Name",
       dataIndex: "className",
       key: "className",
-      align: "center",
       render: (text) => (
         <span className="text-[#637381] text-[16px]">{text}</span>
-      ),
+      )
     },
     {
       title: "Action",
       key: "action",
-      align: "center",
       render: (_, record) => (
         <div className="flex justify-center space-x-4">
           <img
@@ -299,13 +295,12 @@ const StudentMonitoring = ({
         )}
       </div>
       <Table
-        scroll={{ y: 400 }}
+        scroll={{y: 400 }}
         rowSelection={rowSelection}
-        // @ts-ignore
         columns={columns}
-        dataSource={filteredData}
+        dataSource={filteredData || []}
         pagination={paginationConfig}
-        className="border border-gray-200 rounded-lg overflow-hidden"
+        className="border border-gray-200 rounded-lg overflow-hidden w-full h-full"
         rowClassName="hover:bg-gray-50"
         components={{
           header: {

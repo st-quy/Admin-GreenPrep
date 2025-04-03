@@ -11,7 +11,7 @@ const statusTag = (status) => {
     NOT_STARTED: { color: "gray", text: "Not Started" },
   };
   return (
-    <Tag color={statusMap[status]?.color} className="rounded-3xl">
+    <Tag color={statusMap[status]?.color} className="rounded-3xl px-2 py-1">
       {statusMap[status]?.text || "Unknown"}
     </Tag>
   );
@@ -151,9 +151,9 @@ const Details = ({ type, id }) => {
                       <p className="text-[#637381] font-medium m-[15px]">
                         Session Key
                       </p>
-                      {/* <p className="text-[#637381] font-medium m-[15px]">
-                      Status
-                    </p> */}
+                      <p className="text-[#637381] font-medium m-[15px]">
+                        Status
+                      </p>
                       <p className="text-[#637381] font-medium m-[15px]">
                         End Time
                       </p>
@@ -175,9 +175,9 @@ const Details = ({ type, id }) => {
                       <p className="text-black font-semibold m-[15px]">
                         {data.sessionKey || "Not Available"}
                       </p>
-                      {/* <div className={getStatusStyle(data.status)}>
-                      {formatStatus(data.status) || "Not Available"}
-                    </div> */}
+                      <div className="text-[#637381] font-medium mx-[15px] my-[12px]">
+                        {statusTag(data.status)}
+                      </div>
                       <p className="text-black font-semibold m-[15px]">
                         {formatDateTime(data.endTime) || "Not Available"}
                       </p>

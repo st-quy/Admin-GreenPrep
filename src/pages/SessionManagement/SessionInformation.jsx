@@ -61,10 +61,10 @@ const SessionInformation = ({ type }) => {
   };
 
   return (
-    <div className=" session-container flex flex-col p-8">
+    <div className="session-container flex flex-col p-8">
       <Details type={type} id={type == TableType.SESSION ? id : studentId} />
 
-      <div className="">
+      <div className="w-full">
         <div className="flex justify-between">
           <div>
             <p className="text-[30px] text-black font-bold">
@@ -73,7 +73,9 @@ const SessionInformation = ({ type }) => {
                 : "Assessment History"}
             </p>
             <p className="text-[18px] text-[#637381] font-medium mt-[10px]">
-              Track student request and participation.
+              {type == TableType.SESSION
+                ? "Track student request and participation."
+                : "Overview of Past Performance."}
             </p>
           </div>
           <div>
@@ -110,15 +112,20 @@ const SessionInformation = ({ type }) => {
             className={` ${type == TableType.SESSION ? "absolute z-10" : "mb-8"}`}
           />
         </div>
-        {type == TableType.SESSION ? (
-          <Tabs defaultActiveKey="item-1" items={items} />
-        ) : (
-          <StudentSessionTable
-            searchKeyword={searchKeyword}
-            type={type}
-            id={studentId}
-          />
-        )}
+        <div className={`${type == TableType.SESSION && "h-[500px]"}`}>
+          {type == TableType.SESSION ? (
+            <Tabs
+              defaultActiveKey="item-1"
+              items={items}
+            />
+          ) : (
+            <StudentSessionTable
+              searchKeyword={searchKeyword}
+              type={type}
+              id={studentId}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
