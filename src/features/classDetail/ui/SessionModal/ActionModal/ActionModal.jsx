@@ -86,8 +86,7 @@ const ActionModal = ({
       setOpen(false);
       form.resetFields();
     } catch (error) {
-      console.error("Error creating session:", error);
-      message.error("Failed to create session. Please try again.");
+      message.error("Please field all the fields correctly.");
     } finally {
       setConfirmLoading(false);
     }
