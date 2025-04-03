@@ -122,7 +122,7 @@ const ClassManagement = () => {
   );
 
   return (
-    <div className="p-3 md:p-6">
+    <div className="p-2">
       {/* Main Content */}
       <div className="rounded-[4px] p-3 md:p-6">
         <div className="flex flex-col md:flex-row justify-between items-center mb-6">
@@ -184,7 +184,7 @@ const ClassManagement = () => {
                         <td className="py-[15px] px-6 whitespace-nowrap text-left">
                           <div
                             className="text-[14px] text-[#0B3B6A] font-['Inter'] font-medium leading-[22px] tracking-[0px] 
-                          underline decoration-solid decoration-[0%] decoration-auto hover:cursor-pointer"
+                          underline decoration-solid decoration-[0%] hover:cursor-pointer"
                           >
                             <Link to={`${classItem.id}`}>{classItem.name}</Link>
                           </div>
@@ -195,7 +195,7 @@ const ClassManagement = () => {
                           </div>
                         </td>
                         <td className="py-[15px] px-2 whitespace-nowrap">
-                          <div className="flex justify-center space-x-4">
+                          <div className="flex justify-center items-center gap-4">
                             <UpdateClass
                               classData={classItem}
                               onUpdateClass={handleUpdateClass}

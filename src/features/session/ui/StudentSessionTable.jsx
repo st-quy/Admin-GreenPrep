@@ -5,6 +5,7 @@ import {
   useSessionParticipants,
   useStudentParticipants,
 } from "../hooks/useSession";
+import { useNavigate } from "react-router-dom";
 function getSkillLevel(score, skill) {
   const levels = ["A1", "A2", "B1", "B2", "C"];
   const thresholds = {
@@ -29,9 +30,8 @@ const StudentSessionTable = ({
   type,
   status = "draft",
   onAllQuestionGraded = () => {},
-  onNavigate,
-  onStudentClick = (data) => {},
 }) => {
+  const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [levels, setLevels] = useState({});
@@ -124,8 +124,12 @@ const StudentSessionTable = ({
       render: (text, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
-            onClick={() => onNavigate(record.ID, "speaking")}
-            className="cursor-pointer underline text-[14px]  hover:opacity-80"
+            onClick={() =>
+              navigate(
+                `/class/session/student/${record.User.ID}/grade?skill=speaking`
+              )
+            }
+            className="cursor-pointer underline text-[14px] hover:opacity-80"
           >
             {text + "I" + getSkillLevel(text, "Speaking") || "Ungraded"}
           </a>
@@ -142,8 +146,12 @@ const StudentSessionTable = ({
       render: (text, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
-            onClick={() => onNavigate(record.ID, "writing")}
-            className="cursor-pointer underline text-[14px]  hover:opacity-80"
+            onClick={() =>
+              navigate(
+                `/class/session/student/${record.User.ID}/grade?skill=writing`
+              )
+            }
+            className="cursor-pointer underline text-[14px] hover:opacity-80"
           >
             {text + "I" + getSkillLevel(text, "Writing") || "Ungraded"}
           </a>
@@ -190,8 +198,10 @@ const StudentSessionTable = ({
           key: "fullName",
           render: (text, record) => (
             <a
-              onClick={() => onStudentClick(record.UserID)}
-              className="cursor-pointer underline text-[14px]  hover:opacity-80"
+              onClick={() =>
+                navigate(`/class/session/student/${record.User.ID}`)
+              }
+              className="cursor-pointer underline text-[14px] hover:opacity-80"
             >
               {text || "Unknown"}
             </a>

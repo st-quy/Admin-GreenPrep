@@ -84,7 +84,7 @@ const ColumnChart = ({ data, title }) => {
       bodyStyle={{ padding: "1.5rem" }}
       bordered={false}
     >
-      <div className="space-y-4">
+      <div className="space-y-4  overflow-auto h-[200px]">
         {data.length === 0 ? (
           <div className="text-center py-8">
             <Text type="secondary">No session data available</Text>
@@ -146,11 +146,11 @@ const StatusChart = ({ data, title }) => {
       bordered={false}
     >
       {data.length === 0 ? (
-        <div className="text-center py-8">
+        <div className="text-center py-8 h-[200px]">
           <Text type="secondary">No status data available</Text>
         </div>
       ) : (
-        <div className="space-y-6">
+        <div className="space-y-6 h-[200px]">
           <div className="grid grid-cols-2 gap-4">
             {data.map((item, index) => (
               <div
@@ -448,14 +448,8 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-3 md:p-6 bg-white min-h-screen">
+    <div className="p-2 min-h-screen">
       <div className="mb-4 md:mb-6">
-        <div className="flex items-center text-gray-500 mb-2">
-          <span>Home</span>
-          <span className="mx-2">›</span>
-          <span className="text-gray-700">Dashboard</span>
-        </div>
-
         <Title level={3} className="text-xl md:text-2xl lg:text-3xl">
           Dashboard
         </Title>

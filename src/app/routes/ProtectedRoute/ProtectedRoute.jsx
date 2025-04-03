@@ -7,7 +7,7 @@ import {
   matchRoutes,
   useParams,
 } from "react-router-dom";
-import LogoutButton from "@shared/ui/LogoutButton"
+import LogoutButton from "@shared/ui/LogoutButton";
 import { Breadcrumb } from "../../components/Breadcrumb/Breadcrumb";
 import PrivateRoute from "../PrivateRoute";
 
@@ -68,7 +68,7 @@ export const ProtectedRoute = () => {
           theme="light"
           mode="horizontal"
           defaultSelectedKeys={["1"]}
-          className="flex-1 justify-center "
+          className="flex-1 justify-center"
           items={[
             { key: "1", label: "Dashboard" },
             { key: "2", label: "Class Management" },
@@ -77,9 +77,9 @@ export const ProtectedRoute = () => {
           onClick={(e) => navigateTo(e.key)}
         />
         <LogoutButton />
-      </Header> 
+      </Header>
       <Content className="p-10 pt-4">
-        <Breadcrumb paths={breadcrumbPaths} />
+        {location.pathname !== "/" && <Breadcrumb paths={breadcrumbPaths} />}
         <Outlet />
       </Content>
     </Layout>

@@ -4,9 +4,7 @@ import SessionLayout from "../../pages/SessionManagement/SessionLayout.jsx";
 import SessionInformation from "@pages/SessionManagement/SessionInformation.jsx";
 import { TableType } from "@features/session/constraint/TableEnum.js";
 import { GradingPage } from "@pages/grading/GradingPage.jsx";
-const ProfilePage = lazy(
-  () => import("@pages/ProfilePage/ProfilePage.jsx")
-);
+const ProfilePage = lazy(() => import("@pages/ProfilePage/ProfilePage.jsx"));
 import ClassManagement from "@pages/ClassManagement/classManagement.jsx";
 import Dashboard from "@pages/Dashboard/Dashboard.jsx";
 import ClassDetail from "@pages/ClassDetail/ClassDetail.jsx";
@@ -20,9 +18,11 @@ const PrivateRoute = [
         index: true,
         element: <Dashboard />,
         breadcrumb: "Dashboard",
+        role: ["admin"],
       },
       {
         path: "class",
+        role: ["teacher", "admin"],
         breadcrumb: "Class Management",
         children: [
           {
@@ -48,7 +48,8 @@ const PrivateRoute = [
                 breadcrumb: "Student Detail",
                 children: [
                   {
-                    path: ":id",
+                    path: ":studentId",
+                    breadcrumb: ":studentId",
                     children: [
                       {
                         index: true,
@@ -70,11 +71,11 @@ const PrivateRoute = [
         path: "profile",
         breadcrumb: "Profile",
         children: [
-          { 
-            path: "", 
+          {
+            path: "",
             element: <ProfilePage />,
             breadcrumb: "",
-         },
+          },
         ],
       },
     ],

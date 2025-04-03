@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Input } from "antd";
-import "./index.css";
+import "./index.scss";
 import StudentMonitoring from "@features/session/ui/StudentModering";
 import StudentSessionTable from "@/features/session/ui/StudentSessionTable.jsx";
 import SearchInput from "@/app/components/SearchInput.jsx";
@@ -10,7 +10,7 @@ import { TableType } from "@features/session/constraint/TableEnum";
 
 const SessionInformation = ({ type }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
-  const { id } = useParams();
+  const { id, studentId } = useParams();
   const [pendingCount, setPendingCount] = useState(0);
   const navigate = useNavigate();
 
@@ -21,12 +21,6 @@ const SessionInformation = ({ type }) => {
     setSearchKeyword(event.target.value);
   };
 
-  const handleStudentNavigate = (id, action) => {
-    navigate(`/class/session/student/${id}`);
-  };
-  const handleStudentPartNavigate = (id, part) => {
-    navigate(`/class/session/student/${id}/grade/${part}`);
-  };
   const items = [
     {
       label: "Participant List",
@@ -36,8 +30,6 @@ const SessionInformation = ({ type }) => {
           searchKeyword={searchKeyword}
           type={type}
           id={id}
-          onStudentClick={handleStudentNavigate}
-          onNavigate={handleStudentPartNavigate}
         />
       ),
     },
@@ -68,14 +60,14 @@ const SessionInformation = ({ type }) => {
   };
 
   return (
-    <div className="flex flex-col">
+    <div className=" session-container flex flex-col p-8">
       <Details type={type} id={id} />
 
       <div className="">
         <div className="flex justify-between">
           <div>
             <p className="text-[30px] text-black font-bold">
-              Student Monitoring
+            {type == TableType.SESSION ? "Student Monitoring" : "Assessment History"}
             </p>
             <p className="text-[18px] text-[#637381] font-medium mt-[10px]">
               Track student request and participation.
@@ -121,9 +113,7 @@ const SessionInformation = ({ type }) => {
           <StudentSessionTable
             searchKeyword={searchKeyword}
             type={type}
-            id={id}
-            onStudentClick={handleStudentNavigate}
-            onNavigate={handleStudentPartNavigate}
+            id={studentId}
           />
         )}
       </div>

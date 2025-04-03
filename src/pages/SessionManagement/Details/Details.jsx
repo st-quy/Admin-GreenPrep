@@ -14,7 +14,7 @@ const Details = ({ type, id }) => {
         } else if (type === "student") {
           url = `https://dev-api-greenprep.onrender.com/api/users/${id}`;
         }
-  
+
         const response = await axios.get(url);
         setData([response.data.data]);
       } catch (error) {
@@ -23,7 +23,7 @@ const Details = ({ type, id }) => {
         setLoading(false);
       }
     };
-  
+
     fetchData();
   }, [type, id]);
 
@@ -32,7 +32,9 @@ const Details = ({ type, id }) => {
   }
 
   if (data.length === 0) {
-    return <p className="text-center text-red-500 font-bold">No data available.</p>;
+    return (
+      <p className="text-center text-red-500 font-bold">No data available.</p>
+    );
   }
 
   const getStatusStyle = (status) => {
@@ -122,9 +124,10 @@ const Details = ({ type, id }) => {
                       {item.sessionName || "Not Available"}
                     </p>
                     <p className="text-black font-semibold m-[15px]">
-                    {item.SessionParticipants && Array.isArray(item.SessionParticipants)
-                      ? item.SessionParticipants.length
-                      : "Not Available"}
+                      {item.SessionParticipants &&
+                      Array.isArray(item.SessionParticipants)
+                        ? item.SessionParticipants.length
+                        : "Not Available"}
                     </p>
                     <p className="text-black font-semibold m-[15px]">
                       {formatDateTime(item.startTime) || "Not Available"}
