@@ -81,9 +81,20 @@ const StudentSessionTable = ({
       title: "GRAMMAR & VOCABULARY",
       dataIndex: "GrammarVocab",
       key: "GrammarVocab",
+      render: (text) => <div>{text || "No Data"}</div>,
     },
-    { title: "LISTENING", dataIndex: "Listening", key: "Listening" },
-    { title: "READING", dataIndex: "Reading", key: "Reading" },
+    {
+      title: "LISTENING",
+      dataIndex: "Listening",
+      key: "Listening",
+      render: (text) => <div>{text || "No Data"}</div>,
+    },
+    {
+      title: "READING",
+      dataIndex: "Reading",
+      key: "Reading",
+      render: (text) => <div>{text || "No Data"}</div>,
+    },
     {
       title: "SPEAKING",
       dataIndex: "Speaking",
@@ -195,7 +206,7 @@ const StudentSessionTable = ({
     );
   }, [processedData, currentPage, pageSize]);
 
-  if (isLoading) return <Spin />;
+  // if (isLoading) return <Spin />;
 
   return (
     <Table
