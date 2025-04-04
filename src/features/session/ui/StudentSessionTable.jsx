@@ -45,8 +45,10 @@ const StudentSessionTable = ({
     if (!searchKeyword) return processedData;
     return processedData.filter((item) => {
       const fullName = item.User?.fullName || "";
+      const sessionName = item.Session?.sessionName || "";
       return (
         fullName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
+        sessionName?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
         item.Level?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
         item.UserID?.toLowerCase().includes(searchKeyword.toLowerCase())
       );

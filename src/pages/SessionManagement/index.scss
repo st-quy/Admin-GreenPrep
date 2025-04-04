@@ -34,4 +34,9 @@
   .ant-tabs .ant-tabs-ink-bar {
     @apply bg-primaryColor;
   }
+
+  //SearchInput
+  .ant-input-search-large .ant-input-search-button {
+    @apply h-[39px]
+  }
 }

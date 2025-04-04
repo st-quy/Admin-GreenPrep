@@ -12,11 +12,22 @@ const Details = ({ type, id }) => {
         if (type === "session") {
           url = `https://dev-api-greenprep.onrender.com/api/sessions/${id}`;
         } else if (type === "student") {
-          url = `https://dev-api-greenprep.onrender.com/api/students/${id}`;
+          url = `https://dev-api-greenprep.onrender.com/api/session-participants/user/${id}`;
         }
 
         const response = await axios.get(url);
-        setData([response.data.data]);
+
+        if (type === "student") {
+          const userData = response.data.data[0]?.User || {};
+
+          if (!userData.fullName) { 
+            userData.fullName = `${userData.firstName || ""} ${userData.lastName || ""}`.trim();
+          }
+
+          setData([userData]);
+        } else {
+          setData([response.data.data]);
+        }
       } catch (error) {
         console.error("Error when getting data:", error);
       } finally {
@@ -144,13 +155,13 @@ const Details = ({ type, id }) => {
                     ) : (
                       <div>
                         <p className="text-black font-semibold my-[15px]">
-                          {item.studentName || "Not Available"}
+                          {item.fullName || "Not Available"}
                         </p>
                         <p className="text-black font-semibold my-[15px]">
-                          {item.studentID || "Not Available"}
+                          {item.studentCode || "Not Available"}
                         </p>
                         <p className="text-black font-semibold my-[15px]">
-                          {item.className || "Not Available"}
+                          {item.class || "Not Available"}
                         </p>
                       </div>
                     )}
