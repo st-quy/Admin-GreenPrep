@@ -5,7 +5,7 @@ import StudentMonitoring from "@features/session/ui/StudentModering";
 import StudentSessionTable from "@/features/session/ui/StudentSessionTable.jsx";
 import SearchInput from "@/app/components/SearchInput.jsx";
 import Details from "@pages/SessionManagement/Details/Details.jsx";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { TableType } from "@features/session/constraint/TableEnum";
 
 const SessionInformation = ({ type }) => {
