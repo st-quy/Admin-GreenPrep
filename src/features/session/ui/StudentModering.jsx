@@ -41,7 +41,6 @@ const StudentMonitoring = ({
       }));
     return pendingRequests;
   };
-
   const { data: dataSource = [], isLoading } = useQuery({
     queryKey: ["sessionRequests", sessionId],
     queryFn: fetchSessionRequests,
@@ -70,18 +69,17 @@ const StudentMonitoring = ({
   // Mutation cho approve request
   const approveMutation = useMutation({
     mutationFn: (requestId) =>
-      axios.patch(API_ENDPOINTS.APPROVE_REQUEST(sessionId), {
-        requestId,
-      }),
+      axios.patch(API_ENDPOINTS.APPROVE_REQUEST(sessionId), { requestId }),
     onSuccess: (_, requestId) => {
       message.success("Request has been approved!");
-      queryClient.invalidateQueries({ queryKey: ["sessionParticipants"] });
-      queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
-        if (Array.isArray(oldData)) {
-          return oldData.filter((req) => req.requestId !== requestId);
-        }
-        return [];
-      });
+      // queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
+      //   if (Array.isArray(oldData)) {
+      //     return oldData.filter((req) => req.requestId !== requestId);
+      //   }
+      //   return [];
+      // });
+      queryClient.invalidateQueries({queryKey:["sessionRequests"]});
+      queryClient.invalidateQueries({queryKey:["sessionParticipants"]});
     },
     onError: (error) => {
       message.error("Error approving request: " + error.message);
@@ -91,17 +89,16 @@ const StudentMonitoring = ({
   // Mutation cho reject request
   const rejectMutation = useMutation({
     mutationFn: (requestId) =>
-      axios.patch(API_ENDPOINTS.REJECT_REQUEST(sessionId), {
-        requestId,
-      }),
+      axios.patch(API_ENDPOINTS.REJECT_REQUEST(sessionId), { requestId }),
     onSuccess: (_, requestId) => {
       message.success("Request has been rejected!");
-      queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
-        if (Array.isArray(oldData)) {
-          return oldData.filter((req) => req.requestId !== requestId);
-        }
-        return [];
-      });
+      // queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
+      //   if (Array.isArray(oldData)) {
+      //     return oldData.filter((req) => req.requestId !== requestId);
+      //   }
+      //   return [];
+      // });
+      queryClient.invalidateQueries({queryKey:["sessionRequests"]});
     },
     onError: (error) => {
       message.error("Error rejecting request: " + error.message);
@@ -116,7 +113,11 @@ const StudentMonitoring = ({
       okText: "Approve",
       okButtonColor: "#22AD5C",
       onConfirm: () => {
-        approveMutation.mutate(record.requestId);
+        approveMutation.mutate(record.requestId, {
+          onSuccess: () => {
+            message.success("Request has been approved!");
+          },
+        });
         setModalOpen(false);
       },
     });
@@ -131,7 +132,11 @@ const StudentMonitoring = ({
       okText: "Reject",
       okButtonColor: "#F23030",
       onConfirm: () => {
-        rejectMutation.mutate(record.requestId);
+        rejectMutation.mutate(record.requestId, {
+          onSuccess: () => {
+            message.success("Request has been rejected!");
+          },
+        });
         setModalOpen(false);
       },
     });

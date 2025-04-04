@@ -6,6 +6,7 @@ import StudentSessionTable from "@/features/session/ui/StudentSessionTable.jsx";
 import SearchInput from "@/app/components/SearchInput.jsx";
 import Details from "@pages/SessionManagement/Details/Details.jsx";
 import { useParams, useNavigate } from "react-router-dom";
+import { TableType } from "@features/session/constraint/TableEnum";
 
 const SessionInformation = ({ type }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
@@ -28,7 +29,7 @@ const SessionInformation = ({ type }) => {
         <StudentSessionTable
           searchKeyword={searchKeyword}
           type={type}
-          id={id}
+          id={type == TableType.SESSION ? id : studentId}
         />
       ),
     },
@@ -49,6 +50,7 @@ const SessionInformation = ({ type }) => {
           onPendingCountChange={handlePendingCountChange}
         />
       ),
+      forceRender: true,
     },
   ];
 
@@ -60,13 +62,15 @@ const SessionInformation = ({ type }) => {
 
   return (
     <div className=" session-container flex flex-col p-8">
-      <Details type={type} id={id} />
+      <Details type={type} id={type == TableType.SESSION ? id : studentId} />
 
       <div className="">
         <div className="flex justify-between">
           <div>
             <p className="text-[30px] text-black font-bold">
-              Student Monitoring
+              {type == TableType.SESSION
+                ? "Student Monitoring"
+                : "Assessment History"}
             </p>
             <p className="text-[18px] text-[#637381] font-medium mt-[10px]">
               Track student request and participation.
@@ -103,10 +107,18 @@ const SessionInformation = ({ type }) => {
           <SearchInput
             placeholder="Search by name"
             onSearchChange={onSearchChange}
-            className="absolute z-10"
+            className={` ${type == TableType.SESSION ? "absolute z-10" : "mb-8"}`}
           />
         </div>
-        <Tabs defaultActiveKey="item-1" items={items} />
+        {type == TableType.SESSION ? (
+          <Tabs defaultActiveKey="item-1" items={items} />
+        ) : (
+          <StudentSessionTable
+            searchKeyword={searchKeyword}
+            type={type}
+            id={studentId}
+          />
+        )}
       </div>
     </div>
   );

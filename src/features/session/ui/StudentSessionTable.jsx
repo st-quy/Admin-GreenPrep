@@ -6,14 +6,29 @@ import {
   useStudentParticipants,
 } from "../hooks/useSession";
 import { useNavigate } from "react-router-dom";
+function getSkillLevel(score, skill) {
+  const thresholds = {
+    Listening: [8, 16, 24, 34, 42],
+    Reading: [8, 16, 26, 38, 46],
+    Writing: [6, 18, 26, 40, 48],
+    Speaking: [4, 16, 26, 41, 48],
+  };
 
+  if (!thresholds[skill]) {
+    throw new Error("Invalid skill");
+  }
+
+  let levelIndex = thresholds[skill].findIndex(
+    (threshold) => score < threshold
+  );
+  return levelIndex === -1 ? "C" : LevelEnum[levelIndex];
+}
 const StudentSessionTable = ({
   id,
   searchKeyword,
   type,
   status = "draft",
   onAllQuestionGraded = () => {},
-  onNavigate = () => {},
 }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -42,13 +57,18 @@ const StudentSessionTable = ({
   }, [processedData]);
 
   const filteredData = useMemo(() => {
-    if (!searchKeyword) return processedData;
+    const keyword = searchKeyword?.toLowerCase().trim() || "";
+    console.log(keyword);
+    if (!keyword) return processedData;
     return processedData.filter((item) => {
-      const fullName = item.User?.fullName || "";
+      const fullName = String(item.User?.fullName || "").toLowerCase();
+      const sessionName = String(item.Session?.sessionName || "").toLowerCase();
+      const level = String(item.Level || "").toLowerCase();
+
       return (
-        fullName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-        item.Level?.toLowerCase().includes(searchKeyword.toLowerCase()) ||
-        item.UserID?.toLowerCase().includes(searchKeyword.toLowerCase())
+        sessionName.includes(keyword) ||
+        fullName.includes(keyword) ||
+        level.includes(keyword)
       );
     });
   }, [processedData, searchKeyword]);
@@ -65,7 +85,6 @@ const StudentSessionTable = ({
       onAllQuestionGraded?.();
     }
   }, [processedData, levels]);
-
   useEffect(() => {
     if (type === TableType.SESSION && status !== StatusType.PUBLISHED) {
       checkIsAllQuestionGraded();
@@ -87,13 +106,21 @@ const StudentSessionTable = ({
       title: "LISTENING",
       dataIndex: "Listening",
       key: "Listening",
-      render: (text) => <div>{text || "No Data"}</div>,
+      render: (text, record) => (
+        <span className="text-[14px]  text-[#637381]">
+          {text + "I" + getSkillLevel(text, "Listening") || "Ungraded"}
+        </span>
+      ),
     },
     {
       title: "READING",
       dataIndex: "Reading",
       key: "Reading",
-      render: (text) => <div>{text || "No Data"}</div>,
+      render: (text, record) => (
+        <span className="text-[14px]  text-[#637381]">
+          {text + "I" + getSkillLevel(text, "Reading") || "Ungraded"}
+        </span>
+      ),
     },
     {
       title: "SPEAKING",
@@ -109,11 +136,11 @@ const StudentSessionTable = ({
             }
             className="cursor-pointer underline text-[14px] hover:opacity-80"
           >
-            {text || "Ungraded"}
+            {text + "I" + getSkillLevel(text, "Speaking") || "Ungraded"}
           </a>
         ) : (
-          <span className="text-[14px] text-[#637381]">
-            {text || "Ungraded"}
+          <span className="text-[14px]  text-[#637381]">
+            {text + "I" + getSkillLevel(text, "Speaking") || "Ungraded"}
           </span>
         ),
     },
@@ -131,11 +158,11 @@ const StudentSessionTable = ({
             }
             className="cursor-pointer underline text-[14px] hover:opacity-80"
           >
-            {text || "Ungraded"}
+            {text + "I" + getSkillLevel(text, "Writing") || "Ungraded"}
           </a>
         ) : (
-          <span className="text-[14px] text-[#637381]">
-            {text || "Ungraded"}
+          <span className="text-[14px]  text-[#637381]">
+            {text + "I" + getSkillLevel(text, "Writing") || "Ungraded"}
           </span>
         ),
     },
@@ -162,7 +189,7 @@ const StudentSessionTable = ({
             ))}
           </Select>
         ) : (
-          <span className="text-[14px] text-[#637381]">{level}</span>
+          <span className="text-[14px]  text-[#637381]">{level}</span>
         ),
     },
   ];
@@ -181,7 +208,7 @@ const StudentSessionTable = ({
               }
               className="cursor-pointer underline text-[14px] hover:opacity-80"
             >
-              {text}
+              {text || "Unknown"}
             </a>
           ),
         },
@@ -193,6 +220,7 @@ const StudentSessionTable = ({
           title: "SESSION NAME",
           dataIndex: ["Session", "sessionName"],
           key: "SessionID",
+          render: (text) => <span>{text || "Unknown"}</span>,
         },
         ...commonColumns,
       ];
@@ -206,6 +234,7 @@ const StudentSessionTable = ({
     );
   }, [processedData, currentPage, pageSize]);
 
+  // if (isLoading) return <Spin />;
   // if (isLoading) return <Spin />;
 
   return (
