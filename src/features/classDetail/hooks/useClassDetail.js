@@ -48,3 +48,38 @@ export const useDeleteSessionMutation = () => {
     },
   });
 };
+export const useCreateSession = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data) => {
+      const response = await ClassDetailApi.createSession(
+        // @ts-ignore
+        data.classId,
+        // @ts-ignore
+        data.sessionData
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["classDetail"] });
+    },
+  });
+};
+
+export const useUpdateSession = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data) => {
+      const response = await ClassDetailApi.updateSession(
+        // @ts-ignore
+        data.sessionId,
+        // @ts-ignore
+        data.sessionData
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["classDetail"] });
+    },
+  });
+};

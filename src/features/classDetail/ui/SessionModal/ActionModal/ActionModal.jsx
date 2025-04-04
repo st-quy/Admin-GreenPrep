@@ -1,14 +1,27 @@
-import { Modal, Button, DatePicker, Select, Input, message, Form } from "antd";
+import {
+  Modal,
+  Button,
+  DatePicker,
+  Select,
+  Input,
+  message,
+  Form,
+  Spin,
+} from "antd";
 import React, { useState, useEffect } from "react";
 import EditIcon from "@assets/icons/class-detail/edit.png";
 import GenerateIcon from "@assets/icons/class-detail/generate.png";
 const { RangePicker } = DatePicker;
 import { yupSync } from "@shared/lib/utils";
 import { sessionSchema } from "@features/classDetail/validate";
-import { ClassDetailApi } from "@features/classDetail/classAPI";
-import { useGenerateSessionKeyMutation } from "@features/classDetail/hooks/useClassDetail";
+import {
+  useCreateSession,
+  useGenerateSessionKeyMutation,
+  useUpdateSession,
+} from "@features/classDetail/hooks/useClassDetail";
 import dayjs from "dayjs";
 import { useQueryClient } from "@tanstack/react-query";
+import { LoadingOutlined, ReloadOutlined } from "@ant-design/icons";
 
 const ActionModal = ({
   isEdit = false,
@@ -19,7 +32,12 @@ const ActionModal = ({
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-  const generateKey = useGenerateSessionKeyMutation();
+  const { mutateAsync: generateKey, isPending: isGenerating } =
+    useGenerateSessionKeyMutation();
+  const { mutate: createSession, isPending: isCreatingSession } =
+    useCreateSession();
+  const { mutate: updateSession, isPending: isUpdatingSession } =
+    useUpdateSession();
 
   const showModal = () => {
     setOpen(true);
@@ -31,7 +49,7 @@ const ActionModal = ({
   };
 
   const handleGenerateSessionKey = async () => {
-    const data = await generateKey.mutateAsync();
+    const data = await generateKey();
     form.setFieldsValue({ sessionKey: data.key });
   };
 
@@ -49,12 +67,21 @@ const ActionModal = ({
         examSet: values.examSet,
         ClassID: classId,
       };
-
-      await ClassDetailApi.createSession(classId, JSON.stringify(sessionData));
-      queryClient.invalidateQueries({ queryKey: ["classDetail"] });
-      message.success("Session created successfully!");
-      setOpen(false);
-      form.resetFields();
+      createSession(
+        // @ts-ignore
+        { classId, sessionData: JSON.stringify(sessionData) },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["classDetail"] });
+            message.success("Session created successfully!");
+            setOpen(false);
+            form.resetFields();
+          },
+          onError: () => {
+            message.error("Please field all the fields correctly.");
+          },
+        }
+      );
     } catch (error) {
       message.error("Please field all the fields correctly.");
     } finally {
@@ -77,19 +104,23 @@ const ActionModal = ({
         ClassID: classId,
       };
 
-      await ClassDetailApi.updateSession(
-        initialData.ID,
-        JSON.stringify(sessionData)
+      updateSession(
+        // @ts-ignore
+        { sessionId: initialData.ID, sessionData: JSON.stringify(sessionData) },
+        {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["classDetail"] });
+            message.success("Session update successfully!");
+            setOpen(false);
+            form.resetFields();
+          },
+          onError: () => {
+            message.error("Please field all the fields correctly.");
+          },
+        }
       );
-      queryClient.invalidateQueries({ queryKey: ["classDetail"] });
-      message.success(`Session ${isEdit ? "update" : "create"} successfully!`);
-      setOpen(false);
-      form.resetFields();
     } catch (error) {
-      console.error(`Error  ${isEdit ? "update" : "create"}  session:`, error);
-      message.error(
-        `Failed to  ${isEdit ? "update" : "create"}  session. Please try again.`
-      );
+      message.error(`Failed to update session. Please try again.`);
     } finally {
       setConfirmLoading(false);
     }
@@ -165,12 +196,16 @@ const ActionModal = ({
                 placeholder="Session Key"
                 className="!h-[46px]"
                 suffix={
-                  <img
-                    src={GenerateIcon}
-                    alt="Generate Icon"
-                    className="hover:cursor-pointer"
-                    onClick={handleGenerateSessionKey}
-                  />
+                  <div onClick={handleGenerateSessionKey}>
+                    {isGenerating ? (
+                      <Spin
+                        indicator={<LoadingOutlined spin />}
+                        size="default"
+                      />
+                    ) : (
+                      <ReloadOutlined />
+                    )}
+                  </div>
                 }
               />
             </Form.Item>
@@ -183,6 +218,7 @@ const ActionModal = ({
             >
               <Select
                 className="!h-[46px] !w-full"
+                placeholder="Exam Set"
                 options={[
                   { label: "Exam 1", value: "english" },
                   { label: "Exam 2", value: "math" },
@@ -213,6 +249,7 @@ const ActionModal = ({
                 </Button>
                 <Button
                   onClick={isEdit ? onUpdate : onCreate}
+                  loading={isCreatingSession || isUpdatingSession}
                   htmlType="submit"
                   className="h-[52px] w-[124px] rounded-[50px] bg-[#003087] text-white lg:text-[16px] md:text-[14px]"
                 >

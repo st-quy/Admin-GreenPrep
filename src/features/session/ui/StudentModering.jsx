@@ -48,7 +48,6 @@ const StudentMonitoring = ({
     enabled: !!sessionId,
   });
 
-  // Searching functionality
   const filteredData = useMemo(() => {
     if (!searchKeyword) return dataSource;
     return dataSource.filter((item) => {
