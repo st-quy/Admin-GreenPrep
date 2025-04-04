@@ -99,7 +99,11 @@ const StudentSessionTable = ({
       title: "GRAMMAR & VOCABULARY",
       dataIndex: "GrammarVocab",
       key: "GrammarVocab",
-      render: (text) => <div>{text || "No Data"}</div>,
+      render: (text) => (
+        <span className="font-[500] text-[10px] md:text-[14px]  text-[#637381]">
+          {text || "No Data"}
+        </span>
+      ),
       onHeaderCell: () => ({
         style: { paddingLeft: "0px", paddingRight: "0px" },
       }),
@@ -109,7 +113,7 @@ const StudentSessionTable = ({
       dataIndex: "Listening",
       key: "Listening",
       render: (text, record) => (
-        <span className="font-[500] text-[14px]  text-[#637381]">
+        <span className="font-[500] text-[10px] md:text-[14px]  text-[#637381]">
           {text ? text + " | " + getSkillLevel(text, "Listening") : "No Data"}
         </span>
       ),
@@ -119,7 +123,7 @@ const StudentSessionTable = ({
       dataIndex: "Reading",
       key: "Reading",
       render: (text, record) => (
-        <span className="font-[500] text-[14px]  text-[#637381]">
+        <span className="font-[500] text-[10px] md:text-[14px]  text-[#637381]">
           {text ? text + " | " + getSkillLevel(text, "Reading") : "No Data"}
         </span>
       ),
@@ -136,12 +140,12 @@ const StudentSessionTable = ({
                 `/class/session/student/${record.User.ID}/grade?skill=speaking`
               )
             }
-            className="cursor-pointer underline underline-offset-4 font-[500] text-[14px] hover:opacity-80"
+            className="cursor-pointer underline underline-offset-4 font-[500] text-[10px] md:text-[14px] hover:opacity-80"
           >
             {text ? text + " | " + getSkillLevel(text, "Speaking") : "Ungraded"}
           </a>
         ) : (
-          <span className="font-[500] text-[14px]  text-[#637381]">
+          <span className="font-[500] text-[10px] md:text-[14px]  text-[#637381]">
             {text ? text + " | " + getSkillLevel(text, "Speaking") : "Ungraded"}
           </span>
         ),
@@ -158,12 +162,12 @@ const StudentSessionTable = ({
                 `/class/session/student/${record.User.ID}/grade?skill=writing`
               )
             }
-            className="cursor-pointer underline underline-offset-4  font-[500] text-[14px] hover:opacity-80"
+            className="cursor-pointer underline underline-offset-4  font-[500] text-[10px] md:text-[14px] hover:opacity-80"
           >
             {text ? text + " | " + getSkillLevel(text, "Writing") : "Ungraded"}
           </a>
         ) : (
-          <span className="font-[500] text-[14px]  text-[#637381]">
+          <span className="font-[500] text-[10px] md:text-[14px]  text-[#637381]">
             {text ? text + " | " + getSkillLevel(text, "Writing") : "Ungraded"}
           </span>
         ),
@@ -182,7 +186,7 @@ const StudentSessionTable = ({
               status === StatusType.PUBLISHED || type === TableType.STUDENT
             }
             onChange={(value) => onLevelChange(record.ID, value)}
-            className="w-20"
+            className="w-20 text-[10px] md:text-[16px]"
           >
             {LevelEnum.map((lvl) => (
               <Select.Option key={lvl} value={lvl}>
@@ -191,7 +195,7 @@ const StudentSessionTable = ({
             ))}
           </Select>
         ) : (
-          <span className="font-[500] text-[14px]  text-[#637381]">
+          <span className="font-[500] text-[10px] md:text-[14px]  text-[#637381]">
             {level}
           </span>
         ),
@@ -210,7 +214,7 @@ const StudentSessionTable = ({
               onClick={() =>
                 navigate(`/class/session/student/${record.User.ID}`)
               }
-              className="cursor-pointer underline underline-offset-4 font-[500] text-[14px] hover:opacity-80"
+              className="cursor-pointer underline underline-offset-4 font-[500] text-[10px] md:text-[14px] hover:opacity-80"
             >
               {text || "Unknown"}
             </a>
@@ -224,7 +228,11 @@ const StudentSessionTable = ({
           title: "SESSION NAME",
           dataIndex: ["Session", "sessionName"],
           key: "SessionID",
-          render: (text) => <span>{text || "Unknown"}</span>,
+          render: (text) => (
+            <span className="cursor-pointer font-[500] text-[10px] md:text-[14px] hover:opacity-80">
+              {text || "Unknown"}
+            </span>
+          ),
         },
         ...commonColumns,
       ];
@@ -260,13 +268,13 @@ const StudentSessionTable = ({
           wrapper: (props) => (
             <thead
               {...props}
-              className="bg-[#E6F0FA] text-[#637381] text-[16px]"
+              className="bg-[#E6F0FA] text-[#637381] text-[10px] md:text-[16px]"
             />
           ),
           cell: (props) => (
             <th
               {...props}
-              className="font-[550] tracking-wider text-center py-4 px-8"
+              className="font-[550] tracking-wider text-center py-4 px-1 md:px-8"
             />
           ),
         },

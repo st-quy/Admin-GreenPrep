@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Card, Spin, Tag, Typography, Divider } from "antd";
+import { Card, Spin, Tag, Typography, Descriptions, Divider } from "antd";
 import { TableType } from "@features/session/constraint/TableEnum";
 
 const { Title, Text } = Typography;
@@ -11,7 +11,7 @@ const statusTag = (status) => {
     NOT_STARTED: { color: "gray", text: "Not Started" },
   };
   return (
-    <Tag color={statusMap[status]?.color} className="rounded-3xl px-2 py-1">
+    <Tag color={statusMap[status]?.color} className="rounded-3xl">
       {statusMap[status]?.text || "Unknown"}
     </Tag>
   );
@@ -31,9 +31,7 @@ const Details = ({ type, id }) => {
         }
 
         const response = await axios.get(url);
-        setData(
-          type === TableType.SESSION ? response.data.data : response.data
-        );
+        setData(response.data.data || response.data);
       } catch (error) {
         console.error("Error when getting data:", error);
       } finally {
@@ -66,140 +64,86 @@ const Details = ({ type, id }) => {
       minute: "2-digit",
     });
   };
+  const items =
+    type === "session"
+      ? [
+          {
+            key: "1",
+            label: "Session Name",
+            children: data.sessionName || "Not Available",
+          },
+          {
+            key: "2",
+            label: "Session Key",
+            children: data.sessionKey || "Not Available",
+          },
+          {
+            key: "3",
+            label: "Participants",
+            children: data.SessionParticipants?.length || "Not Available",
+          },
+          { key: "4", label: "Status", children: statusTag(data.status) },
+          {
+            key: "5",
+            label: "Start Time",
+            children: formatDateTime(data.startTime),
+          },
+          {
+            key: "6",
+            label: "End Time",
+            children: formatDateTime(data.endTime),
+          },
+        ]
+      : [
+          {
+            key: "1",
+            label: "Student Name",
+            children: `${data.firstName} ${data.lastName}` || "Not Available",
+          },
+          {
+            key: "2",
+            label: "Student ID",
+            children: data.studentCode || "Not Available",
+          },
+          { key: "3", label: "Class", children: data.class || "Not Available" },
+          { key: "4", label: "Email", children: data.email || "Not Available" },
+          { key: "5", label: "Phone", children: data.phone || "Not Available" },
+        ];
 
   return (
-    <>
-      {data && (
-        <div>
-          <p className="text-[30px] text-black font-bold">
-            {type === "session" ? "Session Information" : "Student Information"}
-          </p>
-          <p className="text-[18px] text-[#637381] font-medium mt-[10px]">
-            {type === "session"
-              ? "View session details."
-              : "View student details."}
-          </p>
-          <div className="mt-4">
-            <div
-              key={data.sessionKey}
-              className="w-full flex justify-between columns-2 bg-white rounded-lg p-16 mt-[34px] shadow-md"
-            >
-              <div className="w-full flex columns-2 text-left text-base">
-                <div className="w-1/4 flex flex-col">
-                  {type === "session" ? (
-                    <>
-                      <p className="text-[#637381] font-medium m-[15px]">
-                        Session Name
-                      </p>
-                      <p className="text-[#637381] font-medium m-[15px]">
-                        Participants
-                      </p>
-                      <p className="text-[#637381] font-medium m-[15px]">
-                        Start time
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-[#637381] font-medium m-[15px]">
-                        Student Name
-                      </p>
-                      <p className="text-[#637381] font-medium m-[15px]">
-                        Student ID
-                      </p>
-                      <p className="text-[#637381] font-medium m-[15px]">
-                        Class
-                      </p>
-                    </>
-                  )}
-                </div>
-                <div className="flex flex-col">
-                  {type === "session" ? (
-                    <>
-                      <p className="text-black font-semibold m-[15px]">
-                        {data.sessionName || "Not Available"}
-                      </p>
-                      <p className="text-black font-semibold m-[15px]">
-                        {data.SessionParticipants &&
-                        Array.isArray(data.SessionParticipants)
-                          ? data.SessionParticipants.length
-                          : "Not Available"}
-                      </p>
-                      <p className="text-black font-semibold m-[15px]">
-                        {formatDateTime(data.startTime) || "Not Available"}
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-black font-semibold m-[15px]">
-                        {data.firstName + " " + data.lastName ||
-                          "Not Available"}
-                      </p>
-                      <p className="text-black font-semibold m-[15px]">
-                        {data.ID || "Not Available"}
-                      </p>
-                      <p className="text-black font-semibold m-[15px]">
-                        {data.class || "Not Available"}
-                      </p>
-                    </>
-                  )}
-                </div>
-              </div>
-              <div className="w-full flex columns-2 text-left text-base">
-                <div className="w-1/4 flex flex-col">
-                  {type === "session" ? (
-                    <>
-                      <p className="text-[#637381] font-medium m-[15px]">
-                        Session Key
-                      </p>
-                      <p className="text-[#637381] font-medium m-[15px]">
-                        Status
-                      </p>
-                      <p className="text-[#637381] font-medium m-[15px]">
-                        End Time
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-[#637381] font-medium m-[15px]">
-                        Email
-                      </p>
-                      <p className="text-[#637381] font-medium m-[15px]">
-                        Phone
-                      </p>
-                    </>
-                  )}
-                </div>
-                <div className="flex flex-col">
-                  {type === "session" ? (
-                    <>
-                      <p className="text-black font-semibold m-[15px]">
-                        {data.sessionKey || "Not Available"}
-                      </p>
-                      <div className="text-[#637381] font-medium mx-[15px] my-[12px]">
-                        {statusTag(data.status)}
-                      </div>
-                      <p className="text-black font-semibold m-[15px]">
-                        {formatDateTime(data.endTime) || "Not Available"}
-                      </p>
-                    </>
-                  ) : (
-                    <>
-                      <p className="text-black font-semibold m-[15px]">
-                        {data.email || "Not Available"}
-                      </p>
-                      <p className="text-black font-semibold m-[15px]">
-                        {data.phone || "Not Available"}
-                      </p>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-          <hr className="w-full bg-black bg-opacity-50 my-[50px]" />
-        </div>
-      )}
-    </>
+    <div>
+      <p className="text-[30px] text-black font-bold">
+        {type == TableType.SESSION
+          ? "Session information"
+          : "Student information"}
+      </p>
+      <p className="text-[18px] text-[#637381] font-medium mt-[10px]">
+        {type == TableType.SESSION
+          ? "Track student request and participation."
+          : "View student details."}
+      </p>
+      <div className="w-full">
+        <Card className="w-full h-full px-4 py-0 md:px-14 md:py-6 shadow-md mt-8 flex justify-center">
+          <Descriptions
+            size="small"
+            column={{ xs: 1, sm: 1, md: 1, lg: 2, xl: 2 }}
+            items={items}
+            labelStyle={{
+              width: "130px",
+              fontWeight: "bold",
+              padding: "5px",
+            }}
+            contentStyle={{
+              width: "200px",
+              fontWeight: "bold",
+              padding: "5px",
+            }}
+            className="max-w-[400px] md:max-w-full flex justify-center"
+          />
+        </Card>
+        <Divider className="mt-16" />
+      </div>
+    </div>
   );
 };
 
