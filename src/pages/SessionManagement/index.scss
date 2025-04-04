@@ -1,54 +1,37 @@
 .session-container {
   .ant-tabs-nav .ant-tabs-nav-wrap {
-    flex-direction: row-reverse;
+    @apply flex-row-reverse;
   }
 
-  .ant-tabs .ant-tabs-tab {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #637381;
-    background-color: #f9fafb;
-    font-size: 16px;
-    padding: 18px 40px 18px 40px;
+  .ant-table-wrapper .ant-table-cell {
+    @apply p-2
   }
 
-  .ant-tabs .ant-tabs-tab:hover {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #003087;
-    background-color: #e6f0fa;
-    font-size: 16px;
+  .ant-tabs-tab {
+    @apply md:px-[40px] px-[20px] md:py-[18px] py-[9px] bg-[#f9fafb] text-primaryTextColor md:text-[16px] text-[10px]
+  }
+
+  .ant-tabs-tab:hover {
+    @apply md:px-[40px] px-[20px] md:py-[18px] py-[9px] text-primaryColor bg-tableHeadColor md:text-[16px] text-[10px];
+  }
+
+  .ant-tabs-tab-active .ant-tabs-tab-btn {
+    @apply flex justify-center items-center text-primaryColor bg-tableHeadColor md:text-[16px] text-[10px];
+  }
+
+  .ant-tabs-tab + .ant-tabs-tab {
+    @apply ml-0;
+  }
+
+  .ant-tabs-tab.ant-tabs-tab-active {
+    @apply md:px-[40px] px-[20px] md:py-[18px] py-[9px] text-primaryColor bg-tableHeadColor md:text-[16px] text-[10px];
   }
 
   .ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #003087;
-    background-color: #e6f0fa;
-    font-size: 16px;
+    @apply text-primaryColor md:text-[16px] text-[10px];
   }
 
-  .ant-tabs .ant-tabs-tab + .ant-tabs-tab {
-    margin-left: 0;
-  }
-
-  /* .ant-tabs .ant-tabs-tab {
-    border-bottom: #DFE4EA solid 2px;
-    z-index: 10;
-    transition: 0.3s;
-} */
-
-  .ant-tabs .ant-tabs-tab.ant-tabs-tab-active {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: #003087;
-    background-color: #e6f0fa;
-    font-size: 16px;
-    /* border-bottom: #003087 solid 2px;
-    z-index: 10; */
+  .ant-tabs .ant-tabs-ink-bar {
+    @apply bg-primaryColor;
   }
 }

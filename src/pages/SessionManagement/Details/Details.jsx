@@ -40,11 +40,11 @@ const Details = ({ type, id }) => {
   const getStatusStyle = (status) => {
     switch (status) {
       case "COMPLETED":
-        return "w-[106px] px-[10px] py-[3px] bg-greenLight6 flex items-center justify-center rounded-full text-greenDark font-medium m-[12px]";
+        return "w-[106px] px-[10px] py-[3px] bg-greenLight6 flex items-center justify-center rounded-full text-greenDark font-medium my-[12px]";
       case "ON_GOING":
-        return "w-[96px] px-[10px] py-[3px] bg-blueLight5 flex items-center justify-center rounded-full text-blueDark font-medium m-[12px]";
+        return "w-[96px] px-[10px] py-[3px] bg-blueLight5 flex items-center justify-center rounded-full text-blueDark font-medium my-[12px]";
       case "NOT_STARTED":
-        return "w-[114px] px-[10px] py-[3px] bg-dark8 flex items-center justify-center rounded-full text-dark3 font-medium m-[12px]";
+        return "w-[114px] px-[10px] py-[3px] bg-dark8 flex items-center justify-center rounded-full text-dark3 font-medium my-[12px]";
       default:
         return "";
     }
@@ -81,133 +81,135 @@ const Details = ({ type, id }) => {
     <>
       {data && (
         <div>
-          <p className="text-[30px] text-black font-bold">
-            {type === "session" ? "Session Information" : "Student Information"}
+          <p className="md:text-[30px] text-[20px] text-black font-bold">
+            {type === "session" 
+              ? "Session Information" 
+              : "Student Information"}
           </p>
-          <p className="text-[18px] text-[#637381] font-medium mt-[10px]">
+          <p className="md:text-[18px] text-[12px] text-[#637381] font-medium mt-[10px]">
             {type === "session"
               ? "View session details."
               : "View student details."}
           </p>
-          <div className="mt-4">
+          <div className="md:mt-4 mt-2">
             {data.map((item, index) => (
               <div
                 key={index}
-                className="w-full flex justify-between columns-2 bg-white rounded-lg p-16 mt-[34px] shadow-md"
+                className="w-full flex justify-between columns-2 bg-white rounded-lg lg:p-16 md:p-12 p-8 mt-[34px] shadow-md"
               >
-                <div className="w-full flex columns-2 text-left text-base">
-                  <div className="w-1/4 flex flex-col">
+                <div className="w-full flex columns-2 text-left md:text-base text-xs">
+                  <div className="lg:w-1/4 md:w-2/5 w-2/5 flex flex-col">
                     {type === "session" ? (
-                      <>
-                        <p className="text-[#637381] font-medium m-[15px]">
+                      <div>
+                        <p className="text-[#637381] font-medium my-[15px]">
                           Session Name
                         </p>
-                        <p className="text-[#637381] font-medium m-[15px]">
+                        <p className="text-[#637381] font-medium my-[15px]">
                           Participants
                         </p>
-                        <p className="text-[#637381] font-medium m-[15px]">
+                        <p className="text-[#637381] font-medium my-[15px]">
                           Start time
                         </p>
-                      </>
+                      </div>
                     ) : (
-                      <>
-                        <p className="text-[#637381] font-medium m-[15px]">
+                      <div>
+                        <p className="text-[#637381] font-medium my-[15px]">
                           Student Name
                         </p>
-                        <p className="text-[#637381] font-medium m-[15px]">
+                        <p className="text-[#637381] font-medium my-[15px]">
                           Student ID
                         </p>
-                        <p className="text-[#637381] font-medium m-[15px]">
+                        <p className="text-[#637381] font-medium my-[15px]">
                           Class
                         </p>
-                      </>
+                      </div>
                     )}
                   </div>
                   <div className="flex flex-col">
                     {type === "session" ? (
-                      <>
-                        <p className="text-black font-semibold m-[15px]">
+                      <div>
+                        <p className="text-black font-semibold my-[15px]">
                           {item.sessionName || "Not Available"}
                         </p>
-                        <p className="text-black font-semibold m-[15px]">
+                        <p className="text-black font-semibold my-[15px]">
                           {item.SessionParticipants &&
                           Array.isArray(item.SessionParticipants)
                             ? item.SessionParticipants.length
                             : "Not Available"}
                         </p>
-                        <p className="text-black font-semibold m-[15px]">
+                        <p className="text-black font-semibold my-[15px]">
                           {formatDateTime(item.startTime) || "Not Available"}
                         </p>
-                      </>
+                      </div>
                     ) : (
-                      <>
-                        <p className="text-black font-semibold m-[15px]">
+                      <div>
+                        <p className="text-black font-semibold my-[15px]">
                           {item.studentName || "Not Available"}
                         </p>
-                        <p className="text-black font-semibold m-[15px]">
+                        <p className="text-black font-semibold my-[15px]">
                           {item.studentID || "Not Available"}
                         </p>
-                        <p className="text-black font-semibold m-[15px]">
+                        <p className="text-black font-semibold my-[15px]">
                           {item.className || "Not Available"}
                         </p>
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>
-                <div className="w-full flex columns-2 text-left text-base">
-                  <div className="w-1/4 flex flex-col">
+                <div className="w-full flex columns-2 text-left md:text-base text-xs">
+                  <div className="lg:w-1/4 md:w-2/5 w-2/5 flex flex-col">
                     {type === "session" ? (
-                      <>
-                        <p className="text-[#637381] font-medium m-[15px]">
+                      <div>
+                        <p className="text-[#637381] font-medium my-[15px]">
                           Session Key
                         </p>
-                        {/* <p className="text-[#637381] font-medium m-[15px]">
-                      Status
-                    </p> */}
-                        <p className="text-[#637381] font-medium m-[15px]">
+                        <p className="text-[#637381] font-medium my-[15px]">
+                          Status
+                        </p>
+                        <p className="text-[#637381] font-medium my-[15px]">
                           End Time
                         </p>
-                      </>
+                      </div>
                     ) : (
-                      <>
-                        <p className="text-[#637381] font-medium m-[15px]">
+                      <div>
+                        <p className="text-[#637381] font-medium my-[15px]">
                           Email
                         </p>
-                        <p className="text-[#637381] font-medium m-[15px]">
+                        <p className="text-[#637381] font-medium my-[15px]">
                           Phone
                         </p>
-                      </>
+                      </div>
                     )}
                   </div>
                   <div className="flex flex-col">
                     {type === "session" ? (
-                      <>
-                        <p className="text-black font-semibold m-[15px]">
+                      <div>
+                        <p className="text-black font-semibold my-[15px]">
                           {item.sessionKey || "Not Available"}
                         </p>
-                        {/* <div className={getStatusStyle(item.status)}>
-                      {formatStatus(item.status) || "Not Available"}
-                    </div> */}
-                        <p className="text-black font-semibold m-[15px]">
+                        <div className={getStatusStyle(item.status)}>
+                          {formatStatus(item.status) || "Not Available"}
+                        </div>
+                        <p className="text-black font-semibold my-[15px]">
                           {formatDateTime(item.endTime) || "Not Available"}
                         </p>
-                      </>
+                      </div>
                     ) : (
-                      <>
-                        <p className="text-black font-semibold m-[15px]">
+                      <div>
+                        <p className="text-black font-semibold my-[15px]">
                           {item.email || "Not Available"}
                         </p>
-                        <p className="text-black font-semibold m-[15px]">
+                        <p className="text-black font-semibold my-[15px]">
                           {item.phone || "Not Available"}
                         </p>
-                      </>
+                      </div>
                     )}
                   </div>
                 </div>
               </div>
             ))}
           </div>
-          <hr className="w-full bg-black bg-opacity-50 my-[50px]" />
+          <hr className="w-full bg-black bg-opacity-50 md:my-[50px] my-[30px]" />
         </div>
       )}
     </>

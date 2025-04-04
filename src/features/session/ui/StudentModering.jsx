@@ -70,12 +70,8 @@ const StudentMonitoring = ({
   // Mutation cho approve request
   const approveMutation = useMutation({
     mutationFn: (requestId) =>
-      axios.patch(API_ENDPOINTS.APPROVE_REQUEST(sessionId), {
-        requestId,
-      }),
+      axios.patch(API_ENDPOINTS.APPROVE_REQUEST(sessionId), { requestId }),
     onSuccess: (_, requestId) => {
-      message.success("Request has been approved!");
-      queryClient.invalidateQueries({ queryKey: ["sessionParticipants"] });
       queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
         if (Array.isArray(oldData)) {
           return oldData.filter((req) => req.requestId !== requestId);
@@ -87,15 +83,11 @@ const StudentMonitoring = ({
       message.error("Error approving request: " + error.message);
     },
   });
-
   // Mutation cho reject request
   const rejectMutation = useMutation({
     mutationFn: (requestId) =>
-      axios.patch(API_ENDPOINTS.REJECT_REQUEST(sessionId), {
-        requestId,
-      }),
+      axios.patch(API_ENDPOINTS.REJECT_REQUEST(sessionId), { requestId }),
     onSuccess: (_, requestId) => {
-      message.success("Request has been rejected!");
       queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
         if (Array.isArray(oldData)) {
           return oldData.filter((req) => req.requestId !== requestId);
@@ -116,13 +108,16 @@ const StudentMonitoring = ({
       okText: "Approve",
       okButtonColor: "#22AD5C",
       onConfirm: () => {
-        approveMutation.mutate(record.requestId);
+        approveMutation.mutate(record.requestId, {
+          onSuccess: () => {
+            message.success("Request has been approved!");
+          },
+        });
         setModalOpen(false);
       },
     });
     setModalOpen(true);
   };
-
   const handleReject = (record) => {
     setModalConfig({
       title: "Are you sure you want to reject this student?",
@@ -131,13 +126,16 @@ const StudentMonitoring = ({
       okText: "Reject",
       okButtonColor: "#F23030",
       onConfirm: () => {
-        rejectMutation.mutate(record.requestId);
+        rejectMutation.mutate(record.requestId, {
+          onSuccess: () => {
+            message.success("Request has been rejected!");
+          },
+        });
         setModalOpen(false);
       },
     });
     setModalOpen(true);
   };
-
   const handleBulkApprove = () => {
     setModalConfig({
       title: "Are you sure you want to approve all selected students?",
@@ -165,7 +163,6 @@ const StudentMonitoring = ({
     });
     setModalOpen(true);
   };
-
   const handleBulkReject = () => {
     setModalConfig({
       title: "Are you sure you want to reject all selected students?",
@@ -212,7 +209,7 @@ const StudentMonitoring = ({
       key: "studentName",
       align: "center",
       render: (text) => (
-        <span className="text-[#637381] text-[16px]">{text}</span>
+        <span className="text-[#637381] md:text-[16px] text-[10px]">{text}</span>
       ),
     },
     {
@@ -221,7 +218,7 @@ const StudentMonitoring = ({
       key: "studentId",
       align: "center",
       render: (text) => (
-        <span className="text-[#637381] text-[16px]">{text}</span>
+        <span className="text-[#637381] md:text-[16px] text-[10px]">{text}</span>
       ),
     },
     {
@@ -230,7 +227,7 @@ const StudentMonitoring = ({
       key: "className",
       align: "center",
       render: (text) => (
-        <span className="text-[#637381] text-[16px]">{text}</span>
+        <span className="text-[#637381] md:text-[16px] text-[10px]">{text}</span>
       ),
     },
     {
@@ -243,13 +240,13 @@ const StudentMonitoring = ({
             src={CheckCircleIcon}
             alt="Check Circle"
             onClick={() => handleApprove(record)}
-            className="h-7 text-[#22AD5C] hover:text-green-600 hover:cursor-pointer"
+            className="md:h-7 h-5 text-[#22AD5C] hover:text-green-600 hover:cursor-pointer"
           />
           <img
             src={CloseCircleIcon}
             alt="Close Circle"
             onClick={() => handleReject(record)}
-            className="h-7 text-[#F23030] hover:text-red-600 hover:cursor-pointer"
+            className="md:h-7 h-5 text-[#F23030] hover:text-red-600 hover:cursor-pointer"
           />
         </div>
       ),
@@ -269,7 +266,7 @@ const StudentMonitoring = ({
     onShowSizeChange: onShowSizeChange,
     onChange: (page) => setCurrentPage(page),
     showTotal: (total, range) => (
-      <span className="text-[16px] text-[#637381]">
+      <span className="md:text-[16px] text-[10px] text-[#637381]">
         Showing {range[0].toString().padStart(2)}-
         {range[1].toString().padStart(2)} of {total}
       </span>
@@ -282,14 +279,14 @@ const StudentMonitoring = ({
         {selectedRowKeys.length > 0 && (
           <div className="flex">
             <div
-              className="text-[#637381] rounded-none text-sm h-8 px-3 hover:font-bold hover:text-[#22AD5C] hover:underline hover:cursor-pointer"
+              className="text-[#637381] rounded-none md:text-sm text-[10px] h-8 px-3 hover:font-bold hover:text-[#22AD5C] hover:underline hover:cursor-pointer"
               onClick={handleBulkApprove}
             >
               Approve
             </div>
             <div>|</div>
             <div
-              className="text-[#637381] rounded-none text-sm h-8 px-3 hover:font-bold hover:text-[#F23030] hover:underline hover:cursor-pointer"
+              className="text-[#637381] rounded-none md:text-sm text-[10px] h-8 px-3 hover:font-bold hover:text-[#F23030] hover:underline hover:cursor-pointer"
               onClick={handleBulkReject}
             >
               Reject
@@ -298,7 +295,7 @@ const StudentMonitoring = ({
         )}
       </div>
       <Table
-        scroll={{ y: 400 }}
+        scroll={filteredData.length > 0 && filteredData.length < 400 ? undefined : { y: 400 }}
         rowSelection={rowSelection}
         // @ts-ignore
         columns={columns}
@@ -311,7 +308,7 @@ const StudentMonitoring = ({
             cell: (props) => (
               <th
                 {...props}
-                className="!bg-[#E6F0FA] text-[16px] !text-[#637381] font-medium uppercase tracking-wider text-center py-3 px-4"
+                className="!bg-[#E6F0FA] md:text-[16px] text-[10px] !text-[#637381] font-medium uppercase tracking-wider text-center py-3 px-4"
               />
             ),
           },

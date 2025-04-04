@@ -81,19 +81,19 @@ const StudentSessionTable = ({
       title: "GRAMMAR & VOCABULARY",
       dataIndex: "GrammarVocab",
       key: "GrammarVocab",
-      render: (text) => <div>{text || "No Data"}</div>,
+      render: (text) => <div className="text-[10px] md:text-[16px]">{text || "No Data"}</div>,
     },
     {
       title: "LISTENING",
       dataIndex: "Listening",
       key: "Listening",
-      render: (text) => <div>{text || "No Data"}</div>,
+      render: (text) => <div className="text-[10px] md:text-[16px]">{text || "No Data"}</div>,
     },
     {
       title: "READING",
       dataIndex: "Reading",
       key: "Reading",
-      render: (text) => <div>{text || "No Data"}</div>,
+      render: (text) => <div className="text-[10px] md:text-[16px]">{text || "No Data"}</div>,
     },
     {
       title: "SPEAKING",
@@ -107,12 +107,12 @@ const StudentSessionTable = ({
                 `/class/session/student/${record.User.ID}/grade?skill=speaking`
               )
             }
-            className="cursor-pointer underline text-[14px] hover:opacity-80"
+            className="cursor-pointer underline text-[10px] md:text-[16px] hover:opacity-80"
           >
             {text || "Ungraded"}
           </a>
         ) : (
-          <span className="text-[14px] text-[#637381]">
+          <span className="text-[10px] md:text-[16px] text-[#637381]">
             {text || "Ungraded"}
           </span>
         ),
@@ -129,12 +129,12 @@ const StudentSessionTable = ({
                 `/class/session/student/${record.User.ID}/grade?skill=writing`
               )
             }
-            className="cursor-pointer underline text-[14px] hover:opacity-80"
+            className="cursor-pointer underline text-[10px] md:text-[16px] hover:opacity-80"
           >
             {text || "Ungraded"}
           </a>
         ) : (
-          <span className="text-[14px] text-[#637381]">
+          <span className="text-[10px] md:text-[16px] text-[#637381]">
             {text || "Ungraded"}
           </span>
         ),
@@ -153,7 +153,7 @@ const StudentSessionTable = ({
               status === StatusType.PUBLISHED || type === TableType.STUDENT
             }
             onChange={(value) => onLevelChange(record.ID, value)}
-            className="w-20"
+            className="w-20 text-[10px] md:text-[16px]"
           >
             {LevelEnum.map((lvl) => (
               <Select.Option key={lvl} value={lvl}>
@@ -162,7 +162,7 @@ const StudentSessionTable = ({
             ))}
           </Select>
         ) : (
-          <span className="text-[14px] text-[#637381]">{level}</span>
+          <span className="text-[10px] md:text-[16px] text-[#637381]">{level}</span>
         ),
     },
   ];
@@ -179,7 +179,7 @@ const StudentSessionTable = ({
               onClick={() =>
                 navigate(`/class/session/student/${record.User.ID}`)
               }
-              className="cursor-pointer underline text-[14px] hover:opacity-80"
+              className="cursor-pointer underline md:text-[16px] text-[10px] hover:opacity-80"
             >
               {text}
             </a>
@@ -232,7 +232,7 @@ const StudentSessionTable = ({
       components={{
         header: {
           wrapper: (props) => (
-            <thead {...props} className="bg-[#E6F0FA] text-[#637381]" />
+            <thead {...props} className="bg-[#E6F0FA] text-[#637381] md:text-[14px] text-[10px]" />
           ),
         },
       }}

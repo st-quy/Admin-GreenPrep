@@ -37,7 +37,7 @@ const SessionInformation = ({ type }) => {
         <span className="relavtive">
           Pending Request
           {pendingCount > 0 && (
-            <div className="bg-redDark w-[13px] h-[13px] absolute top-4 right-6 rounded-full"></div>
+            <div className="bg-redDark w-[13px] h-[13px] absolute md:top-4 top-1 md:right-6 right-1 rounded-full"></div>
           )}
         </span>
       ),
@@ -59,23 +59,23 @@ const SessionInformation = ({ type }) => {
   };
 
   return (
-    <div className=" session-container flex flex-col p-8">
+    <div className="session-container flex flex-col p-8">
       <Details type={type} id={id} />
 
       <div className="">
         <div className="flex justify-between">
           <div>
-            <p className="text-[30px] text-black font-bold">
+            <p className="md:text-[30px] text-[20px] text-black font-bold">
               Student Monitoring
             </p>
-            <p className="text-[18px] text-[#637381] font-medium mt-[10px]">
+            <p className="md:text-[18px] text-[12px] text-[#637381] font-medium mt-[10px]">
               Track student request and participation.
             </p>
           </div>
           <div>
             {buttonState === "publishScore" && (
               <button
-                className="bg-[#E5E7EB] text-[#6B7280] font-bold rounded-full px-[28px] py-[13px] text-base border-none"
+                className="bg-[#E5E7EB] text-[#6B7280] font-bold rounded-full md:px-[28px] px-[18px] md:py-[13px] py-[7px] md:text-base text-xs border-none"
                 disabled
               >
                 Publish Score
@@ -83,7 +83,7 @@ const SessionInformation = ({ type }) => {
             )}
             {buttonState === "readyToPublish" && (
               <button
-                className="bg-secondaryColor text-white font-bold rounded-full px-[28px] py-[13px] text-base border-none"
+                className="bg-secondaryColor text-white font-bold rounded-full md:px-[28px] px-[18px] md:py-[13px] py-[7px] md:text-base text-xs border-none"
                 onClick={handlePublishScore}
               >
                 Ready to Publish
@@ -91,7 +91,7 @@ const SessionInformation = ({ type }) => {
             )}
             {buttonState === "publishedScore" && (
               <button
-                className="bg-[#E5E7EB] text-[#6B7280] font-bold rounded-full px-[28px] py-[13px] text-base border-none"
+                className="bg-[#E5E7EB] text-[#6B7280] font-bold rounded-full md:px-[28px] px-[18px] md:py-[13px] py-[7px] md:text-base text-xs border-none"
                 disabled
               >
                 Published
@@ -99,14 +99,14 @@ const SessionInformation = ({ type }) => {
             )}
           </div>
         </div>
-        <div className="mt-[34px]">
+        <div className="md:mt-[34px] mt-[20px]">
           <SearchInput
             placeholder="Search by name"
             onSearchChange={onSearchChange}
             className="absolute z-10"
           />
         </div>
-        <Tabs defaultActiveKey="item-1" items={items} />
+        <Tabs defaultActiveKey="item-1" items={items}/>
       </div>
     </div>
   );
