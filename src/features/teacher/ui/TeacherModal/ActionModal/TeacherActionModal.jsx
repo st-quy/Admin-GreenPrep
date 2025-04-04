@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import * as Yup from "yup";
 import { useQueryClient } from "@tanstack/react-query";
 import { AccountApi } from "@features/teacher/api/teacherAPI"; // Import AccountApi
+import { EditOutlined, PlusCircleOutlined } from "@ant-design/icons";
 
 // Hàm yupSync để tích hợp Yup với Ant Design Form
 const yupSync = (schema) => ({
@@ -26,12 +27,12 @@ const accountSchema = Yup.object().shape({
     .optional(),
 });
 
-const AccountModal = ({ isEdit = false, initialData = null }) => {
+const TeacherActionModal = ({ initialData = null }) => {
   const queryClient = useQueryClient();
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
-
+  const isEdit = initialData !== null;
   const showModal = () => {
     setOpen(true);
   };
@@ -53,10 +54,9 @@ const AccountModal = ({ isEdit = false, initialData = null }) => {
         email: values.email,
         password: values.password || undefined, // Password có thể không bắt buộc
         teacherCode: values.teacherId, // Sử dụng teacherId làm teacherCode
-        roleIDs: ["teacher"], // Vai trò là "teacher"
+        roleIDs: ["teacher"], 
       };
 
-      // Gọi API để tạo tài khoản
       await AccountApi.createAccount(accountData);
 
       queryClient.invalidateQueries({ queryKey: ["accountList"] });
@@ -107,15 +107,18 @@ const AccountModal = ({ isEdit = false, initialData = null }) => {
   return (
     <>
       {isEdit ? (
-        <Button onClick={showModal} className="border-none hover:border-none">
-          Edit
-        </Button>
+        <EditOutlined
+          onClick={showModal}
+          className="text-[#003087] text-[20px]"
+        />
       ) : (
         <Button
+          icon={<PlusCircleOutlined />}
           onClick={showModal}
-          className="rounded-[50px] bg-[#003087] p-6 text-white font-[500] lg:text-[16px] md:text-[14px]"
+          style={{ borderColor: "#2563eb", borderRadius: "50px" }}
+          className="bg-[#003087] text-white py-6 rounded-full px-4 text-base border-none"
         >
-          Create Account
+          Create new account
         </Button>
       )}
       <Modal
@@ -240,4 +243,4 @@ const AccountModal = ({ isEdit = false, initialData = null }) => {
   );
 };
 
-export default AccountModal;
+export default TeacherActionModal;
