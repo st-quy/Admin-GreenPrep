@@ -1,43 +1,35 @@
-import React, { useState, useEffect, useMemo } from "react";
-import { Table, Input, Select, Button, Pagination, Tag, Space } from "antd";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import {
-  EditOutlined,
-  DeleteOutlined,
-  PlusOutlined,
-  PlusCircleOutlined,
-} from "@ant-design/icons";
-import { Teachers } from "../constant/teachers";
+  Table,
+  Input,
+  Select,
+  Button,
+  Pagination,
+  Tag,
+  Space,
+  Spin,
+} from "antd";
+import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import { useFetchTeachers } from "../hook/useTeacherQuery";
 import TeacherActionModal from "./TeacherModal/ActionModal/TeacherActionModal";
 import useConfirm from "@shared/hook/useConfirm";
+import { useDebouncedValue } from "@shared/hook/useDebounceValue";
 const { Option } = Select;
 
 const TeacherManagement = () => {
-  const [teachers, setTeachers] = useState(Teachers);
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState(null);
+  const [statusFilter, setStatusFilter] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 5;
-  const isAdmin = true;
   const { openConfirmModal, ModalComponent } = useConfirm();
-  const filteredData = useMemo(() => {
-    const keyword = searchTerm?.toLowerCase().trim() || "";
-    const statusFil = statusFilter?.toLowerCase().trim() || "";
-    console.log(keyword);
-    if (!keyword) return teachers;
-    return teachers.filter((item) => {
-      const fullName = String(item.name || "").toLowerCase();
-      const sessionName = String(item.id || "").toLowerCase();
-      const statusFilter = String(item.status || "").toLowerCase();
-      return (
-        (sessionName.includes(keyword) || fullName.includes(keyword)) &&
-        statusFilter.includes(statusFil)
-      );
-    });
-  }, [searchTerm, statusFilter, teachers]);
+  const [pageSize, setPageSize] = useState(2);
+  const debouncedSearchTerm = useDebouncedValue(searchTerm, 500);
+  const { data: teachersData, isLoading } = useFetchTeachers({
+    page: currentPage,
+    limit: pageSize,
+    search: debouncedSearchTerm,
+    status: statusFilter,
+  });
 
-  if (!isAdmin) {
-    return <div className="p-4 text-red-500">Access Denied: Admins only</div>;
-  }
   const handleDelete = (data) => {
     openConfirmModal({
       title: "Delete Confirmation",
@@ -49,49 +41,66 @@ const TeacherManagement = () => {
       },
     });
   };
-  const totalItems = filteredData.length;
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const currentItems = filteredData.slice(startIndex, endIndex);
-
+  const handleStatusFilter = (value) => {
+    const fil = value === "Active" ? true : false;
+    setStatusFilter(fil);
+  };
   const columns = [
     {
       title: "TEACHER NAME",
-      dataIndex: "name",
+      dataIndex: ["fullname"],
       key: "name",
+      width: "200px",
+      render: (text, record) => (
+        <a
+          onClick={() => console.log(record)}
+          className="cursor-pointer text-[10px] md:text-[14px] underline  hover:opacity-80"
+        >
+          {`${record.firstName} ${record.lastName}` || "Unknown"}
+        </a>
+      ),
     },
     {
       title: "TEACHER ID",
-      dataIndex: "id",
+      dataIndex: "teacherCode",
       key: "id",
+      width: "100px",
     },
     {
       title: "EMAIL",
       dataIndex: "email",
       key: "email",
+      width: "200px",
     },
     {
       title: "PHONE",
       dataIndex: "phone",
       key: "phone",
+      width: "100px",
     },
     {
       title: "STATUS",
       dataIndex: "status",
       key: "status",
+      width: "80px",
       render: (status) => (
         <Tag
-          className={`rounded-3xl min-w-[80px] font-[600] py-1 text-center ${status === "Active" ? "bg-[#DAF8E6] text-[#1A8245]" : "bg-[#E5E7EB] text-[#374151]"} border-none`}
+          className={`rounded-3xl font-[600] py-1 text-center ${status === true ? "bg-[#DAF8E6] text-[#1A8245]" : "bg-[#E5E7EB] text-[#374151]"} border-none text-[10px] md:text-[14px] `}
         >
-          {status}
+          {status === true ? "Active" : "Deactive"}
         </Tag>
       ),
     },
     {
       title: "ACTIONS",
       key: "actions",
+      width: "100px",
+      fixed: "right",
       render: (_, record) => (
-        <Space size="middle">
+        <Space
+          size="small"
+          className="bg-white rounded-lg shadow-md shadow-black px-1 md:shadow-none"
+        >
           <TeacherActionModal initialData={record} />
 
           <Button
@@ -112,10 +121,10 @@ const TeacherManagement = () => {
           {...props}
           style={{
             ...props.style,
-            backgroundColor: "#E6F0FA", // Set the background color to #E6F0FA
-            textAlign: "center", // Center the text in the header cells
+            backgroundColor: "#E6F0FA",
+            textAlign: "center",
           }}
-          className="text-[#637381] font-medium text-[10px] md:text-[14px] border-none" // Remove inner borders for header cells
+          className="text-[#637381] px-0 font-medium text-[10px] md:text-[14px] border-none"
         />
       ),
     },
@@ -128,7 +137,7 @@ const TeacherManagement = () => {
             borderRightStyle: "none",
             textAlign: "center",
           }}
-          className="text-[#637381] font-medium text-[10px] md:text-[14px] border-none"
+          className="text-[#637381] px-0 font-medium text-[10px] md:text-[14px] border-none"
         />
       ),
       row: (props) => (
@@ -149,15 +158,19 @@ const TeacherManagement = () => {
       <div className="flex justify-between items-center mb-4">
         <div className="flex items-center space-x-4">
           <Input
-            placeholder="Search by name, ID"
             value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search by name, ID"
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
             style={{ width: 200 }}
             allowClear
+            suffix={<SearchOutlined className=" text-[#9CA3AF]" />}
           />
           <Select
             placeholder="Select STATUS"
-            onChange={(value) => setStatusFilter(value)}
+            onChange={(value) => handleStatusFilter(value)}
             style={{ width: 150 }}
             allowClear
           >
@@ -168,22 +181,25 @@ const TeacherManagement = () => {
         <TeacherActionModal />
       </div>
       <Table
+        // @ts-ignore
         columns={columns}
-        dataSource={currentItems}
+        dataSource={teachersData?.data?.teachers}
         rowKey="id"
-        bordered
+        scroll={{ x: 600 }}
         className="mb-4"
         components={tableComponents}
+        loading={isLoading || !teachersData}
         pagination={{
           current: currentPage,
-          pageSize: itemsPerPage,
-          total: totalItems,
+          pageSize: pageSize,
+          total: teachersData?.data?.pagination?.total,
           showSizeChanger: true,
-          pageSizeOptions: ["5", "10", "15", "20"],
+          pageSizeOptions: ["3", "10", "15", "20"],
           showTotal: (total, range) =>
             `Showing ${range[0]}-${range[1]} of ${total}`,
           onChange: (page, size) => {
             setCurrentPage(page);
+            setPageSize(size);
           },
         }}
       />

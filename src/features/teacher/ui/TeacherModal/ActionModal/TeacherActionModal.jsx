@@ -1,8 +1,11 @@
-import { Modal, Button, Input, message, Form } from "antd";
+import { Modal, Button, Input, message, Form, Switch } from "antd";
 import React, { useState } from "react";
 import * as Yup from "yup";
 import { useQueryClient } from "@tanstack/react-query";
-import { AccountApi } from "@features/teacher/api/teacherAPI"; // Import AccountApi
+import {
+  useCreateTeacher,
+  useUpdateTeacher,
+} from "@features/teacher/hook/useTeacherQuery";
 import { EditOutlined, PlusCircleOutlined } from "@ant-design/icons";
 
 // Hàm yupSync để tích hợp Yup với Ant Design Form
@@ -33,6 +36,12 @@ const TeacherActionModal = ({ initialData = null }) => {
   const [open, setOpen] = useState(false);
   const [confirmLoading, setConfirmLoading] = useState(false);
   const isEdit = initialData !== null;
+  // @ts-ignore
+  const { mutate: createTeacher, isPending: isCreatingTeacher } =
+    useCreateTeacher();
+  // @ts-ignore
+  const { mutate: updateTeachers, isPending: isUpdatingTeacher } =
+    useUpdateTeacher();
   const showModal = () => {
     setOpen(true);
   };
@@ -42,63 +51,62 @@ const TeacherActionModal = ({ initialData = null }) => {
     form.resetFields();
   };
 
-  const onCreate = async () => {
+  // @ts-ignore
+  const onAction = async () => {
     try {
-      // Validate form fields
       const values = await form.validateFields();
-
-      // Prepare account data theo định dạng của API
-      const accountData = {
-        firstName: values.firstName,
-        lastName: values.lastName,
-        email: values.email,
-        password: values.password || undefined, // Password có thể không bắt buộc
-        teacherCode: values.teacherId, // Sử dụng teacherId làm teacherCode
-        roleIDs: ["teacher"], 
-      };
-
-      await AccountApi.createAccount(accountData);
-
-      queryClient.invalidateQueries({ queryKey: ["accountList"] });
-      message.success("Account created successfully!");
-      setOpen(false);
-      form.resetFields();
-    } catch (error) {
-      console.error("Error creating account:", error);
-      message.error(
-        error.response?.data?.message ||
-          "Failed to create account. Please try again."
-      );
-    } finally {
-      setConfirmLoading(false);
-    }
-  };
-
-  const onUpdate = async () => {
-    try {
-      // Validate form fields
-      const values = await form.validateFields();
-
-      // Prepare account data
-      const accountData = {
+      const data = {
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,
         teacherCode: values.teacherId,
         password: values.password || undefined,
         roleIDs: ["teacher"],
+        status: values.status,
       };
-
-      // Gọi API để cập nhật tài khoản (giả lập vì chưa có API update)
-      await AccountApi.updateAccount(initialData?.ID, accountData);
-
-      queryClient.invalidateQueries({ queryKey: ["accountList"] });
-      message.success("Account updated successfully!");
-      setOpen(false);
-      form.resetFields();
+      if (!isEdit) {
+        // @ts-ignore
+        createTeacher(data, {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["teachers"] });
+            message.success("Account created successfully!");
+            setOpen(false);
+            form.resetFields();
+          },
+          onError: (err) => {
+            console.error("Error creating account:", err);
+            message.error(
+              // @ts-ignore
+              err.response?.data?.message ||
+                "Failed to create account. Please try again."
+            );
+          },
+        });
+      } else {
+        // @ts-ignore
+        updateTeachers(data, {
+          onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["teachers"] });
+            message.success("Account update successfully!");
+            setOpen(false);
+            form.resetFields();
+          },
+          onError: (err) => {
+            console.error("Error update account:", err);
+            message.error(
+              // @ts-ignore
+              err.response?.data?.message ||
+                "Failed to update account. Please try again."
+            );
+          },
+        });
+      }
     } catch (error) {
-      console.error(`Error updating account:`, error);
-      message.error("Failed to update account. Please try again.");
+      console.error("Error update account:", error);
+      message.error(
+        error.response?.data?.message ||
+          "Failed to update account. Please try again."
+      );
     } finally {
       setConfirmLoading(false);
     }
@@ -152,6 +160,7 @@ const TeacherActionModal = ({ initialData = null }) => {
               email: isEdit ? initialData?.email : "",
               teacherId: isEdit ? initialData?.teacherId : "",
               password: "",
+              status: isEdit ? initialData?.status : true,
             }}
           >
             <div className="grid grid-cols-2 gap-4">
@@ -219,23 +228,36 @@ const TeacherActionModal = ({ initialData = null }) => {
             >
               <Input.Password className="h-[46px]" placeholder="Password" />
             </Form.Item>
-            <Form.Item>
-              <div className="flex justify-center gap-4">
+
+            <div className="flex flex-row items-center">
+              <div className="w-1/2">
+                <Form.Item
+                  label={<span className="text-[16px]">Status</span>}
+                  className="flex self-center mt-6"
+                  layout="horizontal"
+                  // @ts-ignore
+                  name="status"
+                >
+                  <Switch className="ml-2" />
+                </Form.Item>
+              </div>
+              <div>
                 <Button
                   onClick={handleCancel}
-                  className="h-[52px] w-[124px] rounded-[50px] border-[1px] border-[#003087] text-[#003087] lg:text-[16px] md:text-[14px]"
+                  className="h-[50px] w-[100px] md:h-[52px] md:w-[124px] rounded-[50px] border-[1px] border-[#003087] text-[#003087] lg:text-[16px] md:text-[14px] mr-4"
                 >
                   Cancel
                 </Button>
                 <Button
-                  onClick={isEdit ? onUpdate : onCreate}
+                  // @ts-ignore
+                  onClick={onAction}
                   htmlType="submit"
-                  className="h-[52px] w-[124px] rounded-[50px] bg-[#003087] text-white text-[14px] md:text-[16px] "
+                  className="h-[50px] w-[100px] md:h-[52px] md:w-[124px] rounded-[50px] bg-[#003087] text-white text-[14px] md:text-[16px] "
                 >
                   {isEdit ? "Update" : "Create"}
                 </Button>
               </div>
-            </Form.Item>
+            </div>
           </Form>
         </div>
       </Modal>
