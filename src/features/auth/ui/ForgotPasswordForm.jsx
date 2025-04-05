@@ -1,6 +1,6 @@
 // @ts-nocheck
 
-import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
+import { EyeInvisibleOutlined, EyeOutlined, MailOutlined } from "@ant-design/icons";
 import { ForgotPw } from "@assets/images";
 import { useMutation } from "@tanstack/react-query";
 import { Button, Form, Input, message } from "antd";
@@ -77,9 +77,9 @@ const ForgotPasswordForm = () => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 px-4 md:px-10 lg:px-20">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-50px)] bg-[#f9f9f9] px-4 md:px-10 lg:px-20">
       <div className="flex flex-col md:flex-row items-center max-w-[1440px] w-full justify-center gap-8 -mt-40">
-        <div className="w-full sm:w-[400px] sm:h-[450px] md:w-[450px] md:h-[450px] lg:w-[650px] lg:h-[600px] xl:w-[658px] xl:h-[697px] bg-white p-[40px] pt-[60px] rounded-lg shadow-lg">
+        <div className="w-full [@media(max-width:599px)]:w-[400px] [@media(max-width:599px)]:h-[430px] sm:w-[400px] sm:h-[440px] md:w-[450px] md:h-[480px] lg:w-[650px] lg:h-[600px] xl:w-[658px] xl:h-[680px] bg-white [@media(max-width:599px)]:p-[30px] [@media(max-width:599px)]:pt-[20px] sm:p-[45px] sm:pt-[30px] md:p-[50px] md:pt-[50px] lg:p-[70px] lg:pt-[60px] rounded-lg shadow-lg">
           {!isReset && (
             <Link
               to="/login"
@@ -91,7 +91,7 @@ const ForgotPasswordForm = () => {
           <h2 className="text-[28px] md:text-[30px] lg:text-[42px] xl:text-[45px] font-bold text-[#111928] mb-4 leading-tight">
             {isReset ? "Create new password" : "Forgot password?"}
           </h2>
-          <p className="text-gray-600 text-sm mb-6 md:text-[12.5px] lg:text-[18px] xl:text-[20px]">
+          <p className="text-[#637381] text-sm mb-6 md:text-[12px] lg:text-[16px] ">
             {isReset
               ? "Your previous password has been reset. Please set a new password for your account."
               : "Don't worry! Enter your email below to recover your password"}
@@ -101,12 +101,13 @@ const ForgotPasswordForm = () => {
             onFinish={isReset ? handlePasswordSubmit : handleEmailSubmit}
             layout="vertical"
             className="space-y-6"
-          >
-            {!isReset ? (
+            >
+             {!isReset ? (
               <Form.Item
                 label={
                   <>
-                    Email <span className="ml-1 text-red-500">*</span>
+                     <span style={{ fontSize: '16px' }}>
+                    Email <span className="ml-1 text-red-500">*</span></span>
                   </>
                 }
                 name="email"
@@ -122,10 +123,11 @@ const ForgotPasswordForm = () => {
                     },
                   },
                 ]}
-              >
+                >
                 <Input
-                  className="h-[40px]"
+                  className="h-[46px] text-[16px] placeholder:text-[16px]"
                   placeholder="Enter your email here"
+                  suffix={<MailOutlined style={{ color: '#6B7280' }} />}
                 />
               </Form.Item>
             ) : (
@@ -133,63 +135,13 @@ const ForgotPasswordForm = () => {
                 <Form.Item
                   label={
                     <>
-                      New password <span className="ml-1 text-red-500">*</span>
+                      <span style={{ fontSize: '16px' }}>
+                      New password <span className="ml-1 text-red-500">*</span> 
+                      </span>
                     </>
                   }
                   name="password"
-                  required={false}
-                  validateTrigger={["onChange", "onBlur"]}
-                  help={
-                    form.getFieldValue("password") ? (
-                      <ul className="list-none pl-0 mt-1 text-sm space-y-1">
-                        <li
-                          className={
-                            form.getFieldValue("password")?.length >= 8
-                              ? "text-green-500"
-                              : "text-red-500"
-                          }
-                        >
-                          • At least 8 characters
-                        </li>
-                        <li
-                          className={
-                            /[A-Z]/.test(form.getFieldValue("password"))
-                              ? "text-green-500"
-                              : "text-red-500"
-                          }
-                        >
-                          • One uppercase letter
-                        </li>
-                        <li
-                          className={
-                            /[a-z]/.test(form.getFieldValue("password"))
-                              ? "text-green-500"
-                              : "text-red-500"
-                          }
-                        >
-                          • One lowercase letter
-                        </li>
-                        <li
-                          className={
-                            /[0-9]/.test(form.getFieldValue("password"))
-                              ? "text-green-500"
-                              : "text-red-500"
-                          }
-                        >
-                          • One number
-                        </li>
-                        <li
-                          className={
-                            /[@$!%*?&]/.test(form.getFieldValue("password"))
-                              ? "text-green-500"
-                              : "text-red-500"
-                          }
-                        >
-                          • One special character (@$!%*?&)
-                        </li>
-                      </ul>
-                    ) : null
-                  }
+                  required={false}                    
                   rules={[
                     {
                       validator: async (_, value) => {
@@ -204,22 +156,22 @@ const ForgotPasswordForm = () => {
                         }
                         if (!/[A-Z]/.test(value)) {
                           errors.push(
-                            "Password must contain at least one uppercase letter"
+                            "one uppercase letter"
                           );
                         }
                         if (!/[a-z]/.test(value)) {
                           errors.push(
-                            "Password must contain at least one lowercase letter"
+                            "lowercase letter"
                           );
                         }
                         if (!/[0-9]/.test(value)) {
                           errors.push(
-                            "Password must contain at least one number"
+                            "one number"
                           );
                         }
                         if (!/[@$!%*?&]/.test(value)) {
                           errors.push(
-                            "Password must contain at least one special character (@$!%*?&)"
+                            "and one special character (@$!%*?&)"
                           );
                         }
 
@@ -231,8 +183,8 @@ const ForgotPasswordForm = () => {
                   ]}
                 >
                   <Input.Password
-                    className="h-[40px]"
-                    placeholder="********"
+                    className="h-[46px] text-[16px] placeholder:text-[16px]"
+                    placeholder="* * * * * * * *"
                     onChange={() => {
                       form.validateFields(["confirmPassword"]);
                       form.setFieldValue(
@@ -249,21 +201,22 @@ const ForgotPasswordForm = () => {
                 <Form.Item
                   label={
                     <>
+                      <span style={{ fontSize: '16px' }}> 
                       Confirm new password{" "}
-                      <span className="ml-1 text-red-500">*</span>
+                      <span className="ml-1 text-red-500">*</span></span>
                     </>
                   }
                   name="confirmPassword"
                   required={false}
                   dependencies={["password"]}
-                  validateTrigger={["onChange", "onBlur"]}
                   rules={[
                     {
                       validator: async (_, value) => {
-                        if (!value) {
-                          throw new Error("Please confirm your new password");
-                        }
                         const password = form.getFieldValue("password");
+                        if (!value) {
+                          return Promise.resolve();
+                        }
+
                         if (value !== password) {
                           throw new Error("The two passwords do not match");
                         }
@@ -272,8 +225,8 @@ const ForgotPasswordForm = () => {
                   ]}
                 >
                   <Input.Password
-                    className="h-[40px]"
-                    placeholder="********"
+                    className="h-[46px] text-[16px] placeholder:text-[16px]"
+                    placeholder="* * * * * * * *"
                     iconRender={(visible) =>
                       visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
                     }
@@ -290,7 +243,7 @@ const ForgotPasswordForm = () => {
                   forgotPasswordMutation.isPending ||
                   resetPasswordMutation.isPending
                 }
-                className="w-[250px] h-[50px] bg-[#003087] text-white rounded-[50px] mt-4 flex justify-center items-center"
+                className="w-[250px] h-[50px] bg-[#003087] text-white text-[16px] rounded-[50px] mt-4 flex justify-center items-center"
               >
                 {isReset ? "Submit" : "Reset password"}
               </Button>
@@ -301,7 +254,7 @@ const ForgotPasswordForm = () => {
           <img
             src={ForgotPw}
             alt="Forgot Password Illustration"
-            className="w-full max-w-[650px] h-auto sm:w-[400px] md:w-[500px] lg:w-[650px] xl:w-[661px] xl:h-[697px] object-contain"
+            className="w-full max-w-[650px] h-auto [@media(max-width:599px)]:w-[400px] [@media(max-width:599px)]:h-[430px] sm:w-[350px] md:w-[500px] lg:w-[650px] xl:w-[661px] xl:h-[680px] object-contain"
           />
         </div>
       </div>
