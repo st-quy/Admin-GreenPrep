@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Tabs, Input } from "antd";
-import "./index.scss";
+import "@features/session/css/index.scss";
 import StudentMonitoring from "@features/session/ui/StudentModering";
 import StudentSessionTable from "@/features/session/ui/StudentSessionTable.jsx";
 import SearchInput from "@/app/components/SearchInput.jsx";
-import Details from "@pages/SessionManagement/Details/Details.jsx";
+import Details from "@features/session/ui/Details.jsx";
 import { useParams } from "react-router-dom";
 import { TableType } from "@features/session/constraint/TableEnum";
 

@@ -99,21 +99,14 @@ const StudentSessionTable = ({
       title: "GRAMMAR & VOCABULARY",
       dataIndex: "GrammarVocab",
       key: "GrammarVocab",
-      render: (text) => (
-        <span className="font-[500] text-[10px] md:text-[14px]  text-[#637381]">
-          {text || "No Data"}
-        </span>
-      ),
-      onHeaderCell: () => ({
-        style: { paddingLeft: "0px", paddingRight: "0px" },
-      }),
+      render: (text) => <span>{text || "No Data"}</span>,
     },
     {
       title: "LISTENING",
       dataIndex: "Listening",
       key: "Listening",
       render: (text, record) => (
-        <span className="font-[500] text-[10px] md:text-[14px]  text-[#637381]">
+        <span>
           {text ? text + " | " + getSkillLevel(text, "Listening") : "No Data"}
         </span>
       ),
@@ -123,7 +116,7 @@ const StudentSessionTable = ({
       dataIndex: "Reading",
       key: "Reading",
       render: (text, record) => (
-        <span className="font-[500] text-[10px] md:text-[14px]  text-[#637381]">
+        <span>
           {text ? text + " | " + getSkillLevel(text, "Reading") : "No Data"}
         </span>
       ),
@@ -140,12 +133,12 @@ const StudentSessionTable = ({
                 `/class/session/student/${record.User.ID}/grade?skill=speaking`
               )
             }
-            className="cursor-pointer underline underline-offset-4 font-[500] text-[10px] md:text-[14px] hover:opacity-80"
+            className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
             {text ? text + " | " + getSkillLevel(text, "Speaking") : "Ungraded"}
           </a>
         ) : (
-          <span className="font-[500] text-[10px] md:text-[14px]  text-[#637381]">
+          <span>
             {text ? text + " | " + getSkillLevel(text, "Speaking") : "Ungraded"}
           </span>
         ),
@@ -162,12 +155,12 @@ const StudentSessionTable = ({
                 `/class/session/student/${record.User.ID}/grade?skill=writing`
               )
             }
-            className="cursor-pointer underline underline-offset-4  font-[500] text-[10px] md:text-[14px] hover:opacity-80"
+            className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
             {text ? text + " | " + getSkillLevel(text, "Writing") : "Ungraded"}
           </a>
         ) : (
-          <span className="font-[500] text-[10px] md:text-[14px]  text-[#637381]">
+          <span>
             {text ? text + " | " + getSkillLevel(text, "Writing") : "Ungraded"}
           </span>
         ),
@@ -186,7 +179,7 @@ const StudentSessionTable = ({
               status === StatusType.PUBLISHED || type === TableType.STUDENT
             }
             onChange={(value) => onLevelChange(record.ID, value)}
-            className="w-20 text-[10px] md:text-[16px]"
+            className="p-0"
           >
             {LevelEnum.map((lvl) => (
               <Select.Option key={lvl} value={lvl}>
@@ -195,9 +188,7 @@ const StudentSessionTable = ({
             ))}
           </Select>
         ) : (
-          <span className="font-[500] text-[10px] md:text-[14px]  text-[#637381]">
-            {level}
-          </span>
+          <span>{level || "No Data"}</span>
         ),
     },
   ];
@@ -214,7 +205,7 @@ const StudentSessionTable = ({
               onClick={() =>
                 navigate(`/class/session/student/${record.User.ID}`)
               }
-              className="cursor-pointer underline underline-offset-4 font-[500] text-[10px] md:text-[14px] hover:opacity-80"
+              className="cursor-pointer underline underline-offset-4 hover:opacity-80"
             >
               {text || "Unknown"}
             </a>
@@ -229,7 +220,7 @@ const StudentSessionTable = ({
           dataIndex: ["Session", "sessionName"],
           key: "SessionID",
           render: (text) => (
-            <span className="cursor-pointer font-[500] text-[10px] md:text-[14px] hover:opacity-80">
+            <span className="cursor-pointer hover:opacity-80">
               {text || "Unknown"}
             </span>
           ),
@@ -245,6 +236,7 @@ const StudentSessionTable = ({
   return (
     <Table
       columns={columns}
+      loading={isLoading}
       dataSource={filteredData.map((item) => ({ ...item, key: item.ID }))}
       pagination={{
         current: currentPage,
@@ -262,19 +254,27 @@ const StudentSessionTable = ({
       bordered
       className="border border-gray-200 pagination w-full p-0 m-0 overflow-x-auto bg-none"
       rowClassName="text-center"
-      scroll={{ x: 400 }}
+      scroll={{ x: "max-content" }}
       components={{
         header: {
           wrapper: (props) => (
             <thead
               {...props}
-              className="bg-[#E6F0FA] text-[#637381] text-[10px] md:text-[16px]"
+              className="bg-[#E6F0FA] text-[10px] font-[700] md:text-[16px] text-[#637381]"
             />
           ),
           cell: (props) => (
             <th
               {...props}
-              className="font-[550] tracking-wider text-center py-4 px-1 md:px-8"
+              className="tracking-wider text-center py-4 px-0 whitespace-nowrap"
+            />
+          ),
+        },
+        body: {
+          cell: (props) => (
+            <td
+              {...props}
+              className="font-[500] tracking-wider text-center py-4 px-0 whitespace-nowrap text-[10px] md:text-[14px] text-[#637381]"
             />
           ),
         },

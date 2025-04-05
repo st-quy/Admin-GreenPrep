@@ -1,4 +1,3 @@
-import { classInfo, sessionsData } from "@features/classDetail/exampleData";
 import { useClassDetailQuery } from "@features/classDetail/hooks/useClassDetail";
 import ClassInfo from "@features/classDetail/ui/ClassInfo/ClassInfo";
 

@@ -1,84 +1,115 @@
 import React from "react";
-import { Pagination } from "antd";
-import ActionModal from "../../SessionModal/ActionModal/ActionModal";
-import { formatDateTime } from "@shared/lib/utils/formatString";
-import DeleteModal from "../../SessionModal/DeleteModal/DeleteModal";
+import { Table } from "antd";
 import { useNavigate } from "react-router-dom";
+import { formatDateTime } from "@shared/lib/utils/formatString";
+import ActionModal from "../../SessionModal/ActionModal/ActionModal";
+import DeleteModal from "../../SessionModal/DeleteModal/DeleteModal";
 
 const SessionTable = ({ dataSource }) => {
-  const tableHeaders = [
-    "SESSION NAME",
-    "SESSION KEY",
-    "START TIME",
-    "END TIME",
-    "NUMBER OF PARTICIPANTS",
-    // "STATUS",
-    "ACTION",
-  ];
   const navigate = useNavigate();
+
   const handleNavigate = (id) => {
     navigate(`/class/session/${id}`);
   };
 
+  const columns = [
+    {
+      title: "SESSION NAME",
+      dataIndex: "sessionName",
+      key: "sessionName",
+      render: (text, record) => (
+        <a
+          onClick={() => handleNavigate(record.ID)}
+          className="text-[#003087] hover:underline cursor-pointer"
+        >
+          {text}
+        </a>
+      ),
+      ellipsis: true,
+    },
+    {
+      title: "SESSION KEY",
+      dataIndex: "sessionKey",
+      key: "sessionKey",
+      ellipsis: true,
+    },
+    {
+      title: "START TIME",
+      dataIndex: "startTime",
+      key: "startTime",
+      render: (time) => formatDateTime(time),
+      ellipsis: true,
+    },
+    {
+      title: "END TIME",
+      dataIndex: "endTime",
+      key: "endTime",
+      render: (time) => formatDateTime(time),
+      ellipsis: true,
+    },
+    {
+      title: "NUMBER OF PARTICIPANTS",
+      dataIndex: "numberOfParticipants",
+      key: "numberOfParticipants",
+      render: (participants) => participants?.length || 0,
+      ellipsis: true,
+    },
+    {
+      title: "ACTION",
+      key: "action",
+      fixed: "right",
+      width: 120,
+      render: (_, record) => (
+        <div className="flex items-center gap-4 bg-white">
+          <ActionModal isEdit={true} initialData={record} />
+          <DeleteModal sessionID={record.ID} />
+        </div>
+      ),
+      onHeaderCell: () => ({
+        className: "bg-[#bae6fd] text-black", // màu header riêng cho cột này
+      }),
+      ellipsis: true,
+      className: "custom-action-column",
+    },
+  ];
+
   return (
-    <>
-      <table className="w-full overflow-hidden border border-[#E0E0E0] rounded-tl-[10px] rounded-tr-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.2)]">
-        <thead className="bg-[#EEEEEE]">
-          <tr>
-            {tableHeaders.map((header, index) => (
+    <div className="w-full overflow-x-auto rounded-xl border bg-[#E6F0FA]">
+      <Table
+        columns={columns}
+        dataSource={dataSource ? [...dataSource].reverse() : []}
+        pagination={false}
+        rowKey={(record) => record.ID}
+        bordered
+        scroll={{ x: "max-content" }}
+        components={{
+          header: {
+            wrapper: (props) => (
+              <thead
+                {...props}
+                className="bg-[#478edf] text-sm md:text-base lg:text-lg"
+              />
+            ),
+
+            cell: (props) => (
               <th
-                key={index}
-                className="p-6 text-[14px] font-[500] md:text-[14px] lg:text-[16px]"
-              >
-                {header}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody className="text-center">
-          {dataSource && dataSource.length > 0 ? (
-            dataSource.reverse().map((item, index) => (
-              <tr
-                key={index}
-                className="text-[14px] font-[500] text-[#637381] md:text-[14px] lg:text-[16px]"
-              >
-                <td className="p-4 text-[#003087]">
-                  <a onClick={() => handleNavigate(item.ID)}>
-                    {item.sessionName}
-                  </a>
-                </td>
-                <td className="p-4">{item.sessionKey}</td>
-                <td className="p-4">{formatDateTime(item.startTime)}</td>
-                <td className="p-4">{formatDateTime(item.endTime)}</td>
-                <td className="p-4">{item.numberOfParticipants}</td>
-                {/* <td className="p-4">{item.status}</td> */}
-                <td className="flex justify-center items-center gap-4 p-4">
-                  <ActionModal isEdit={true} initialData={item} />
-                  <DeleteModal sessionID={item.ID} />
-                </td>
-              </tr>
-            ))
-          ) : (
-            <tr>
-              <td colSpan={7} className="p-4 text-center text-gray-500">
-                No data available
-              </td>
-            </tr>
-          )}
-        </tbody>
-      </table>
-      {/* <div className="flex justify-end">
-        <Pagination
-          total={85}
-          showTotal={(total, range) =>
-            `${range[0]}-${range[1]} of ${total} items`
-          }
-          defaultPageSize={20}
-          defaultCurrent={1}
-          className="!mt-6"
-        />
-      </div> */}
-    </>
+                {...props}
+                className="py-4 font-medium whitespace-nowrap text-center text-[12px] md:text-[16px]"
+              />
+            ),
+          },
+          body: {
+            cell: (props) => (
+              <td
+                {...props}
+                className="whitespace-nowrap text-center text-[#637381] text-[10px] md:text-[14px]"
+              />
+            ),
+          },
+        }}
+        className="custom-table"
+      />
+    </div>
   );
 };
 
