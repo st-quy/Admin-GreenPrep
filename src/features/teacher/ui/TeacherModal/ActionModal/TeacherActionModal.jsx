@@ -1,14 +1,12 @@
 import { Modal, Button, Input, message, Form, Switch } from "antd";
 import React, { useState } from "react";
 import * as Yup from "yup";
-import { useQueryClient } from "@tanstack/react-query";
 import {
   useCreateTeacher,
   useUpdateTeacher,
 } from "@features/teacher/hook/useTeacherQuery";
 import { EditOutlined, PlusCircleOutlined } from "@ant-design/icons";
 
-// Hàm yupSync để tích hợp Yup với Ant Design Form
 const yupSync = (schema) => ({
   async validator({ field }, value) {
     try {
@@ -19,29 +17,25 @@ const yupSync = (schema) => ({
   },
 });
 
-// Định nghĩa schema validation bằng Yup
 const accountSchema = Yup.object().shape({
   firstName: Yup.string().required("First name is required"),
   lastName: Yup.string().required("Last name is required"),
   email: Yup.string().email("Invalid email").required("Email is required"),
-  teacherId: Yup.string().required("Teacher ID is required"),
+  teacherCode: Yup.string().required("Teacher Code is required"),
   password: Yup.string()
     .min(6, "Password must be at least 6 characters")
     .optional(),
 });
 
 const TeacherActionModal = ({ initialData = null }) => {
-  const queryClient = useQueryClient();
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
   const isEdit = initialData !== null;
   // @ts-ignore
-  const { mutate: createTeacher, isPending: isCreatingTeacher } =
-    useCreateTeacher();
-  // @ts-ignore
-  const { mutate: updateTeachers, isPending: isUpdatingTeacher } =
-    useUpdateTeacher();
+  const { mutate: teacherAction, isPending: isOnAction } = isEdit
+    ? useUpdateTeacher()
+    : useCreateTeacher();
+
   const showModal = () => {
     setOpen(true);
   };
@@ -56,59 +50,40 @@ const TeacherActionModal = ({ initialData = null }) => {
     try {
       const values = await form.validateFields();
       const data = {
+        ID: isEdit ? initialData?.ID : undefined,
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,
-        teacherCode: values.teacherId,
+        teacherCode: values.teacherCode,
         password: values.password || undefined,
         roleIDs: ["teacher"],
         status: values.status,
+        phone: values.phone || undefined,
       };
-      if (!isEdit) {
-        // @ts-ignore
-        createTeacher(data, {
-          onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["teachers"] });
-            message.success("Account created successfully!");
-            setOpen(false);
-            form.resetFields();
-          },
-          onError: (err) => {
-            console.error("Error creating account:", err);
-            message.error(
-              // @ts-ignore
-              err.response?.data?.message ||
-                "Failed to create account. Please try again."
-            );
-          },
-        });
-      } else {
-        // @ts-ignore
-        updateTeachers(data, {
-          onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["teachers"] });
-            message.success("Account update successfully!");
-            setOpen(false);
-            form.resetFields();
-          },
-          onError: (err) => {
-            console.error("Error update account:", err);
-            message.error(
-              // @ts-ignore
-              err.response?.data?.message ||
-                "Failed to update account. Please try again."
-            );
-          },
-        });
-      }
+      // @ts-ignore
+      teacherAction(data, {
+        onSuccess: (data) => {
+          message
+            .success(
+              data.data.message || `${isEdit ? "Update" : "Create"} success!`
+            )
+            .then(() => {
+              handleCancel();
+            });
+        },
+        onError: (error) => {
+          message.error(
+            // @ts-ignore
+            error?.response?.data?.message ||
+              `Failed to ${isEdit ? "update" : "create"} account.`
+          );
+        },
+      });
     } catch (error) {
-      console.error("Error update account:", error);
       message.error(
         error.response?.data?.message ||
-          "Failed to update account. Please try again."
+        "Failed to send request account. Please try again."
       );
-    } finally {
-      setConfirmLoading(false);
     }
   };
 
@@ -123,7 +98,6 @@ const TeacherActionModal = ({ initialData = null }) => {
         <Button
           icon={<PlusCircleOutlined />}
           onClick={showModal}
-          style={{ borderColor: "#2563eb", borderRadius: "50px" }}
           className="bg-[#003087] text-white py-6 rounded-full px-4 text-base border-none"
         >
           Create new account
@@ -132,8 +106,9 @@ const TeacherActionModal = ({ initialData = null }) => {
       <Modal
         open={open}
         okText={isEdit ? "Update" : "Create"}
+        onOk={onAction}
         closable={false}
-        confirmLoading={confirmLoading}
+        confirmLoading={isOnAction}
         width={{
           xs: "90%",
           sm: "80%",
@@ -158,9 +133,10 @@ const TeacherActionModal = ({ initialData = null }) => {
               firstName: isEdit ? initialData?.firstName : "",
               lastName: isEdit ? initialData?.lastName : "",
               email: isEdit ? initialData?.email : "",
-              teacherId: isEdit ? initialData?.teacherId : "",
+              teacherCode: isEdit ? initialData?.teacherCode : "",
               password: "",
               status: isEdit ? initialData?.status : true,
+              phone: isEdit ? initialData?.phone : "",
             }}
           >
             <div className="grid grid-cols-2 gap-4">
@@ -211,24 +187,34 @@ const TeacherActionModal = ({ initialData = null }) => {
                 }
                 // @ts-ignore
                 rules={[yupSync(accountSchema)]}
-                name="teacherId"
+                name="teacherCode"
               >
-                <Input className="h-[46px]" placeholder="Teacher ID" />
+                <Input className="h-[46px]" placeholder="Teacher Code" />
               </Form.Item>
             </div>
-            <Form.Item
-              label={
-                <span className="text-[16px]">
-                  Password <span className="text-red-500">*</span>
-                </span>
-              }
-              // @ts-ignore
-              rules={[yupSync(accountSchema)]}
-              name="password"
-            >
-              <Input.Password className="h-[46px]" placeholder="Password" />
-            </Form.Item>
-
+            <div className="grid grid-cols-2 gap-4">
+              {!isEdit && (
+                <Form.Item
+                  label={
+                    <span className="text-[16px]">
+                      Password <span className="text-red-500">*</span>
+                    </span>
+                  }
+                  // @ts-ignore
+                  rules={[yupSync(accountSchema)]}
+                  name="password"
+                >
+                  <Input.Password className="h-[46px]" placeholder="Password" />
+                </Form.Item>
+              )}
+              <Form.Item
+                label={<span className="text-[16px]">Phone Number</span>}
+                // @ts-ignore
+                name="phone"
+              >
+                <Input className="h-[46px]" placeholder="Phone Number" />
+              </Form.Item>
+            </div>
             <div className="flex flex-row items-center">
               <div className="w-1/2">
                 <Form.Item
@@ -241,7 +227,7 @@ const TeacherActionModal = ({ initialData = null }) => {
                   <Switch className="ml-2" />
                 </Form.Item>
               </div>
-              <div>
+              <div className="flex justify-start w-1/2">
                 <Button
                   onClick={handleCancel}
                   className="h-[50px] w-[100px] md:h-[52px] md:w-[124px] rounded-[50px] border-[1px] border-[#003087] text-[#003087] lg:text-[16px] md:text-[14px] mr-4"
@@ -251,6 +237,7 @@ const TeacherActionModal = ({ initialData = null }) => {
                 <Button
                   // @ts-ignore
                   onClick={onAction}
+                  loading={isOnAction}
                   htmlType="submit"
                   className="h-[50px] w-[100px] md:h-[52px] md:w-[124px] rounded-[50px] bg-[#003087] text-white text-[14px] md:text-[16px] "
                 >

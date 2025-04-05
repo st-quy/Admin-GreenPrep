@@ -5,7 +5,7 @@ export const createTeachers = async (data) => {
   return await axiosInstance.post("/users/register", data);
 };
 export const updateTeachers = async (data) => {
-  return await axiosInstance.put(`/users/${data.teacherId}`, data.teacherData);
+  return await axiosInstance.put(`/users/${data.ID}`, data);
 };
 export const getTeachers = async (data) => {
   const res = await axiosInstance.post(`/users/teachers`, data);
