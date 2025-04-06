@@ -1,10 +1,11 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Table, Select, Pagination, Spin } from "antd";
-import { TableType, StatusType, LevelEnum } from "../constraint/TableEnum";
+import { TableType, StatusType, LevelEnum } from "../constant/TableEnum";
 import {
   useSessionParticipants,
   useStudentParticipants,
 } from "../hooks/useSession";
+import "../css/index.scss";
 import { useNavigate } from "react-router-dom";
 function getSkillLevel(score, skill) {
   const thresholds = {
@@ -57,7 +58,6 @@ const StudentSessionTable = ({
 
   const filteredData = useMemo(() => {
     const keyword = searchKeyword?.toLowerCase().trim() || "";
-    console.log(keyword);
     if (!keyword) return processedData;
     return processedData.filter((item) => {
       const fullName = String(item.User?.fullName || "").toLowerCase();
@@ -99,12 +99,14 @@ const StudentSessionTable = ({
       title: "GRAMMAR & VOCABULARY",
       dataIndex: "GrammarVocab",
       key: "GrammarVocab",
+      width: "240px",
       render: (text) => <span>{text || "No Data"}</span>,
     },
     {
       title: "LISTENING",
       dataIndex: "Listening",
       key: "Listening",
+      width: "120px",
       render: (text, record) => (
         <span>
           {text ? text + " | " + getSkillLevel(text, "Listening") : "No Data"}
@@ -115,6 +117,7 @@ const StudentSessionTable = ({
       title: "READING",
       dataIndex: "Reading",
       key: "Reading",
+      width: "120px",
       render: (text, record) => (
         <span>
           {text ? text + " | " + getSkillLevel(text, "Reading") : "No Data"}
@@ -125,6 +128,7 @@ const StudentSessionTable = ({
       title: "SPEAKING",
       dataIndex: "Speaking",
       key: "Speaking",
+      width: "120px",
       render: (text, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
@@ -147,6 +151,7 @@ const StudentSessionTable = ({
       title: "WRITING",
       dataIndex: "Writing",
       key: "Writing",
+      width: "120px",
       render: (text, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
@@ -165,11 +170,13 @@ const StudentSessionTable = ({
           </span>
         ),
     },
-    { title: "TOTAL", dataIndex: "Total", key: "Total" },
+    { title: "TOTAL", width: "90px", dataIndex: "Total", key: "Total" },
     {
       title: "LEVEL",
       dataIndex: "Level",
       key: "Level",
+      fixed: "right",
+      width: "90px",
       render: (level, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <Select
@@ -190,6 +197,15 @@ const StudentSessionTable = ({
         ) : (
           <span>{level || "No Data"}</span>
         ),
+      onHeaderCell: () => {
+        return {
+          style: {
+            textAlign: "center",
+            backgroundColor: "#E6F0FA",
+          },
+        };
+      },
+      className: "shadow-[-4px_0px_0_rgba(0,0,0,0.1)] md:shadow-none",
     },
   ];
 
@@ -200,16 +216,20 @@ const StudentSessionTable = ({
           title: "STUDENT NAME",
           dataIndex: ["User", "fullName"],
           key: "fullName",
-          render: (text, record) => (
-            <a
-              onClick={() =>
-                navigate(`/class/session/student/${record.User.ID}`)
-              }
-              className="cursor-pointer underline underline-offset-4 hover:opacity-80"
-            >
-              {text || "Unknown"}
-            </a>
-          ),
+          width: "260px",
+          render: (text, record) =>
+            text ? (
+              <a
+                onClick={() =>
+                  navigate(`/class/session/student/${record.User.ID}`)
+                }
+                className="cursor-pointer underline underline-offset-4 hover:opacity-80"
+              >
+                {text}
+              </a>
+            ) : (
+              "Unknown"
+            ),
         },
         ...commonColumns,
       ];
@@ -235,6 +255,8 @@ const StudentSessionTable = ({
 
   return (
     <Table
+      scroll={{ y: 5 * 70 }}
+      // @ts-ignore
       columns={columns}
       loading={isLoading}
       dataSource={filteredData.map((item) => ({ ...item, key: item.ID }))}
@@ -253,20 +275,13 @@ const StudentSessionTable = ({
       }}
       bordered
       className="border border-gray-200 pagination w-full p-0 m-0 overflow-x-auto bg-none"
-      rowClassName="text-center"
-      scroll={{ x: "max-content" }}
       components={{
         header: {
-          wrapper: (props) => (
-            <thead
-              {...props}
-              className="bg-[#E6F0FA] text-[10px] font-[700] md:text-[16px] text-[#637381]"
-            />
-          ),
+          wrapper: (props) => <thead {...props} className={`bg-[#E6F0FA]`} />,
           cell: (props) => (
             <th
               {...props}
-              className="tracking-wider text-center py-4 px-0 whitespace-nowrap"
+              className={` bg-[#E6F0FA] text-[10px] font-[700] md:text-[16px] text-[#637381] tracking-wider text-center !py-4 px-0 whitespace-nowrap `}
             />
           ),
         },
@@ -274,7 +289,7 @@ const StudentSessionTable = ({
           cell: (props) => (
             <td
               {...props}
-              className="font-[500] tracking-wider text-center py-4 px-0 whitespace-nowrap text-[10px] md:text-[14px] text-[#637381]"
+              className={`font-[500] tracking-wider text-center py-4 px-0 whitespace-nowrap text-[10px] md:text-[14px] text-[#637381] ${props.className || ""}`}
             />
           ),
         },

@@ -8,7 +8,6 @@ export const ClassDetailApi = {
     return axiosInstance.get(`/sessions/generate-key`);
   },
   createSession: (classId, sessionData) => {
-    console.log("here",classId);
     return axiosInstance.post(`/sessions?classId=${classId}`, sessionData);
   },
   updateSession: (sessionId, sessionData) => {

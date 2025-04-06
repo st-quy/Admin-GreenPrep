@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ClassDetailApi } from "../classAPI";
+import { ClassDetailApi } from "../api/classAPI";
 
 export const useClassDetailQuery = (classID) => {
   return useQuery({
@@ -54,9 +54,9 @@ export const useCreateSession = () => {
     mutationFn: async (data) => {
       const response = await ClassDetailApi.createSession(
         // @ts-ignore
-        data.classId,
+        data.ClassId,
         // @ts-ignore
-        data.sessionData
+        data
       );
       return response.data;
     },
@@ -74,7 +74,7 @@ export const useUpdateSession = () => {
         // @ts-ignore
         data.sessionId,
         // @ts-ignore
-        data.sessionData
+        data
       );
       return response.data;
     },

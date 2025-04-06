@@ -3,19 +3,34 @@ import { Table, message } from "antd";
 import CheckCircleIcon from "@/assets/icons/check-circle.svg";
 import CloseCircleIcon from "@/assets/icons/close-circle.svg";
 import ConfirmationModal from "@shared/Modal/ConfirmationModal";
-import axios from "@shared/config/axios";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { API_ENDPOINTS } from "../api";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+  useApproveRequest,
+  useApproveSelectedRequest,
+  useRejectRequest,
+  useRejectSelectedRequest,
+  useSessionRequests,
+} from "../hooks/useSession";
 
 const StudentMonitoring = ({
   sessionId,
   searchKeyword,
   onPendingCountChange,
 }) => {
+  const queryClient = useQueryClient();
   const [selectedRowKeys, setSelectedRowKeys] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(5);
   const [modalOpen, setModalOpen] = useState(false);
+  const { data: dataSource, isLoading } = useSessionRequests(sessionId);
+  const { mutate: approve, isPending: isApproving } =
+    useApproveRequest(sessionId);
+  const { mutate: reject, isPending: isRejecting } =
+    useRejectRequest(sessionId);
+  const { mutate: rejectSelected, isPending: isRejectingSelected } =
+    useRejectSelectedRequest(sessionId);
+  const { mutate: approveSelected, isPending: isAppoveSelected } =
+    useApproveSelectedRequest(sessionId);
   const [modalConfig, setModalConfig] = useState({
     title: "",
     message: "",
@@ -24,12 +39,9 @@ const StudentMonitoring = ({
     onConfirm: () => {},
   });
 
-  const queryClient = useQueryClient();
-
-  const fetchSessionRequests = async () => {
+  const filterPending = useMemo(() => {
     if (!sessionId) return [];
-    const response = await axios.get(API_ENDPOINTS.SESSION_REQUESTS(sessionId));
-    const requestsData = response.data.data || [];
+    const requestsData = dataSource || [];
     const pendingRequests = requestsData
       .filter((req) => req.status === "pending")
       .map((req, index) => ({
@@ -40,153 +52,69 @@ const StudentMonitoring = ({
         requestId: req.ID,
       }));
     return pendingRequests;
-  };
-  const { data: dataSource = [], isLoading } = useQuery({
-    queryKey: ["sessionRequests", sessionId],
-    queryFn: fetchSessionRequests,
-    refetchInterval: 10000,
-    enabled: !!sessionId,
-  });
-
+  }, [dataSource]);
   const filteredData = useMemo(() => {
-    if (!searchKeyword) return dataSource;
-    return dataSource.filter((item) => {
+    if (!searchKeyword) return filterPending;
+    return filterPending.filter((item) => {
       return (
         item.studentName.toLowerCase().includes(searchKeyword.toLowerCase()) ||
         item.studentId.toLowerCase().includes(searchKeyword.toLowerCase()) ||
         item.className.toLowerCase().includes(searchKeyword.toLowerCase())
       );
     });
-  }, [dataSource, searchKeyword]);
+  }, [filterPending, searchKeyword]);
 
   useEffect(() => {
     if (onPendingCountChange) {
-      onPendingCountChange(filteredData.length);
+      onPendingCountChange(filteredData?.length || 0);
     }
   }, [filteredData, onPendingCountChange]);
 
-  // Mutation cho approve request
-  const approveMutation = useMutation({
-    mutationFn: (requestId) =>
-      axios.patch(API_ENDPOINTS.APPROVE_REQUEST(sessionId), { requestId }),
-    onSuccess: (_, requestId) => {
-      message.success("Request has been approved!");
-      // queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
-      //   if (Array.isArray(oldData)) {
-      //     return oldData.filter((req) => req.requestId !== requestId);
-      //   }
-      //   return [];
-      // });
-      queryClient.invalidateQueries({ queryKey: ["sessionRequests"] });
-      queryClient.invalidateQueries({ queryKey: ["sessionParticipants"] });
-    },
-    onError: (error) => {
-      message.error("Error approving request: " + error.message);
-    },
-  });
-  // Mutation cho reject request
-  const rejectMutation = useMutation({
-    mutationFn: (requestId) =>
-      axios.patch(API_ENDPOINTS.REJECT_REQUEST(sessionId), { requestId }),
-    onSuccess: (_, requestId) => {
-      message.success("Request has been rejected!");
-      // queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
-      //   if (Array.isArray(oldData)) {
-      //     return oldData.filter((req) => req.requestId !== requestId);
-      //   }
-      //   return [];
-      // });
-      queryClient.invalidateQueries({ queryKey: ["sessionRequests"] });
-    },
-    onError: (error) => {
-      message.error("Error rejecting request: " + error.message);
-    },
-  });
+  const handleAction = (record, type) => {
+    const isApprove = type === "approve";
+    const mutation = isApprove ? approve : reject;
+    setModalConfig({
+      title: `Are you sure you want to ${isApprove ? "approve" : "reject"} this student?`,
+      message: isApprove
+        ? "After you approve this student, this account will be able to take the test."
+        : "After you reject this student, this account will no longer be available in this pending list.",
+      okText: isApprove ? "Approve" : "Reject",
+      okButtonColor: isApprove ? "#22AD5C" : "#F23030",
+      onConfirm: () => {
+        mutation(record.requestId);
+        setModalOpen(false);
+      },
+    });
 
-  const handleApprove = (record) => {
-    setModalConfig({
-      title: "Are you sure you want to approve this student?",
-      message:
-        "After you approve this student, this account will be able to take the test.",
-      okText: "Approve",
-      okButtonColor: "#22AD5C",
-      onConfirm: () => {
-        approveMutation.mutate(record.requestId, {
-          onSuccess: () => {
-            message.success("Request has been approved!");
-          },
-        });
-        setModalOpen(false);
-      },
-    });
     setModalOpen(true);
   };
-  const handleReject = (record) => {
+
+  const handleBulkAction = (type = "approve") => {
+    const isApprove = type === "approve";
+    const selectedRequestIds = 
+      filteredData
+        .filter((req) => selectedRowKeys.includes(req.key))
+        .map((req) => req.requestId);
+
     setModalConfig({
-      title: "Are you sure you want to reject this student?",
-      message:
-        "After you reject this student, this account will no longer be available in this pending list.",
-      okText: "Reject",
-      okButtonColor: "#F23030",
-      onConfirm: () => {
-        rejectMutation.mutate(record.requestId, {
-          onSuccess: () => {
-            message.success("Request has been rejected!");
-          },
-        });
-        setModalOpen(false);
-      },
-    });
-    setModalOpen(true);
-  };
-  const handleBulkApprove = () => {
-    setModalConfig({
-      title: "Are you sure you want to approve all selected students?",
-      message:
-        "Once you approve all students, all selected accounts will be able to take the test.",
-      okText: "Approve",
-      okButtonColor: "#22AD5C",
+      title: `Are you sure you want to ${isApprove ? "approve" : "reject"} all selected students?`,
+      message: `Once you ${isApprove ? "approve" : "reject"} all students, their request status will be updated.`,
+      okText: isApprove ? "Approve" : "Reject",
+      okButtonColor: isApprove ? "#22AD5C" : "#F23030",
       onConfirm: async () => {
         try {
-          const selectedRequests = dataSource.filter((req) =>
-            selectedRowKeys.includes(req.key)
+          const mutate = isApprove ? approveSelected : rejectSelected;
+          mutate(
+            selectedRequestIds,
+            {
+              onSuccess: () => {
+                setSelectedRowKeys([]);
+              },
+              onError: () => {},
+            }
           );
-          await Promise.all(
-            selectedRequests.map((req) =>
-              approveMutation.mutateAsync(req.requestId)
-            )
-          );
-          message.success("All selected requests have been approved!");
-          setSelectedRowKeys([]);
         } catch (error) {
-          message.error("Error approving multiple requests: " + error.message);
-        }
-        setModalOpen(false);
-      },
-    });
-    setModalOpen(true);
-  };
-  const handleBulkReject = () => {
-    setModalConfig({
-      title: "Are you sure you want to reject all selected students?",
-      message:
-        "After you reject all students, all selected accounts will no longer be available on this pending list.",
-      okText: "Reject",
-      okButtonColor: "#F23030",
-      onConfirm: async () => {
-        try {
-          const selectedRequests = dataSource.filter((req) =>
-            selectedRowKeys.includes(req.key)
-          );
-          await Promise.all(
-            selectedRequests.map((req) =>
-              rejectMutation.mutateAsync(req.requestId)
-            )
-          );
-          message.success("All selected requests have been rejected!");
-          setSelectedRowKeys([]);
-        } catch (error) {
-          message.error("Error rejecting multiple requests: " + error.message);
+          message.error(`Error processing bulk ${type}: ` + error.message);
         }
         setModalOpen(false);
       },
@@ -210,25 +138,16 @@ const StudentMonitoring = ({
       title: "Student Name",
       dataIndex: "studentName",
       key: "studentName",
-      render: (text) => (
-        <span className="text-[#637381] md:text-[16px] text-[10px]">{text}</span>
-      ),
     },
     {
       title: "Student ID",
       dataIndex: "studentId",
       key: "studentId",
-      render: (text) => (
-        <span className="text-[#637381] md:text-[16px] text-[10px]">{text}</span>
-      ),
     },
     {
       title: "Class Name",
       dataIndex: "className",
       key: "className",
-      render: (text) => (
-        <span className="text-[#637381] md:text-[16px] text-[10px]">{text}</span>
-      ),
     },
     {
       title: "Action",
@@ -238,13 +157,13 @@ const StudentMonitoring = ({
           <img
             src={CheckCircleIcon}
             alt="Check Circle"
-            onClick={() => handleApprove(record)}
+            onClick={() => handleAction(record, "approve")}
             className="md:h-7 h-5 text-[#22AD5C] hover:text-green-600 hover:cursor-pointer"
           />
           <img
             src={CloseCircleIcon}
             alt="Close Circle"
-            onClick={() => handleReject(record)}
+            onClick={() => handleAction(record, "reject")}
             className="md:h-7 h-5 text-[#F23030] hover:text-red-600 hover:cursor-pointer"
           />
         </div>
@@ -258,14 +177,15 @@ const StudentMonitoring = ({
   };
 
   const paginationConfig = {
+    pageSizeOptions: ["5", "10", "15", "20"],
     current: currentPage,
     pageSize: pageSize,
-    total: filteredData.length,
+    total: filteredData?.length || 0,
     showSizeChanger: true,
     onShowSizeChange: onShowSizeChange,
     onChange: (page) => setCurrentPage(page),
     showTotal: (total, range) => (
-      <span className="md:text-[16px] text-[10px] text-[#637381]">
+      <span className="text-center md:text-[16px] text-[10px] text-[#637381]">
         Showing {range[0].toString().padStart(2)}-
         {range[1].toString().padStart(2)} of {total}
       </span>
@@ -279,14 +199,14 @@ const StudentMonitoring = ({
           <div className="flex">
             <div
               className="text-[#637381] rounded-none md:text-sm text-[10px] h-8 px-3 hover:font-bold hover:text-[#22AD5C] hover:underline hover:cursor-pointer"
-              onClick={handleBulkApprove}
+              onClick={() => handleBulkAction("approve")}
             >
               Approve
             </div>
             <div>|</div>
             <div
               className="text-[#637381] rounded-none md:text-sm text-[10px] h-8 px-3 hover:font-bold hover:text-[#F23030] hover:underline hover:cursor-pointer"
-              onClick={handleBulkReject}
+              onClick={() => handleBulkAction("reject")}
             >
               Reject
             </div>
@@ -294,19 +214,35 @@ const StudentMonitoring = ({
         )}
       </div>
       <Table
-        scroll={filteredData.length > 0 && filteredData.length < 400 ? undefined : { y: 400 }}
+        scroll={{ y: 5 * 70 }}
         rowSelection={rowSelection}
+        // @ts-ignore
         columns={columns}
-        dataSource={filteredData || []}
+        loading={isLoading}
+        dataSource={filteredData}
         pagination={paginationConfig}
-        className="border border-gray-200 rounded-lg overflow-hidden w-full h-full"
+        className="border border-gray-200 rounded-lg overflow-hidden"
         rowClassName="hover:bg-gray-50"
         components={{
           header: {
+            wrapper: (props) => (
+              <thead
+                {...props}
+                className="bg-[#E6F0FA] text-[10px] font-[700] md:text-[16px] text-[#637381] uppercase"
+              />
+            ),
             cell: (props) => (
               <th
                 {...props}
-                className="!bg-[#E6F0FA] md:text-[16px] text-[10px] !text-[#637381] font-medium uppercase tracking-wider text-center py-3 px-4"
+                className="tracking-wider text-center py-4 px-0 whitespace-nowrap"
+              />
+            ),
+          },
+          body: {
+            cell: (props) => (
+              <td
+                {...props}
+                className="font-[500] tracking-wider text-center py-4 px-0 whitespace-nowrap text-[10px] md:text-[14px] text-[#637381]"
               />
             ),
           },

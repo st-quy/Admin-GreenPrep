@@ -1,17 +1,56 @@
-import React from "react";
-import { Table } from "antd";
+import React, { useMemo, useState } from "react";
+import { Table, Tag } from "antd";
 import { useNavigate } from "react-router-dom";
 import { formatDateTime } from "@shared/lib/utils/formatString";
 import ActionModal from "../../SessionModal/ActionModal/ActionModal";
 import DeleteModal from "../../SessionModal/DeleteModal/DeleteModal";
-
-const SessionTable = ({ dataSource }) => {
+import { calc } from "antd/es/theme/internal";
+const SessionTable = ({ dataSource, searchKeyword, statusFilter }) => {
   const navigate = useNavigate();
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const handleNavigate = (id) => {
     navigate(`/class/session/${id}`);
   };
+  const statusTag = (status) => {
+    const statusMap = {
+      COMPLETED: { color: "green", text: "Completed" },
+      ON_GOING: { color: "blue", text: "On Going" },
+      NOT_STARTED: { color: "gray", text: "Not Started" },
+    };
+    return (
+      <div className="w-full flex items-center justify-center">
+        <Tag
+          color={statusMap[status]?.color}
+          className="rounded-2xl p-1 px-2  ml-3 text-center border-none"
+        >
+          {statusMap[status]?.text || "Unknown"}
+        </Tag>
+      </div>
+    );
+  };
+  const sortedSessions = useMemo(() => {
+    return dataSource.sort((a, b) => {
+      return (
+        new Date(b.updatedAt || 0).getTime() -
+        new Date(a.updatedAt || 0).getTime()
+      );
+    });
+  }, [dataSource]);
+  const filteredData = useMemo(() => {
+    const keyword = searchKeyword?.toLowerCase().trim() || "";
+    if (!keyword && !statusFilter) return dataSource;
 
+    return sortedSessions.filter((item) => {
+      const sessionName = String(item.sessionName || "").toLowerCase();
+
+      // Kiểm tra cả keyword và statusFilter
+      return (
+        sessionName.includes(keyword) &&
+        (item.status === statusFilter || !statusFilter)
+      );
+    });
+  }, [dataSource, searchKeyword, statusFilter]);
   const columns = [
     {
       title: "SESSION NAME",
@@ -49,67 +88,91 @@ const SessionTable = ({ dataSource }) => {
     },
     {
       title: "NUMBER OF PARTICIPANTS",
-      dataIndex: "numberOfParticipants",
-      key: "numberOfParticipants",
+      dataIndex: ["SessionParticipants"],
+      key: "SessionParticipants",
       render: (participants) => participants?.length || 0,
+      ellipsis: true,
+    },
+    {
+      title: "STATUS",
+      dataIndex: "status",
+      key: "status",
+      render: (text) => statusTag(text),
       ellipsis: true,
     },
     {
       title: "ACTION",
       key: "action",
       fixed: "right",
-      width: 120,
+      width: "10%",
       render: (_, record) => (
-        <div className="flex items-center gap-4 bg-white">
-          <ActionModal isEdit={true} initialData={record} />
-          <DeleteModal sessionID={record.ID} />
+        <div className="flex gap-4 w-full">
+          <div className="w-1/2">
+            {" "}
+            <ActionModal initialData={record} />
+          </div>
+          <div className="w-1/2">
+            {" "}
+            <DeleteModal sessionID={record.ID} />
+          </div>
         </div>
       ),
-      onHeaderCell: () => ({
-        className: "bg-[#bae6fd] text-black", // màu header riêng cho cột này
-      }),
-      ellipsis: true,
-      className: "custom-action-column",
+      onHeaderCell: () => {
+        return {
+          style: {
+            textAlign: "center",
+            backgroundColor: "#E6F0FA",
+          },
+        };
+      },
+      className: "shadow-[-4px_0px_0_rgba(0,0,0,0.1)] md:shadow-none",
     },
   ];
+  const components = {
+    header: {
+      wrapper: (props) => (
+        <thead {...props} className="bg-[#E6F0FA]  text-center" />
+      ),
+      cell: (props) => (
+        <th
+          {...props}
+          className={`py-4 font-[500] whitespace-nowrap text-center text-[12px] md:text-[16px] ${props.className || ""}`}
+        />
+      ),
+    },
+    body: {
+      cell: (props) => (
+        <td
+          {...props}
+          className={`whitespace-nowrap font-[500]  text-[#637381] text-[10px] md:text-[14px]   ${props.className || ""} text-center items-center`}
+        />
+      ),
+    },
+  };
 
   return (
-    <div className="w-full overflow-x-auto rounded-xl border bg-[#E6F0FA]">
-      <Table
-        columns={columns}
-        dataSource={dataSource ? [...dataSource].reverse() : []}
-        pagination={false}
-        rowKey={(record) => record.ID}
-        bordered
-        scroll={{ x: "max-content" }}
-        components={{
-          header: {
-            wrapper: (props) => (
-              <thead
-                {...props}
-                className="bg-[#478edf] text-sm md:text-base lg:text-lg"
-              />
-            ),
-
-            cell: (props) => (
-              <th
-                {...props}
-                className="py-4 font-medium whitespace-nowrap text-center text-[12px] md:text-[16px]"
-              />
-            ),
-          },
-          body: {
-            cell: (props) => (
-              <td
-                {...props}
-                className="whitespace-nowrap text-center text-[#637381] text-[10px] md:text-[14px]"
-              />
-            ),
-          },
-        }}
-        className="custom-table"
-      />
-    </div>
+    <Table
+      // @ts-ignore
+      columns={columns}
+      dataSource={filteredData}
+      scroll={{ x: "max-content" }}
+      rowKey={(record) => record.ID}
+      components={components}
+      bordered
+      pagination={{
+        current: currentPage,
+        pageSize: pageSize,
+        total: filteredData.length,
+        showSizeChanger: true,
+        pageSizeOptions: ["5", "10", "15", "20"],
+        showTotal: (total, range) =>
+          `Showing ${range[0]}-${range[1]} of ${total}`,
+        onChange: (page, size) => {
+          setCurrentPage(page);
+          setPageSize(size);
+        },
+      }}
+    />
   );
 };
 

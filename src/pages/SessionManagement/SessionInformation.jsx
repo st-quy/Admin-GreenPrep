@@ -6,7 +6,7 @@ import StudentSessionTable from "@/features/session/ui/StudentSessionTable.jsx";
 import SearchInput from "@/app/components/SearchInput.jsx";
 import Details from "@features/session/ui/Details.jsx";
 import { useParams } from "react-router-dom";
-import { TableType } from "@features/session/constraint/TableEnum";
+import { TableType } from "@features/session/constant/TableEnum";
 
 const SessionInformation = ({ type }) => {
   const [searchKeyword, setSearchKeyword] = useState("");

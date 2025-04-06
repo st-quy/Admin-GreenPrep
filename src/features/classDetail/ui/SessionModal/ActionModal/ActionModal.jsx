@@ -21,24 +21,22 @@ import {
 } from "@features/classDetail/hooks/useClassDetail";
 import dayjs from "dayjs";
 import { useQueryClient } from "@tanstack/react-query";
-import { LoadingOutlined, ReloadOutlined } from "@ant-design/icons";
+import {
+  EditFilled,
+  EditOutlined,
+  LoadingOutlined,
+  ReloadOutlined,
+} from "@ant-design/icons";
 
-const ActionModal = ({
-  isEdit = false,
-  initialData = null,
-  classId = null,
-}) => {
-  const queryClient = useQueryClient();
+const ActionModal = ({ initialData = null, classId = null }) => {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
-  const [confirmLoading, setConfirmLoading] = useState(false);
+  const isEdit = initialData !== null;
   const { mutateAsync: generateKey, isPending: isGenerating } =
     useGenerateSessionKeyMutation();
-  const { mutate: createSession, isPending: isCreatingSession } =
-    useCreateSession();
-  const { mutate: updateSession, isPending: isUpdatingSession } =
-    useUpdateSession();
-
+  const { mutate: sessionAction, isPending: isLoading } = isEdit
+    ? useUpdateSession()
+    : useCreateSession();
   const showModal = () => {
     setOpen(true);
   };
@@ -53,85 +51,57 @@ const ActionModal = ({
     form.setFieldsValue({ sessionKey: data.key });
   };
 
-  const onCreate = async () => {
+  const onAction = async () => {
     try {
       // Validate form fields
       const values = await form.validateFields();
 
       // Prepare session data
       const sessionData = {
+        sessionId: initialData?.ID || null,
         sessionName: values.sessionName,
         sessionKey: values.sessionKey,
         startTime: values.dateRange ? values.dateRange[0].toISOString() : null,
         endTime: values.dateRange ? values.dateRange[1].toISOString() : null,
         examSet: values.examSet,
-        ClassID: classId,
+        ClassId: classId,
       };
-      createSession(
+      sessionAction(
         // @ts-ignore
-        { classId, sessionData: JSON.stringify(sessionData) },
+        sessionData,
         {
-          onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["classDetail"] });
-            message.success("Session created successfully!");
-            setOpen(false);
-            form.resetFields();
+          onSuccess: (data) => {
+            message
+              .success(
+                data.data.message || `${isEdit ? "Update" : "Create"} success!`
+              )
+              .then(() => {
+                handleCancel();
+              });
           },
-          onError: () => {
-            message.error("Please field all the fields correctly.");
+          onError: (error) => {
+            message.error(
+              // @ts-ignore
+              error?.response?.data?.message ||
+                `Failed to ${isEdit ? "update" : "create"} account.`
+            );
           },
         }
       );
     } catch (error) {
-      message.error("Please field all the fields correctly.");
-    } finally {
-      setConfirmLoading(false);
-    }
-  };
-
-  const onUpdate = async () => {
-    try {
-      // Validate form fields
-      const values = await form.validateFields();
-
-      // Prepare session data
-      const sessionData = {
-        sessionName: values.sessionName,
-        sessionKey: values.sessionKey,
-        startTime: values.dateRange ? values.dateRange[0].toISOString() : null,
-        endTime: values.dateRange ? values.dateRange[1].toISOString() : null,
-        examSet: values.examSet,
-        ClassID: classId,
-      };
-
-      updateSession(
-        // @ts-ignore
-        { sessionId: initialData.ID, sessionData: JSON.stringify(sessionData) },
-        {
-          onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["classDetail"] });
-            message.success("Session update successfully!");
-            setOpen(false);
-            form.resetFields();
-          },
-          onError: () => {
-            message.error("Please field all the fields correctly.");
-          },
-        }
+      message.error(
+        error?.response?.data?.message ||
+          "Please field all the fields correctly."
       );
-    } catch (error) {
-      message.error(`Failed to update session. Please try again.`);
-    } finally {
-      setConfirmLoading(false);
     }
   };
 
   return (
     <>
       {isEdit ? (
-        <Button onClick={showModal} className="!border-none !hover:border-none">
-          <img src={EditIcon} alt="Edit" width={20} height={20} />
-        </Button>
+        <span className="text-3xl">
+          <EditOutlined onClick={showModal} className="hover:opacity-50" />
+        </span>
       ) : (
         <Button
           onClick={showModal}
@@ -144,7 +114,7 @@ const ActionModal = ({
         open={open}
         okText={isEdit ? "Update" : "Create"}
         closable={false}
-        confirmLoading={confirmLoading}
+        confirmLoading={isLoading}
         width={{
           xs: "90%",
           sm: "80%",
@@ -153,9 +123,9 @@ const ActionModal = ({
           xl: "50%",
           xxl: "40%",
         }}
-        footer={(_) => <></>}
+        footer={null}
       >
-        <div className="px-6 pt-4">
+        <div className="px-6">
           <h4 className="font-[700] lg:text-[30px] md:text-[28px]">
             {isEdit ? "Update session" : "Create Session"}
           </h4>
@@ -166,7 +136,7 @@ const ActionModal = ({
           </p>
           <Form
             form={form}
-            className="mb-14"
+            className=""
             layout="vertical"
             initialValues={{
               sessionName: isEdit ? initialData?.sessionName : "",
@@ -239,25 +209,23 @@ const ActionModal = ({
                 format="DD-MM-YYYY HH:mm:ss"
               />
             </Form.Item>
-            <Form.Item>
-              <div className="flex justify-end gap-4 py-4">
-                <Button
-                  onClick={handleCancel}
-                  className="h-[52px] w-[124px] rounded-[50px] border-[1px] border-[#003087] text-[#003087] lg:text-[16px] md:text-[14px]"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={isEdit ? onUpdate : onCreate}
-                  loading={isCreatingSession || isUpdatingSession}
-                  htmlType="submit"
-                  className="h-[52px] w-[124px] rounded-[50px] bg-[#003087] text-white lg:text-[16px] md:text-[14px]"
-                >
-                  {isEdit ? "Update" : "Create"}
-                </Button>
-              </div>
-            </Form.Item>
           </Form>
+        </div>
+        <div className="flex justify-end gap-4">
+          <Button
+            onClick={handleCancel}
+            className="h-[52px] w-[124px] rounded-[50px] border-[1px] border-[#003087] text-[#003087] lg:text-[16px] md:text-[14px]"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={onAction}
+            loading={isLoading}
+            htmlType="submit"
+            className="h-[52px] w-[124px] rounded-[50px] bg-[#003087] text-white lg:text-[16px] md:text-[14px]"
+          >
+            {isEdit ? "Update" : "Create"}
+          </Button>
         </div>
       </Modal>
     </>

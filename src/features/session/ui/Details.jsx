@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Card, Spin, Tag, Typography, Descriptions, Divider } from "antd";
-import { TableType } from "@features/session/constraint/TableEnum";
+import { TableType } from "@features/session/constant/TableEnum";
 
 const { Title, Text } = Typography;
 const statusTag = (status) => {
@@ -11,7 +11,7 @@ const statusTag = (status) => {
     NOT_STARTED: { color: "gray", text: "Not Started" },
   };
   return (
-    <Tag color={statusMap[status]?.color} className="rounded-3xl">
+    <Tag color={statusMap[status]?.color} className="rounded-3xl border-none">
       {statusMap[status]?.text || "Unknown"}
     </Tag>
   );
