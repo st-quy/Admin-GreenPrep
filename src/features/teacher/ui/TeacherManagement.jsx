@@ -1,15 +1,6 @@
-import React, { useState, useEffect, useMemo, useCallback } from "react";
-import {
-  Table,
-  Input,
-  Select,
-  Button,
-  Pagination,
-  Tag,
-  Space,
-  Spin,
-} from "antd";
-import { DeleteOutlined, SearchOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { Table, Input, Select, Space, Tag } from "antd";
+import { SearchOutlined } from "@ant-design/icons";
 import { useFetchTeachers } from "../hook/useTeacherQuery";
 import TeacherActionModal from "./TeacherModal/ActionModal/TeacherActionModal";
 import useConfirm from "@shared/hook/useConfirm";
@@ -18,33 +9,27 @@ const { Option } = Select;
 
 const TeacherManagement = () => {
   const [searchTerm, setSearchTerm] = useState("");
-  const [statusFilter, setStatusFilter] = useState(true);
+  const [statusFilter, setStatusFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
   const { openConfirmModal, ModalComponent } = useConfirm();
-  const [pageSize, setPageSize] = useState(2);
   const debouncedSearchTerm = useDebouncedValue(searchTerm, 500);
   const { data: teachersData, isLoading } = useFetchTeachers({
     page: currentPage,
     limit: pageSize,
     search: debouncedSearchTerm,
-    status: statusFilter,
+    ...(statusFilter !== null && { status: statusFilter }),
   });
 
-  const handleDelete = (data) => {
-    openConfirmModal({
-      title: "Delete Confirmation",
-      message: "Are you sure you want to delete this item?",
-      okText: "Delete",
-      okButtonColor: "red",
-      onConfirm: () => {
-        console.log("Item deleted!");
-      },
-    });
-  };
   const handleStatusFilter = (value) => {
-    const fil = value === "Active" ? true : false;
-    setStatusFilter(fil);
+    if (value === "All") {
+      setStatusFilter(null);
+    } else {
+      const fil = value === "Active" ? true : false;
+      setStatusFilter(fil);
+    }
   };
+
   const columns = [
     {
       title: "TEACHER NAME",
@@ -52,12 +37,14 @@ const TeacherManagement = () => {
       key: "name",
       width: "200px",
       render: (text, record) => (
-        <a
-          onClick={() => console.log(record)}
-          className="cursor-pointer text-[10px] md:text-[14px] underline  hover:opacity-80"
-        >
-          {`${record.firstName} ${record.lastName}` || "Unknown"}
-        </a>
+        <div className="overflow-hidden text-ellipsis whitespace-nowrap">
+          <a
+            onClick={() => console.log(record)}
+            className="cursor-pointer text-[10px] md:text-[14px] underline hover:opacity-80"
+          >
+            {`${record.firstName} ${record.lastName}` || "Unknown"}
+          </a>
+        </div>
       ),
     },
     {
@@ -71,6 +58,7 @@ const TeacherManagement = () => {
       dataIndex: "email",
       key: "email",
       width: "200px",
+      ellipsis: true,
     },
     {
       title: "PHONE",
@@ -82,10 +70,15 @@ const TeacherManagement = () => {
       title: "STATUS",
       dataIndex: "status",
       key: "status",
-      width: "80px",
+      width: "120px",
+      align: "center",
       render: (status) => (
         <Tag
-          className={`rounded-3xl font-[600] py-1 text-center ${status === true ? "bg-[#DAF8E6] text-[#1A8245]" : "bg-[#E5E7EB] text-[#374151]"} border-none text-[10px] md:text-[14px] `}
+          className={`rounded-3xl font-[600] py-1 text-center ${
+            status === true
+              ? "bg-[#DAF8E6] text-[#1A8245]"
+              : "bg-[#E5E7EB] text-[#374151]"
+          } border-none text-[10px] md:text-[14px]`}
         >
           {status === true ? "Active" : "Deactive"}
         </Tag>
@@ -95,20 +88,10 @@ const TeacherManagement = () => {
       title: "ACTIONS",
       key: "actions",
       width: "100px",
-      fixed: "right",
+      // fixed: "right",
       render: (_, record) => (
-        <Space
-          size="small"
-          className="bg-white rounded-lg shadow-md shadow-black px-1 md:shadow-none"
-        >
+        <Space size="small" className="bg-white rounded-lg px-1">
           <TeacherActionModal initialData={record} />
-
-          <Button
-            type="text"
-            icon={<DeleteOutlined style={{ fontSize: "20px" }} />}
-            className="text-red-600 hover:text-red-800"
-            onClick={() => handleDelete(record.id)}
-          />
         </Space>
       ),
     },
@@ -141,13 +124,7 @@ const TeacherManagement = () => {
         />
       ),
       row: (props) => (
-        <tr
-          {...props}
-          style={{
-            ...props.style,
-            border: "none",
-          }}
-        />
+        <tr {...props} style={{ ...props.style, border: "none" }} />
       ),
     },
   };
@@ -156,7 +133,7 @@ const TeacherManagement = () => {
     <div className="w-full">
       <ModalComponent />
       <div className="flex justify-between items-center mb-4">
-        <div className="flex items-center space-x-4">
+        <div className="flex flex-col md:flex-row md:items-center md:space-x-4 space-y-2 md:space-y-0">
           <Input
             value={searchTerm}
             placeholder="Search by name, ID"
@@ -164,16 +141,17 @@ const TeacherManagement = () => {
               setSearchTerm(e.target.value);
               setCurrentPage(1);
             }}
-            style={{ width: 200 }}
+            className="w-full md:w-[200px]"
             allowClear
-            suffix={<SearchOutlined className=" text-[#9CA3AF]" />}
+            suffix={<SearchOutlined className="text-[#9CA3AF]" />}
           />
           <Select
             placeholder="Select STATUS"
             onChange={(value) => handleStatusFilter(value)}
-            style={{ width: 150 }}
+            className="w-full md:w-[150px]"
             allowClear
           >
+            <Option value="All">All</Option>
             <Option value="Active">Active</Option>
             <Option value="Deactive">Deactive</Option>
           </Select>
@@ -194,7 +172,7 @@ const TeacherManagement = () => {
           pageSize: pageSize,
           total: teachersData?.data?.pagination?.total,
           showSizeChanger: true,
-          pageSizeOptions: ["3", "10", "15", "20"],
+          pageSizeOptions: ["5", "10", "15", "20"],
           showTotal: (total, range) =>
             `Showing ${range[0]}-${range[1]} of ${total}`,
           onChange: (page, size) => {
@@ -206,4 +184,5 @@ const TeacherManagement = () => {
     </div>
   );
 };
+
 export default TeacherManagement;

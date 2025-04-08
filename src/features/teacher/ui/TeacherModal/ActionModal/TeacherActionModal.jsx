@@ -23,8 +23,9 @@ const accountSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
   teacherCode: Yup.string().required("Teacher Code is required"),
   password: Yup.string()
+    .transform((value) => (value === "" ? undefined : value))
     .min(6, "Password must be at least 6 characters")
-    .optional(),
+    .notRequired(),
 });
 
 const TeacherActionModal = ({ initialData = null }) => {
@@ -55,7 +56,7 @@ const TeacherActionModal = ({ initialData = null }) => {
         lastName: values.lastName,
         email: values.email,
         teacherCode: values.teacherCode,
-        password: values.password || undefined,
+        password: values.password || `Greenwich@123`,
         roleIDs: ["teacher"],
         status: values.status,
         phone: values.phone || undefined,
@@ -82,7 +83,7 @@ const TeacherActionModal = ({ initialData = null }) => {
     } catch (error) {
       message.error(
         error.response?.data?.message ||
-        "Failed to send request account. Please try again."
+          "Failed to send request account. Please try again."
       );
     }
   };
@@ -195,16 +196,15 @@ const TeacherActionModal = ({ initialData = null }) => {
             <div className="grid grid-cols-2 gap-4">
               {!isEdit && (
                 <Form.Item
-                  label={
-                    <span className="text-[16px]">
-                      Password <span className="text-red-500">*</span>
-                    </span>
-                  }
+                  label={<span className="text-[16px]">Password</span>}
                   // @ts-ignore
                   rules={[yupSync(accountSchema)]}
                   name="password"
                 >
                   <Input.Password className="h-[46px]" placeholder="Password" />
+                  <div className="text-[14px] text-[#b3b0a5] mt-2">
+                    Default Password: Greenwich@123
+                  </div>
                 </Form.Item>
               )}
               <Form.Item
