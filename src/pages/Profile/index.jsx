@@ -3,16 +3,22 @@ import React, { useRef, useState } from 'react';
 import { Button, Typography, Avatar, message, Form } from 'antd';
 import { UserOutlined, CameraOutlined } from '@ant-design/icons';
 import defaultAvatar from '@assets/images/avatar.png';
-import ProfileTeacher from '@features/profile/ui/ProfileTeacher';
 import { getUserFromToken, QUERY_KEYS } from '@features/profile/api';
 import { useQuery } from '@tanstack/react-query';
-
+import { useNavigate } from 'react-router-dom';
+import ProfileUpdate from '@features/profile/ui/Modal/ProfileUpdate';
+import ChangePassword from '@features/profile/ui/Modal/ChangePassword';
+import { useSelector } from 'react-redux';
 const { Title, Text } = Typography;
+
 
 const ProfilePage = () => {
   const fileInputRef = useRef(null);
   const [avatar, setAvatar] = useState(defaultAvatar);
   const [form] = Form.useForm();
+  const [openKey, setOpenKey] = useState(null);
+  const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
 
   const { data: userData, isLoading } = useQuery({
     queryKey: [QUERY_KEYS.USER_PROFILE],
@@ -22,6 +28,7 @@ const ProfilePage = () => {
       message.error('Có lỗi khi lấy thông tin người dùng');
     }
   });
+  
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -44,10 +51,6 @@ const ProfilePage = () => {
       };
       reader.readAsDataURL(file);
     }
-  };
-
-  const handleChangePassword = () => {
-    console.log('Change password clicked');
   };
 
   const InfoField = ({ label, value }) => (
@@ -74,7 +77,22 @@ const ProfilePage = () => {
           <Title level={4} className="m-0">My profile</Title>
           <Text className="text-gray-500">Summary of personal information.</Text>
         </div>
-        <ProfileTeacher userData={userData} />
+        <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:space-x-0">
+          <Button
+            type="default"
+            onClick={() => setOpenKey("change-password")}
+            className="min-w-[140px] md:min-w-[160px] h-[40px] rounded-full border border-[#003087] text-[#003087] hover:text-[#0066CC] hover:border-[#0066CC] font-medium"
+          >
+            Change password
+          </Button>
+          <Button
+            type="primary"
+            onClick={() => setOpenKey("update-profile")}
+            className="min-w-[140px] md:min-w-[160px] h-[40px] rounded-full bg-[#003087] hover:bg-[#002A6B] border-none font-medium"
+          >
+            Update profile
+          </Button>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg shadow-lg border border-gray-100 p-6 sm:p-8">
@@ -100,7 +118,7 @@ const ProfilePage = () => {
           </div>
           <div>
             <Title level={4} className="m-0">{userData.firstName} {userData.lastName}</Title>
-            <Text className="text-gray-500 font-semibold">{userData.roleIDs?.[0] || 'N/A'}</Text>
+            <Text className="text-gray-500 font-semibold">{userData.RoleIDs?.[0] || 'N/A'}</Text>
             <Text className="block text-gray-500 font-semibold">{userData.email}</Text>
           </div>
         </div>
@@ -108,24 +126,24 @@ const ProfilePage = () => {
 
       <div className="bg-white rounded-[8px] shadow-lg border border-gray-100 w-full mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8">
-          <div className="space-y-2">
+          <div className="space-y-1 w-[200px]">
             <InfoField label="First Name" value={userData.firstName} />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1 ">
             <InfoField label="Last Name" value={userData.lastName} />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1 ">
             <InfoField label="Email" value={userData.email} />
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8 border-t border-gray-100">
-          <div className="space-y-2">
+          <div className="space-y-1 ">
             <InfoField label="BOD" value={userData.bod || 'No information'} />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1 ">
             <InfoField label="Phone number" value={userData.phone || 'No information'} />
           </div>
-          <div className="space-y-2">
+          <div className="space-y-1 ">
             <InfoField label="Address" value={userData.address || 'No information'} />
           </div>
         </div>
@@ -133,15 +151,26 @@ const ProfilePage = () => {
 
       <div className="bg-white rounded-[8px] shadow-lg border border-gray-100 w-full mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8">
-          <div className="space-y-2">
+          <div className="space-y-1 w-[200px]">
             <InfoField label="Teacher Code" value={userData.teacherCode || 'No information'} />
           </div>
           
-          <div className="space-y-2">
-            <InfoField label="Role" value={userData.roleIDs?.[0] || 'No information'} />
+          <div className="space-y-1 w-[200px]">
+            <InfoField label="Role" value={userData.RoleIDs?.[0] || 'No information'} />
           </div>
         </div>
       </div>
+
+      <ProfileUpdate 
+        isOpen={openKey === "update-profile"}
+        onClose={() => setOpenKey(null)}
+        userData={userData}
+      />
+
+      <ChangePassword 
+        isOpen={openKey === "change-password"}
+        onClose={() => setOpenKey(null)}
+      />
     </div>
   );
 };

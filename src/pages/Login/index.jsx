@@ -9,7 +9,7 @@ import {
 } from "@ant-design/icons";
 import { loginSchema } from "./loginSchema";
 import { yupSync } from "@shared/lib/utils";
-import { useLogin } from "../../features/auth/hooks";
+import { useLogin } from "@features/auth/hooks/index";
 import { useSelector } from "react-redux";
 
 const { Title, Text } = Typography;

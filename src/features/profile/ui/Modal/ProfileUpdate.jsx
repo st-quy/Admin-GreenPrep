@@ -1,33 +1,33 @@
 import React from "react";
-import { Form, Input, Button, Card, Typography, Spin } from "antd";
-import { LeftOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
-import { useUpdateProfile } from "@features/auth/hooks";
-import { useSelector } from "react-redux";
-import { UpdateProfileSchema } from "./schema";
+import { Form, Input, Button, Card, Typography, Spin, Modal } from "antd";
+import { useUpdateProfile } from "@features/auth/hooks/index";
+import { UpdateProfileSchema } from "@features/profile/schema";
 import { yupSync } from "@shared/lib/utils";
 
-const ProfileUpdate = () => {
-  const navigate = useNavigate();
+const ProfileUpdate = ({ isOpen, onClose, userData }) => {
   const { mutate: updateProfile, isPending } = useUpdateProfile();
-  const { user } = useSelector((state) => state.auth);
+  
 
   const handleFinish = (values) => {
-    updateProfile(values);
+    updateProfile(values, {
+      onSuccess: () => {
+        onClose();
+      },
+    });
   };
 
   const [form] = Form.useForm();
 
   const initialValues = {
-    firstName: user?.firstName,
-    lastName: user?.lastName,
-    email: user?.email,
-    class: user?.class,
-    studentCode: user?.studentCode,
-    phone: user?.phone,
+    firstName: userData.firstName,
+    lastName: userData.lastName,
+    email: userData.email,
+    class: userData.class,
+    studentCode: userData.studentCode,
+    phone: userData.phone,
   };
 
-  if (!user) {
+  if (!userData) {
     return (
       <div className="flex justify-center h-screen">
         <Spin size="large" />
@@ -36,23 +36,20 @@ const ProfileUpdate = () => {
   }
 
   return (
-    <div className="flex flex-col px-10">
-      <div
-        className="flex items-center gap-2 mb-6 cursor-pointer w-fit  hover:font-bold"
-        onClick={() => navigate("/profile")}
-      >
-        <LeftOutlined />
-        <Typography.Text className="text-sm inline-block">
-          Back to profile
-        </Typography.Text>
-      </div>
-      <Typography.Title className="font-bold mb-2">
-        Update Profile
-      </Typography.Title>
-      <p className="text-gray-600 mb-6">
-        Keep your profile up to date by editing your personal information.
-      </p>
-      <Card className="w-full">
+    <Modal
+      open={isOpen}
+      footer={null}
+      centered
+      width={800}
+      onCancel={onClose}
+    >
+      <div className="p-6">
+        <Typography.Title level={3} className="font-bold mb-2">
+          Update Profile
+        </Typography.Title>
+        <p className="text-gray-600 mb-6">
+          Keep your profile up to date by editing your personal information.
+        </p>
         <Form
           form={form}
           layout="vertical"
@@ -112,7 +109,10 @@ const ProfileUpdate = () => {
             <Button
               type="default"
               htmlType="button"
-              onClick={() => navigate("/profile")}
+              onClick={() => {
+                onClose();
+                form.resetFields();
+              }}
             >
               Cancel
             </Button>
@@ -121,8 +121,8 @@ const ProfileUpdate = () => {
             </Button>
           </div>
         </Form>
-      </Card>
-    </div>
+      </div>
+    </Modal>
   );
 };
 

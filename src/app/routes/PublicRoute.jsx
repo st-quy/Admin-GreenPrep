@@ -1,7 +1,9 @@
 // Define public routes accessible to all users
 import { PublicLayout } from "@app/layout/PublicLayout";
-import ForgotPasswordForm from "@features/auth/ui/ForgotPasswordForm";
+import ForgotPassword from "@pages/ForgotPassword/index";
 import LoginPage from "@pages/Login/index";
+import ResetPassword from "@pages/ResetPassword/index";
+import ResetPasswordSuccess from "@pages/ResetPassword/ResetSuccess";
     
 const PublicRoute = [
   {
@@ -11,14 +13,18 @@ const PublicRoute = [
       {
         path: "login",
           element: <LoginPage />,
-      },
+      }, 
       {
         path: "forgot-password",
-        element: <ForgotPasswordForm/>,
-      },   
+        element: <ForgotPassword />,
+      },
+      {
+        path: "reset-password",
+        element: <ResetPassword />,
+      },
       {
         path: "reset-password-success",
-        element: <ResetPasswordSuccessfullyPage />,
+        element: <ResetPasswordSuccess />,
       },
     ],
   },
