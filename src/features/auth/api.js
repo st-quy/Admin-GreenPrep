@@ -8,6 +8,9 @@ export const AUTH_QUERY_KEYS = {
 };
 
 export const AuthApi = {
+  resetPassword: (params) => {
+    return axiosInstance.post("/users/reset-password", params);
+  },
   login: async (credentials) => {
     try {
       const response = await axiosInstance.post(

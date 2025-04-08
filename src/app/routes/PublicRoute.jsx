@@ -1,4 +1,4 @@
-import ResetPasswordSuccessfullyPage from "@pages/ResetPasswordSuccessfully/ResetPasswordSuccessfullyPage.jsx";
+// Define public routes accessible to all users
 import { PublicLayout } from "@app/layout/PublicLayout";
 import ForgotPasswordForm from "@features/auth/ui/ForgotPasswordForm";
 import LoginPage from "@pages/Login/index";
@@ -23,5 +23,7 @@ const PublicRoute = [
     ],
   },
 ];
+
+
 
 export default PublicRoute;
