@@ -227,16 +227,6 @@ const StudentSessionTable = ({
     }
   }, [type, status, levels]);
 
-  const paginatedData = useMemo(() => {
-    return processedData.slice(
-      (currentPage - 1) * pageSize,
-      currentPage * pageSize
-    );
-  }, [processedData, currentPage, pageSize]);
-
-  // if (isLoading) return <Spin />;
-  // if (isLoading) return <Spin />;
-
   return (
     <Table
       columns={columns}

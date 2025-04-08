@@ -9,6 +9,8 @@ import ClassManagement from "@pages/ClassManagement/classManagement.jsx";
 import Dashboard from "@pages/Dashboard/Dashboard.jsx";
 import ClassDetail from "@pages/ClassDetail/ClassDetail.jsx";
 import StudentDetail from "@pages/Student/Details/index.jsx";
+import { element } from "prop-types";
+import TeacherAccountManagement from "@pages/TeacherManagement/TeacherAccountManagement.jsx";
 const PrivateRoute = [
   {
     path: "/",
@@ -20,6 +22,12 @@ const PrivateRoute = [
         element: <Dashboard />,
         breadcrumb: "Dashboard",
         role: ["admin"],
+      },
+      {
+        path: "teacher",
+        role: ["admin"],
+        breadcrumb: "Teacher",
+        element: <TeacherAccountManagement />,
       },
       {
         path: "class",
@@ -54,13 +62,13 @@ const PrivateRoute = [
                     children: [
                       {
                         index: true,
-                        element: <SessionInformation type={TableType.STUDENT} />,
+                        element: (
+                          <SessionInformation type={TableType.STUDENT} />
+                        ),
                       },
-                     
                     ],
                   },
                 ],
-
               },
             ],
           },
