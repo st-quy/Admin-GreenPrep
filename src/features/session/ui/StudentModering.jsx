@@ -5,10 +5,10 @@ import CloseCircleIcon from "@/assets/icons/close-circle.svg";
 import ConfirmationModal from "@shared/Modal/ConfirmationModal";
 import axios from "@shared/config/axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { SESSION_ID, API_ENDPOINTS } from "../api";
+import { API_ENDPOINTS } from "../api";
 
 const StudentMonitoring = ({
-  sessionId = SESSION_ID,
+  sessionId,
   searchKeyword,
   onPendingCountChange,
 }) => {
@@ -75,6 +75,7 @@ const StudentMonitoring = ({
       }),
     onSuccess: (_, requestId) => {
       message.success("Request has been approved!");
+      queryClient.invalidateQueries({ queryKey: ["sessionParticipants"] });
       queryClient.setQueryData(["sessionRequests", sessionId], (oldData) => {
         if (Array.isArray(oldData)) {
           return oldData.filter((req) => req.requestId !== requestId);

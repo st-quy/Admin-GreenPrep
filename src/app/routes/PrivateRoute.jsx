@@ -8,6 +8,7 @@ const ProfilePage = lazy(() => import("@pages/ProfilePage/ProfilePage.jsx"));
 import ClassManagement from "@pages/ClassManagement/classManagement.jsx";
 import Dashboard from "@pages/Dashboard/Dashboard.jsx";
 import ClassDetail from "@pages/ClassDetail/ClassDetail.jsx";
+import StudentDetail from "@pages/Student/Details/index.jsx";
 const PrivateRoute = [
   {
     path: "/",
@@ -52,9 +53,7 @@ const PrivateRoute = [
                     children: [
                       {
                         index: true,
-                        element: (
-                          <SessionInformation type={TableType.STUDENT} />
-                        ),
+                        element: <StudentDetail />,
                       },
                       {
                         path: "grade",

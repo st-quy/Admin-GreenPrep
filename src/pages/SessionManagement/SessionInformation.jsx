@@ -101,7 +101,7 @@ const SessionInformation = ({ type }) => {
         </div>
         <div className="mt-[34px]">
           <SearchInput
-            placeholder="Search by name, class,..."
+            placeholder="Search by name"
             onSearchChange={onSearchChange}
             className="absolute z-10"
           />

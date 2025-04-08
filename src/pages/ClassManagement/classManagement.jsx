@@ -38,6 +38,7 @@ const ClassManagement = () => {
             return { ...cls, sessions: sessions.length };
           })
         );
+
         setClasses(classesWithSessions);
       } catch (err) {
         console.error("Failed to load classes:", err);
@@ -70,7 +71,7 @@ const ClassManagement = () => {
   };
 
   const handleAddClass = (newClass) => {
-    setClasses((prevClasses) => [...prevClasses, newClass]);
+    setClasses((prevClasses) => [newClass, ...prevClasses]);
     // Notification.success("Class created successfully");
   };
 

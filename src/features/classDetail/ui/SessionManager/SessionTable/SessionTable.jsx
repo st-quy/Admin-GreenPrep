@@ -12,13 +12,14 @@ const SessionTable = ({ dataSource }) => {
     "START TIME",
     "END TIME",
     "NUMBER OF PARTICIPANTS",
-    "STATUS",
+    // "STATUS",
     "ACTION",
   ];
   const navigate = useNavigate();
   const handleNavigate = (id) => {
     navigate(`/class/session/${id}`);
   };
+
   return (
     <>
       <table className="w-full overflow-hidden border border-[#E0E0E0] rounded-tl-[10px] rounded-tr-[10px] shadow-[0px_4px_4px_rgba(0,0,0,0.2)]">
@@ -36,7 +37,7 @@ const SessionTable = ({ dataSource }) => {
         </thead>
         <tbody className="text-center">
           {dataSource && dataSource.length > 0 ? (
-            dataSource.map((item, index) => (
+            dataSource.reverse().map((item, index) => (
               <tr
                 key={index}
                 className="text-[14px] font-[500] text-[#637381] md:text-[14px] lg:text-[16px]"
@@ -50,7 +51,7 @@ const SessionTable = ({ dataSource }) => {
                 <td className="p-4">{formatDateTime(item.startTime)}</td>
                 <td className="p-4">{formatDateTime(item.endTime)}</td>
                 <td className="p-4">{item.numberOfParticipants}</td>
-                <td className="p-4">{item.status}</td>
+                {/* <td className="p-4">{item.status}</td> */}
                 <td className="flex justify-center items-center gap-4 p-4">
                   <ActionModal isEdit={true} initialData={item} />
                   <DeleteModal sessionID={item.ID} />
@@ -66,7 +67,7 @@ const SessionTable = ({ dataSource }) => {
           )}
         </tbody>
       </table>
-      <div className="flex justify-end">
+      {/* <div className="flex justify-end">
         <Pagination
           total={85}
           showTotal={(total, range) =>
@@ -76,7 +77,7 @@ const SessionTable = ({ dataSource }) => {
           defaultCurrent={1}
           className="!mt-6"
         />
-      </div>
+      </div> */}
     </>
   );
 };
