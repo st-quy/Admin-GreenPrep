@@ -1,5 +1,5 @@
 import React from "react";
-import SessionTable from "./SessionTable/SessionTable";
+import SessionTable from "../SessionTable/SessionTable";
 import ActionModal from "../SessionModal/ActionModal/ActionModal";
 import { Input, Select } from "antd";
 
@@ -17,6 +17,7 @@ const SessionManager = ({ data }) => {
         </div>
         <ActionModal isEdit={false} classId={data.ID} />
       </div>
+
       <div className="mb-[10px] mt-4 flex gap-4">
         <Input
           placeholder="Search session by name"
@@ -24,8 +25,9 @@ const SessionManager = ({ data }) => {
         />
         <Select placeholder="Select Status" className="!w-[180px] !h-[48px]" />
       </div>
+
       <div className="mt-8">
-        <SessionTable dataSource={data.Sessions} />
+        <SessionTable data={data.Sessions} />
       </div>
     </>
   );
