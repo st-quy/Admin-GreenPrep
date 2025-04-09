@@ -36,100 +36,115 @@ const LoginPage = () => {
   }, [isAuth, navigate]);
 
   return (
-    <Row className="bg-[#f3f4f6]">
-      <Col xs={24} md={12} className="flex items-center justify-center">
-        <Card className="w-full max-w-lg shadow-lg p-10">
-          <div className="mb-6">
-            <Title level={2} className="!text-gray-900 !mb-2">
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-6 min-h-screen bg-[#f9f9f9] px-8">
+      <div className="flex-1 w-full lg:max-w-[calc(36rem+120px)] flex justify-center items-center pl-[5%]">
+        <Card className="bg-white p-10 rounded-2xl shadow-lg h-auto w-full max-w-[658px] flex flex-col justify-between">
+          <div className="mt-[30px] w-full">
+            <Title level={1} className="text-3xl lg:text-4xl xl:text-5xl font-bold text-black !mb-4">
               Welcome back!
             </Title>
-            <Text className="text-gray-500">
+            <Text className="text-[#637381] text-base lg:text-lg mt-4 mb-8 block">
               Welcome back! Please enter your details.
             </Text>
-          </div>
 
-          {errorMessage && (
-            <Alert
-              message={errorMessage}
-              type="error"
-              className="mb-4"
-              showIcon
-            />
-          )}
-
-          <Form form={form} layout="vertical" onFinish={onSubmit}>
-            <Form.Item
-              name="email"
-              label="Email"
-              required
-              rules={[yupSync(loginSchema)]}
-            >
-              <Input
-                prefix={<MailOutlined className="text-gray-400" />}
-                placeholder="Enter your email here"
-                size="large"
-                className="rounded-lg"
+            {errorMessage && (
+              <Alert
+                message={errorMessage}
+                type="error"
+                className="mb-4"
+                showIcon
               />
-            </Form.Item>
+            )}
 
-            <Form.Item
-              name="password"
-              label="Password"
-              required
-              rules={[yupSync(loginSchema)]}
+            <Form 
+              form={form} 
+              layout="vertical" 
+              onFinish={onSubmit}
+              className="mt-4 space-y-4 flex-1 flex flex-col"
             >
-              <Input.Password
-                placeholder="Enter your password"
-                size="large"
-                className="rounded-lg"
-                iconRender={(visible) =>
-                  visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
+              <Form.Item
+                name="email"
+                label={
+                  <span className="text-base lg:text-lg font-medium">
+                    Email <span className="text-red-500">*</span>
+                  </span>
                 }
-              />
-            </Form.Item>
-
-            <div className="text-right mb-4">
-              <Link
-                to="/forgot-password"
-                className="text-blue-700 hover:text-blue-800"
+                required
+                rules={[yupSync(loginSchema)]}
               >
-                Forgot password?
-              </Link>
-            </div>
+                <Input
+                  prefix={<MailOutlined className="text-gray-400" />}
+                  placeholder="Enter your email here"
+                  className="h-12 text-base rounded-lg placeholder:text-[#9CA3AF]"
+                />
+              </Form.Item>
 
-            <Form.Item>
-              <Button
-                type="primary"
-                htmlType="submit"
-                size="large"
-                className="w-full bg-blue-700 hover:bg-blue-800 rounded-full"
-                loading={isPending}
+              <Form.Item
+                name="password"
+                label={
+                  <span className="text-base lg:text-lg font-medium">
+                    Password <span className="text-red-500">*</span>
+                  </span>
+                }
+                required
+                rules={[yupSync(loginSchema)]}
               >
-                Login
-              </Button>
-            </Form.Item>
+                <Input.Password
+                  placeholder="* * * * * * * *"
+                  className="h-12 text-base rounded-lg placeholder:text-[#9CA3AF]"
+                  iconRender={(visible) =>
+                    visible ? (
+                      <EyeOutlined className="text-lg lg:text-xl" />
+                    ) : (
+                      <EyeInvisibleOutlined className="text-lg lg:text-xl" />
+                    )
+                  }
+                />
+              </Form.Item>
 
-            <Text className="text-gray-600 mt-4 block text-center">
-              Don't have an account?{" "}
-              <span
-                className="text-blue-700 hover:underline"
-                onClick={() => navigate("/register")}
-              >
-                Sign up
-              </span>
-            </Text>
-          </Form>
+              <div className="mt-2 text-right">
+                <Link
+                  to="/forgot-password"
+                  className="text-[#003087] text-base font-medium no-underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+
+              <Form.Item className="mt-auto flex justify-center">
+                <Button
+                  type="primary"
+                  htmlType="submit"
+                  size="large"
+                  className="w-[250px] h-[50px] bg-[#003087] hover:bg-blue-800 rounded-full"
+                  loading={isPending}
+                >
+                  Login
+                </Button>
+              </Form.Item>
+
+              <Text className="text-gray-600 mt-4 block text-center">
+                Don't have an account?{" "}
+                <span
+                  className="text-blue-700 hover:underline cursor-pointer"
+                  onClick={() => navigate("/register")}
+                >
+                  Sign up
+                </span>
+              </Text>
+            </Form>
+          </div>
         </Card>
-      </Col>
+      </div>
 
-      <Col xs={0} md={12} className="flex items-center justify-center">
+      <div className="hidden lg:flex items-center justify-center pr-[5%]">
         <img
           src={loginHappyStudent}
           alt="Happy students celebrating"
-          className="max-w-[80%] h-auto"
+          className="w-[726px] h-[839px] max-w-full h-auto"
         />
-      </Col>
-    </Row>
+      </div>
+    </div>
   );
 };
 export default LoginPage;
