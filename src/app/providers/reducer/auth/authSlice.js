@@ -15,6 +15,8 @@ const getUserRole = () => {
     const token = getStorageData(ACCESS_TOKEN);
     if (!token) return null;
     const decodedToken = jwtDecode(token);
+    console.log(decodedToken, 'decodedToken');
+    
     // @ts-ignore - JWT payload may contain custom fields
     return decodedToken.RoleIDs?.[0] || null;
   } catch (error) {
@@ -62,7 +64,8 @@ const authSlice = createSlice({
   reducers: {
     login(state) {
       state.isAuth = true;
-      state.user = getUserData();
+      state.role = getUserRole();
+      state.userId = getUserId();
     },
     logout(state) {
       state.isAuth = false;

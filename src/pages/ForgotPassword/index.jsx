@@ -12,9 +12,11 @@ const { Content } = Layout;
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const { mutate: forgotPasswordFunc, isPending } = useForgotPassword();
+  
   const onFinish = (values) => {
     forgotPasswordFunc({ ...values, host: window.location.origin });
   };
+
   return (
     <Layout style={{ minHeight: "100vh", background: "#f9f9f9" }}>
       <Content style={{ maxWidth: "1200px", margin: "0 auto", width: "100%" }}>
@@ -140,4 +142,5 @@ const ForgotPassword = () => {
     </Layout>
   );
 };
+
 export default ForgotPassword;

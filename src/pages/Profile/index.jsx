@@ -1,11 +1,7 @@
-// @ts-nocheck
 import React, { useRef, useState } from 'react';
 import { Button, Typography, Avatar, message, Form } from 'antd';
 import { UserOutlined, CameraOutlined } from '@ant-design/icons';
 import defaultAvatar from '@assets/images/avatar.png';
-import { getUserFromToken, QUERY_KEYS } from '@features/profile/api';
-import { useQuery } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
 import ProfileUpdate from '@features/profile/ui/Modal/ProfileUpdate';
 import ChangePassword from '@features/profile/ui/Modal/ChangePassword';
 import { useSelector } from 'react-redux';
@@ -15,19 +11,8 @@ const { Title, Text } = Typography;
 const ProfilePage = () => {
   const fileInputRef = useRef(null);
   const [avatar, setAvatar] = useState(defaultAvatar);
-  const [form] = Form.useForm();
   const [openKey, setOpenKey] = useState(null);
-  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
-
-  const { data: userData, isLoading } = useQuery({
-    queryKey: [QUERY_KEYS.USER_PROFILE],
-    queryFn: getUserFromToken,
-    onError: (error) => {
-      console.error('Error fetching user data:', error);
-      message.error('Có lỗi khi lấy thông tin người dùng');
-    }
-  });
   
 
   const handleAvatarClick = () => {
@@ -61,14 +46,6 @@ const ProfilePage = () => {
       </Text>
     </div>
   );
-
-  if (isLoading) {
-    return <div className="p-6">Loading...</div>;
-  }
-
-  if (!userData) {
-    return <div className="p-6">No user data available</div>;
-  }
 
   return (
     <div className="p-6 space-y-6 max-w-[1920px] mx-auto">
@@ -117,9 +94,9 @@ const ProfilePage = () => {
             />
           </div>
           <div>
-            <Title level={4} className="m-0">{userData.firstName} {userData.lastName}</Title>
-            <Text className="text-gray-500 font-semibold">{userData.RoleIDs?.[0] || 'N/A'}</Text>
-            <Text className="block text-gray-500 font-semibold">{userData.email}</Text>
+            <Title level={4} className="m-0">{user?.firstName } {user?.lastName}</Title>
+            <Text className="text-gray-500 font-semibold">{user?.role || 'N/A'}</Text>
+            <Text className="block text-gray-500 font-semibold">{user?.email}</Text>
           </div>
         </div>
       </div>
@@ -127,24 +104,24 @@ const ProfilePage = () => {
       <div className="bg-white rounded-[8px] shadow-lg border border-gray-100 w-full mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8">
           <div className="space-y-1 w-[200px]">
-            <InfoField label="First Name" value={userData.firstName} />
+            <InfoField label="First Name" value={user?.firstName} />
           </div>
           <div className="space-y-1 ">
-            <InfoField label="Last Name" value={userData.lastName} />
+            <InfoField label="Last Name" value={user?.lastName} />
           </div>
           <div className="space-y-1 ">
-            <InfoField label="Email" value={userData.email} />
+            <InfoField label="Email" value={user?.email} />
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8 border-t border-gray-100">
           <div className="space-y-1 ">
-            <InfoField label="BOD" value={userData.bod || 'No information'} />
+            <InfoField label="BOD" value={user?.bod || 'No information'} />
           </div>
           <div className="space-y-1 ">
-            <InfoField label="Phone number" value={userData.phone || 'No information'} />
+            <InfoField label="Phone number" value={user?.phone || 'No information'} />
           </div>
           <div className="space-y-1 ">
-            <InfoField label="Address" value={userData.address || 'No information'} />
+            <InfoField label="Address" value={user?.address || 'No information'} />
           </div>
         </div>
       </div>
@@ -152,11 +129,11 @@ const ProfilePage = () => {
       <div className="bg-white rounded-[8px] shadow-lg border border-gray-100 w-full mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8">
           <div className="space-y-1 w-[200px]">
-            <InfoField label="Teacher Code" value={userData.teacherCode || 'No information'} />
+            <InfoField label="Teacher Code" value={user?.teacherCode || 'No information'} />
           </div>
           
           <div className="space-y-1 w-[200px]">
-            <InfoField label="Role" value={userData.RoleIDs?.[0] || 'No information'} />
+            <InfoField label="Role" value={user?.role || 'No information'} />
           </div>
         </div>
       </div>
@@ -164,7 +141,7 @@ const ProfilePage = () => {
       <ProfileUpdate 
         isOpen={openKey === "update-profile"}
         onClose={() => setOpenKey(null)}
-        userData={userData}
+        userData={user}
       />
 
       <ChangePassword 
