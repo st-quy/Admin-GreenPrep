@@ -8,18 +8,24 @@ import {
 } from "../api/session_api";
 import { message } from "antd";
 
-export const useSessionParticipants = (sessionId) => {
+export const useSessionParticipants = (
+  sessionId,
+  { page = 1, limit = 10 } = {}
+) => {
   return useQuery({
-    queryKey: ["sessionParticipants", sessionId],
-    queryFn: () => fetchSessionParticipants(sessionId),
+    queryKey: ["sessionParticipants", sessionId, page, limit],
+    queryFn: () => fetchSessionParticipants(sessionId, { page, limit }),
     enabled: !!sessionId,
   });
 };
 
-export const useStudentParticipants = (studentId) => {
+export const useStudentParticipants = (
+  studentId,
+  { page = 1, limit = 10 } = {}
+) => {
   return useQuery({
-    queryKey: ["studentParticipants", studentId],
-    queryFn: () => fetchStudentParticipants(studentId),
+    queryKey: ["studentParticipants", studentId, page, limit],
+    queryFn: () => fetchStudentParticipants(studentId, { page, limit }),
     enabled: !!studentId,
   });
 };

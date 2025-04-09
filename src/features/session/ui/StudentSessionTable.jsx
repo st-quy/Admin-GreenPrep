@@ -7,6 +7,7 @@ import {
 } from "../hooks/useSession";
 import "../css/index.scss";
 import { useNavigate } from "react-router-dom";
+
 function getSkillLevel(score, skill) {
   const thresholds = {
     Listening: [8, 16, 24, 34, 42],
@@ -24,6 +25,7 @@ function getSkillLevel(score, skill) {
   );
   return levelIndex === -1 ? "C" : LevelEnum[levelIndex];
 }
+
 const StudentSessionTable = ({
   id,
   searchKeyword,
@@ -33,12 +35,13 @@ const StudentSessionTable = ({
 }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10); 
   const [levels, setLevels] = useState({});
+
   const { data, isLoading } =
-    type == TableType.SESSION
-      ? useSessionParticipants(id)
-      : useStudentParticipants(id);
+    type === TableType.SESSION
+      ? useSessionParticipants(id, { page: currentPage, limit: pageSize })
+      : useStudentParticipants(id, { page: currentPage, limit: pageSize });
 
   const processedData = useMemo(() => {
     return (data?.data || []).map((record) => ({
@@ -50,6 +53,7 @@ const StudentSessionTable = ({
         (record.Writing || 0),
     }));
   }, [data]);
+
   useEffect(() => {
     setLevels(
       processedData.reduce((acc, cur) => ({ ...acc, [cur.ID]: cur.Level }), {})
@@ -84,6 +88,7 @@ const StudentSessionTable = ({
       onAllQuestionGraded?.();
     }
   }, [processedData, levels]);
+
   useEffect(() => {
     if (type === TableType.SESSION && status !== StatusType.PUBLISHED) {
       checkIsAllQuestionGraded();
@@ -254,47 +259,40 @@ const StudentSessionTable = ({
   // if (isLoading) return <Spin />;
 
   return (
-    <Table
-      scroll={{ y: 5 * 70 }}
-      // @ts-ignore
-      columns={columns}
-      loading={isLoading}
-      dataSource={filteredData.map((item) => ({ ...item, key: item.ID }))}
-      pagination={{
-        current: currentPage,
-        pageSize: pageSize,
-        total: filteredData.length,
-        showSizeChanger: true,
-        pageSizeOptions: ["5", "10", "15", "20"],
-        showTotal: (total, range) =>
-          `Showing ${range[0]}-${range[1]} of ${total}`,
-        onChange: (page, size) => {
-          setCurrentPage(page);
-          setPageSize(size);
-        },
-      }}
-      bordered
-      className="border border-gray-200 pagination w-full p-0 m-0 overflow-x-auto bg-none"
-      components={{
-        header: {
-          wrapper: (props) => <thead {...props} className={`bg-[#E6F0FA]`} />,
-          cell: (props) => (
-            <th
-              {...props}
-              className={` bg-[#E6F0FA] text-[10px] font-[700] md:text-[16px] text-[#637381] tracking-wider text-center !py-4 px-0 whitespace-nowrap `}
-            />
-          ),
-        },
-        body: {
-          cell: (props) => (
-            <td
-              {...props}
-              className={`font-[500] tracking-wider text-center py-4 px-0 whitespace-nowrap text-[10px] md:text-[14px] text-[#637381] ${props.className || ""}`}
-            />
-          ),
-        },
-      }}
-    />
+    <div>
+      {isLoading ? (
+        <Spin tip="Loading..." />
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={filteredData.map((item) => ({ ...item, key: item.ID }))}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: data?.pagination?.totalItems || 0,
+            showSizeChanger: true,
+            pageSizeOptions: ["5", "10", "15", "20"],
+            showTotal: (total, range) =>
+              `Showing ${range[0]}-${range[1]} of ${total}`,
+            onChange: (page, size) => {
+              setCurrentPage(page);
+              setPageSize(size);
+            },
+          }}
+          bordered
+          className="border border-gray-200 pagination w-full p-0 m-0 overflow-x-auto bg-none"
+          rowClassName="text-center"
+          scroll={{ x: 768 }}
+          components={{
+            header: {
+              wrapper: (props) => (
+                <thead {...props} className="bg-[#E6F0FA] text-[#637381]" />
+              ),
+            },
+          }}
+        />
+      )}
+    </div>
   );
 };
 
