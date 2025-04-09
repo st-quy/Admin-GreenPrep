@@ -1,12 +1,8 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import loginHappyStudent from "@assets/images/login-happy-student.png";
-import { Form, Input, Button, Card, Row, Col, Typography, Alert } from "antd";
-import {
-  EyeOutlined,
-  EyeInvisibleOutlined,
-  MailOutlined,
-} from "@ant-design/icons";
+import { Form, Input, Button, Typography, Alert } from "antd";
+import { EyeOutlined, EyeInvisibleOutlined, MailOutlined } from "@ant-design/icons";
 import { loginSchema } from "./loginSchema";
 import { yupSync } from "@shared/lib/utils";
 import { useLogin } from "@features/auth/hooks/index";
@@ -36,115 +32,128 @@ const LoginPage = () => {
   }, [isAuth, navigate]);
 
   return (
-    <div className="flex flex-col lg:flex-row items-center justify-between gap-6 min-h-screen bg-[#f9f9f9] px-8">
-      <div className="flex-1 w-full lg:max-w-[calc(36rem+120px)] flex justify-center items-center pl-[5%]">
-        <Card className="bg-white p-10 rounded-2xl shadow-lg h-auto w-full max-w-[658px] flex flex-col justify-between">
-          <div className="mt-[30px] w-full">
-            <Title level={1} className="text-3xl lg:text-4xl xl:text-5xl font-bold text-black !mb-4">
-              Welcome back!
-            </Title>
-            <Text className="text-[#637381] text-base lg:text-lg mt-4 mb-8 block">
-              Welcome back! Please enter your details.
-            </Text>
-
-            {errorMessage && (
-              <Alert
-                message={errorMessage}
-                type="error"
-                className="mb-4"
-                showIcon
-              />
-            )}
-
-            <Form 
-              form={form} 
-              layout="vertical" 
-              onFinish={onSubmit}
-              className="mt-4 space-y-4 flex-1 flex flex-col"
-            >
-              <Form.Item
-                name="email"
-                label={
-                  <span className="text-base lg:text-lg font-medium">
-                    Email <span className="text-red-500">*</span>
-                  </span>
-                }
-                required
-                rules={[yupSync(loginSchema)]}
-              >
-                <Input
-                  prefix={<MailOutlined className="text-gray-400" />}
-                  placeholder="Enter your email here"
-                  className="h-12 text-base rounded-lg placeholder:text-[#9CA3AF]"
-                />
-              </Form.Item>
-
-              <Form.Item
-                name="password"
-                label={
-                  <span className="text-base lg:text-lg font-medium">
-                    Password <span className="text-red-500">*</span>
-                  </span>
-                }
-                required
-                rules={[yupSync(loginSchema)]}
-              >
-                <Input.Password
-                  placeholder="* * * * * * * *"
-                  className="h-12 text-base rounded-lg placeholder:text-[#9CA3AF]"
-                  iconRender={(visible) =>
-                    visible ? (
-                      <EyeOutlined className="text-lg lg:text-xl" />
-                    ) : (
-                      <EyeInvisibleOutlined className="text-lg lg:text-xl" />
-                    )
-                  }
-                />
-              </Form.Item>
-
-              <div className="mt-2 text-right">
-                <Link
-                  to="/forgot-password"
-                  className="text-[#003087] text-base font-medium no-underline"
-                >
-                  Forgot password?
-                </Link>
+    <div className="min-h-screen bg-[#f9f9f9] flex justify-center items-center">
+      <div className="w-full max-w-[1400px] flex justify-center lg:justify-between items-center gap-6 px-6 lg:px-8">
+        {/* Login Form */}
+        <div 
+          className="bg-white rounded-lg shadow-md w-full 
+                    max-w-[380px] md:max-w-[450px] lg:max-w-[580px] xl:w-[658px] 
+                    h-auto xl:h-[699px] p-8"
+          style={{ 
+            boxSizing: 'border-box',
+            width: '658px', 
+            height: '699px',
+          }}
+        >
+          <div className="h-full flex flex-col">
+            <div className="space-y-5 pt-8">
+              <div>
+                <Title level={3} className="text-xl font-bold text-black m-0">Welcome back!</Title>
+                <Text className="text-[#637381] text-sm font-normal">Welcome back! Please enter your details.</Text>
               </div>
 
-              <Form.Item className="mt-auto flex justify-center">
+              {errorMessage && (
+                <Alert
+                  message={errorMessage}
+                  type="error"
+                  className="mb-4"
+                  showIcon
+                />
+              )}
+
+              <Form
+                form={form}
+                layout="vertical"
+                onFinish={onSubmit}
+                requiredMark={false}
+                className="space-y-5"
+              >
+                <Form.Item
+                  name="email"
+                  label={
+                    <span className="block text-sm font-medium text-black mb-1">
+                      Email <span className="text-red-500">*</span>
+                    </span>
+                  }
+                  rules={[yupSync(loginSchema)]}
+                  className="mb-4"
+                >
+                  <Input
+                    prefix={<MailOutlined className="text-gray-400" />}
+                    placeholder="Enter your email here"
+                    className="h-10 rounded-lg border-gray-300"
+                  />
+                </Form.Item>
+
+                <Form.Item
+                  name="password"
+                  label={
+                    <span className="block text-sm font-medium text-black mb-1">
+                      Password <span className="text-red-500">*</span>
+                    </span>
+                  }
+                  rules={[yupSync(loginSchema)]}
+                  className="mb-1"
+                >
+                  <Input.Password
+                    placeholder="* * * * * * * *"
+                    className="h-10 rounded-lg border-gray-300"
+                    iconRender={(visible) =>
+                      visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
+                    }
+                  />
+                </Form.Item>
+
+                <div className="text-right">
+                  <Link
+                    to="/forgot-password"
+                    className="text-[#003087] text-sm font-medium no-underline"
+                  >
+                    Forgot password?
+                  </Link>
+                </div>
+              </Form>
+            </div>
+
+            <div className="mt-4 mb-10">
+              <div className="flex justify-center mb-5">
                 <Button
                   type="primary"
                   htmlType="submit"
-                  size="large"
+                  onClick={() => form.submit()}
                   className="w-[250px] h-[50px] bg-[#003087] hover:bg-blue-800 rounded-full"
                   loading={isPending}
                 >
                   Login
                 </Button>
-              </Form.Item>
+              </div>
 
-              <Text className="text-gray-600 mt-4 block text-center">
-                Don't have an account?{" "}
-                <span
-                  className="text-blue-700 hover:underline cursor-pointer"
-                  onClick={() => navigate("/register")}
-                >
-                  Sign up
-                </span>
-              </Text>
-            </Form>
+              <div className="text-center">
+                <Text className="text-gray-600 text-sm">
+                  Don't have an account?{" "}
+                  <span
+                    className="text-blue-700 hover:underline cursor-pointer"
+                    onClick={() => navigate("/register")}
+                  >
+                    Sign up
+                  </span>
+                </Text>
+              </div>
+            </div>
           </div>
-        </Card>
-      </div>
+        </div>
 
-      <div className="hidden lg:flex items-center justify-center pr-[5%]">
-        <img
-          src={loginHappyStudent}
-          alt="Happy students celebrating"
-          className="w-[726px] h-[839px] max-w-full h-auto"
-        />
+        {/* Image */}
+        <div className="hidden lg:block">
+          <img
+            src={loginHappyStudent}
+            alt="Happy students celebrating"
+            className="w-auto h-auto max-w-[726px] max-h-[839px] object-contain"
+          />
+        </div>
       </div>
     </div>
   );
 };
+
 export default LoginPage;
