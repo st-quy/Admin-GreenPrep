@@ -14,12 +14,12 @@ export const ChangePasswordSchema = Yup.object().shape({
 
 
 export const UpdateProfileSchema = Yup.object().shape({
-  firstName: Yup.string().required("First name is required"),
-  lastName: Yup.string().required("Last name is required"),
+  fullName: Yup.string().required("Full name is required"),
+  code: Yup.string().required("Code is required"),
+  bod: Yup.string().nullable(),
   email: Yup.string()
     .email("Enter a valid email")
     .required("Email is required"),
-  class: Yup.string().required("Class name is required"),
-  studentCode: Yup.string().required("Student ID is required"),
-  phone: Yup.string().nullable(),
+  phoneNumber: Yup.string().nullable(),
+  address: Yup.string().nullable(),
 });

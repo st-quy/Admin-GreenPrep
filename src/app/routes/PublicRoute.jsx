@@ -23,7 +23,7 @@ const PublicRoute = [
         element: <ResetPassword />,
       },
       {
-        path: "reset-password-success",
+        path: "reset-success",
         element: <ResetPasswordSuccess />,
       },
     ],

@@ -18,17 +18,16 @@ const ForgotPassword = () => {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh", background: "#f9f9f9" }}>
-      <Content style={{ maxWidth: "1200px", margin: "0 auto", width: "100%" }}>
-        <Row gutter={0} style={{ height: "100%" }}>
+    <Layout className="bg-[#f9f9f9]">
+      <Layout.Content className="max-w-[1200px] mx-auto w-full">
+        <Row gutter={0} className="h-full">
           <Col
             xs={{ span: 24 }}
             md={{ span: 12 }}
             className="flex items-center justify-center p-4"
           >
             <Card
-              className="w-full max-w-xl shadow-lg p-4 sm:p-8"
-              style={{ minHeight: "600px" }}
+              className="w-full max-w-xl shadow-lg p-4 sm:p-8 min-h-[600px]"
             >
               <div
                 className="mb-6 flex items-center cursor-pointer gap-2"
@@ -36,14 +35,7 @@ const ForgotPassword = () => {
               >
                 <LeftOutlined />
                 <Text
-                  style={{
-                    fontWeight: 600,
-                    fontSize: "16px",
-                    lineHeight: "24px",
-                    letterSpacing: "0px",
-                    color: "#374151",
-                  }}
-                  className="text-base sm:text-lg"
+                  className="font-semibold text-base sm:text-lg text-[#374151]"
                 >
                   Back to login
                 </Text>
@@ -52,29 +44,13 @@ const ForgotPassword = () => {
               <div className="mb-6 w-full">
                 <Title
                   level={2}
-                  style={{
-                    fontWeight: 700,
-                    fontSize: "48px",
-                    lineHeight: "1.2",
-                    letterSpacing: "0px",
-                    color: "#111928",
-                    marginBottom: "8px",
-                  }}
-                  className="text-center sm:text-left md:text-4xl lg:text-5xl"
+                  className="font-bold text-4xl lg:text-5xl text-[#111928] mb-2 text-center sm:text-left"
                 >
                   Forgot password?
                 </Title>
                 <div className="w-full">
                   <Text
-                    style={{
-                      fontWeight: 400,
-                      fontSize: "16px",
-                      lineHeight: "1.5",
-                      letterSpacing: "0px",
-                      color: "#637381",
-                      display: "block",
-                    }}
-                    className="text-center sm:text-left sm:text-base"
+                    className="font-normal text-base text-[#637381] block text-center sm:text-left"
                   >
                     Don't worry! Enter your email below to recover your password
                   </Text>
@@ -102,19 +78,7 @@ const ForgotPassword = () => {
                     type="primary"
                     htmlType="submit"
                     size="large"
-                    style={{
-                      width: "100%",
-                      maxWidth: "250px",
-                      height: "50px",
-                      borderRadius: "50px",
-                      padding: "13px 28px",
-                      background: "#003087",
-                      animationDuration: "0ms",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      margin: "0 auto",
-                    }}
+                    className="w-full max-w-[250px] h-[50px] rounded-full px-7 py-3 bg-[#003087] mx-auto flex items-center justify-center"
                     loading={isPending}
                   >
                     Reset password
@@ -138,7 +102,7 @@ const ForgotPassword = () => {
             </div>
           </Col>
         </Row>
-      </Content>
+      </Layout.Content>
     </Layout>
   );
 };
