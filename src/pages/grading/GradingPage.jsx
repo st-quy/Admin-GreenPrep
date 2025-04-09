@@ -49,10 +49,8 @@ export const GradingPage = () => {
         student={data1}
         onViewList={() => setIsModalOpen(true)}
       />
-      <hr className="mt-[42px] mb-[37px] opacity-40" />
       <AssessmentScores onTabChange={onTabChange} />
 
-      <hr className="mt-[42px] mb-[37px] opacity-40" />
       <Assessment
         isSpeaking={isSpeaking}
         data={isSpeaking ? speakingData : writingData}
