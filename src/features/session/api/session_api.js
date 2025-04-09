@@ -4,6 +4,11 @@ export const fetchSessionParticipants = async (
   sessionId,
   { page = 1, limit = 10 } = {}
 ) => {
+  console.log("Fetching session participants with:", {
+    sessionId,
+    page,
+    limit,
+  });
   try {
     const response = await axiosInstance.get(
       `/session-participants/${sessionId}`,
@@ -14,7 +19,7 @@ export const fetchSessionParticipants = async (
     return response.data;
   } catch (error) {
     console.error("Error fetching session participants:", error);
-    throw error; 
+    throw error;
   }
 };
 
@@ -29,4 +34,22 @@ export const fetchStudentParticipants = async (
     }
   );
   return response.data;
+};
+export const fetchSessionRequests = async (sessionId) => {
+  if (!sessionId) return [];
+
+  const response = await axiosInstance.get(`/session-requests/${sessionId}`);
+  return response.data.data;
+};
+
+export const approveRequest = (sessionId, requestId) => {
+  return axiosInstance.patch(`/session-requests/${sessionId}/approve`, {
+    requestId,
+  });
+};
+
+export const rejectRequest = (sessionId, requestId) => {
+  return axiosInstance.patch(`/session-requests/${sessionId}/reject`, {
+    requestId,
+  });
 };
