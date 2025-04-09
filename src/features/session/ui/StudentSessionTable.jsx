@@ -264,6 +264,7 @@ const StudentSessionTable = ({
         <Spin tip="Loading..." />
       ) : (
         <Table
+          // @ts-ignore
           columns={columns}
           dataSource={filteredData.map((item) => ({ ...item, key: item.ID }))}
           pagination={{

@@ -4,11 +4,6 @@ export const fetchSessionParticipants = async (
   sessionId,
   { page = 1, limit = 10 } = {}
 ) => {
-  console.log("Fetching session participants with:", {
-    sessionId,
-    page,
-    limit,
-  });
   try {
     const response = await axiosInstance.get(
       `/session-participants/${sessionId}`,
