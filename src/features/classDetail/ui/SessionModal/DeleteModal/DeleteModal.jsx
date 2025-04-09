@@ -6,6 +6,7 @@ import {
   useDeleteSessionMutation,
   useSessionByIdQuery,
 } from "@features/classDetail/hooks/useClassDetail";
+import { DeleteOutlined } from "@ant-design/icons";
 
 const DeleteModal = ({ sessionID }) => {
   const deleteSession = useDeleteSessionMutation();
@@ -39,9 +40,9 @@ const DeleteModal = ({ sessionID }) => {
       {session?.SessionParticipants.length > 0 ? (
         ""
       ) : (
-        <Button className="!hover:border-none" onClick={showModal}>
-          <img src={DeleteIcon} alt="Delete" width={20} height={20} />
-        </Button>
+        <span onClick={showModal} className="text-3xl text-red-500">
+          <DeleteOutlined className=" hover:opacity-50" onClick={showModal} />
+        </span>
       )}
       <Modal
         open={open}
@@ -84,7 +85,7 @@ const DeleteModal = ({ sessionID }) => {
               Are you sure to delete this session?
             </h6>
           </div>
-          <p className="text-[#637381] lg:text-[18px] md:text-[16px] pb-6">
+          <p className="text-[#637381] lg:text-[18px] md:text-[16px]">
             Once you delete this session, all associated data will be
             permanently removed and cannot be recovered. Please confirm if you
             want to proceed with this action.
