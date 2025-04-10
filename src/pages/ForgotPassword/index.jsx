@@ -1,9 +1,9 @@
 import { Form, Input, Button, Card, Row, Col, Typography, Layout } from "antd";
 import { yupSync } from "@shared/lib/utils";
 import { useNavigate } from "react-router-dom";
-import { LeftOutlined } from "@ant-design/icons";
+import { LeftOutlined, MailOutlined } from "@ant-design/icons";
 import { ForgotPasswordImg } from "@assets/images";
-import { forgotPasswordSchema } from "./schema";
+import { emailSchema } from "./schema";
 import { useForgotPassword } from "@features/auth/hooks";
 
 const { Title, Text } = Typography;
@@ -35,7 +35,7 @@ const ForgotPassword = () => {
               >
                 <LeftOutlined />
                 <Text
-                  className="font-semibold text-base sm:text-lg text-[#374151]"
+                  className="font-semibold text-base sm:text-[16px] text-[#374151]"
                 >
                   Back to login
                 </Text>
@@ -62,11 +62,12 @@ const ForgotPassword = () => {
                   <Form.Item
                     name="email"
                     label="Email"
-                    rules={[yupSync(forgotPasswordSchema)]}
+                    rules={[yupSync(emailSchema)]}
                     required
                     className="w-full"
                   >
                     <Input
+                      suffix={<MailOutlined className="text-[#dadcdf]" />}
                       placeholder="Enter your email here"
                       size="large"
                       className="w-full"

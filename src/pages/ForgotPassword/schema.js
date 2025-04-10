@@ -1,7 +1,14 @@
 import * as Yup from "yup";
 
-export const forgotPasswordSchema = Yup.object().shape({
-  email: Yup.string()
-    .email("Enter a valid email")
-    .required("Email is required"),
+const strictEmailRegex = /^[\w.-]+@[\w-]+\.[a-zA-Z]{2,}$/;
+
+export const emailSchema = Yup.object().shape({
+  email: Yup
+    .string()
+    // .email("Please enter a valid email address Ex:abc@fpt.com")
+    .required("Email is required")
+    .matches(
+      strictEmailRegex,
+      "Please enter a valid email address (Ex:abc@fpt.com)"
+    ),
 });
