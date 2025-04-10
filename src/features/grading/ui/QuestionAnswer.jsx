@@ -13,9 +13,9 @@ export const QuestionAnswer = ({
     if (isSpeaking) {
       const fakeSpeakingAnswers = {
         1: [
-          "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
-          "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
-          "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
+          "https://res.cloudinary.com/dd48zrjqs/raw/upload/v1744192731/speaking_tests/recording_1744192703843_nstrib.mp3",
+          "https://res.cloudinary.com/dd48zrjqs/raw/upload/v1744192731/speaking_tests/recording_1744192703843_nstrib.mp3",
+          "https://res.cloudinary.com/dd48zrjqs/raw/upload/v1744192731/speaking_tests/recording_1744192703843_nstrib.mp3",
         ],
         2: [
           "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Kangaroo_MusiQue_-_The_Neverwritten_Role_Playing_Game.mp3",
