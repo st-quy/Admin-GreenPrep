@@ -14,6 +14,14 @@ const ScoreCommentForm = ({
   const [comment, setComment] = useState("");
   const [form] = Form.useForm();
 
+  const schema = yup.object().shape({
+    comment: yup
+      .string()
+      .trim()
+      .nullable()
+      .optional(), // không bắt buộc nhập
+  });
+
   // useEffect(() => {
   //   // Update form when savedData changes
   //   if (savedData) {
@@ -51,7 +59,8 @@ const ScoreCommentForm = ({
       // initialValues={{ comment: comment }}
     >
       <Form.Item name="comment" 
-      // rules={[yupSync(schema)]} 
+      // @ts-ignore
+      rules={[yupSync(schema)]} 
       noStyle={true}>
         <div>
           <label className="block text-base font-medium mt-[12px] mb-[6px]">

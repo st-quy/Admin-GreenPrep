@@ -41,42 +41,6 @@ export const Assessment = ({ isSpeaking, data }) => {
     }
   };
 
-  const handleSubmitScore = () => {
-    const skillType = isSpeaking ? "speaking" : "writing";
-    const currentPart = activeTab;
-
-    // Check if all questions in the current part have scores
-    let allScoresFilled = true;
-
-    // Special handling for speaking part 4
-    if (isSpeaking && currentPart === "4") {
-      // For speaking part 4, we only need one score entry
-      if (
-        !scores[skillType][currentPart] ||
-        !scores[skillType][currentPart]["0"] ||
-        scores[skillType][currentPart]["0"].score === undefined
-      ) {
-        allScoresFilled = false;
-      }
-    } else {
-      // For other parts, check all questions
-      const currentPartData = partData;
-
-      if (!scores[skillType][currentPart]) {
-        allScoresFilled = false;
-      } else if (currentPartData && currentPartData.Questions) {
-        // Check if all questions in this part have scores
-        currentPartData.Questions.forEach((_, questionIndex) => {
-          if (
-            !scores[skillType][currentPart][questionIndex] ||
-            scores[skillType][currentPart][questionIndex].score === undefined
-          ) {
-            allScoresFilled = false;
-          }
-        });
-      }
-    }
-  };
   const handleDisplayPart = () => {
     if (!partData) return "";
     if (isSpeaking && activeTab === "4") {

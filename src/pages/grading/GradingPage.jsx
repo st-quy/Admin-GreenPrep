@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Assessment } from "@features/grading/ui/Assessment";
-import AssessmentScores from "@features/grading/ui/AssessmentScores";
+import AssessmentScores from "@features/grading/ui/assessmentScores";
 import StudentInfoCard from "@features/grading/ui/StudentInfoCard";
 import StudentListModal from "@features/grading/ui/StudentListModal";
 import { SpeakingApi, WritingApi } from "@features/grading/api";
@@ -54,9 +54,7 @@ export const GradingPage = () => {
       <Assessment
         isSpeaking={isSpeaking}
         data={isSpeaking ? speakingData : writingData}
-      />
-
-      {/* Student List Modal */}
+      />      {/* Student List Modal */}
       <StudentListModal
         data={[]}
         visible={isModalOpen}
