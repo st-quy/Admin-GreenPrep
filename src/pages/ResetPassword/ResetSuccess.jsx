@@ -21,7 +21,7 @@ const ResetPasswordSuccessfullyPage = () => {
         <div className="flex justify-center">
           <button
             className="reset-password-button w-[250px] h-[50px] rounded-[50px] bg-[#003087] text-white hover:bg-[#002A6B] transition-colors text-sm sm:text-base outline-none focus:outline-none border-none"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/login")}
           >
             Back to login
           </button>

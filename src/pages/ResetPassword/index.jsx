@@ -1,4 +1,4 @@
-import { Form, Input, Button, Card, Row, Col, Typography, message, Layout } from "antd";
+import { Form, Input, Button, Card, Row, Col, Typography, Layout } from "antd";
 import { yupSync } from "@shared/lib/utils";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { ForgotPasswordImg } from "@assets/images";
@@ -7,6 +7,7 @@ import { ResetPasswordSchema } from "./schema";
 import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
+import toast, { Toaster } from 'react-hot-toast';
 
 const { Title, Text } = Typography;
 
@@ -17,10 +18,23 @@ const ResetPassword = () => {
 
   const onFinish = (values) => {
     if (searchParams.get("token")) {
-      resetPasswordFunc({
-        token: searchParams.get("token"),
-        newPassword: values.password,
-      });
+      resetPasswordFunc(
+        {
+          token: searchParams.get("token"),
+          newPassword: values.password,
+        },
+        {
+          onSuccess: () => {
+            toast.success("Password reset successfully!");
+            setTimeout(() => {
+              navigate("/reset-success");
+            }, 2000);
+          },
+          onError: () => {
+            toast.error("Failed to reset password. Please try again.");
+          },
+        }
+      );
     }
   };
 
@@ -28,7 +42,7 @@ const ResetPassword = () => {
     const token = searchParams.get("token");
 
     if (!token) {
-      message.error("Token not found, please try again");
+      toast.error("Token not found, please try again");
       navigate("/login");
     }
 
@@ -37,12 +51,14 @@ const ResetPassword = () => {
     const isTokenExpired = tokenExpiration < currentTime;
 
     if (!token || isTokenExpired) {
-      message.error("Token expired, please try again");
+      toast.error("Token expired, please try again");
       navigate("/login");
     }
   }, [searchParams.get("token"), navigate]);
+
   return (
     <Layout className="bg-[#f9f9f9]">
+      <Toaster />
       <Layout.Content className="max-w-[1200px] mx-auto w-full">
         <Row gutter={0} className="h-full">
           <Col
@@ -100,19 +116,7 @@ const ResetPassword = () => {
                       }
                       dependencies={["password"]}
                       required={false}
-                      rules={[
-                        yupSync(ResetPasswordSchema),
-                        ({ getFieldValue }) => ({
-                          validator(_, value) {
-                            if (!value || getFieldValue("password") === value) {
-                              return Promise.resolve();
-                            }
-                            return Promise.reject(
-                              new Error("The two passwords that you entered do not match!")
-                            );
-                          },
-                        }),
-                      ]}
+                      rules={[yupSync(ResetPasswordSchema)]}
                     >
                       <Input.Password 
                         placeholder="Confirm password" 
@@ -160,4 +164,5 @@ const ResetPassword = () => {
     </Layout>
   );
 };
+
 export default ResetPassword;

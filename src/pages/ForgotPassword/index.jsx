@@ -5,6 +5,7 @@ import { LeftOutlined, MailOutlined } from "@ant-design/icons";
 import { ForgotPasswordImg } from "@assets/images";
 import { emailSchema } from "./schema";
 import { useForgotPassword } from "@features/auth/hooks";
+import toast, { Toaster } from 'react-hot-toast';
 
 const { Title, Text } = Typography;
 const { Content } = Layout;
@@ -14,11 +15,19 @@ const ForgotPassword = () => {
   const { mutate: forgotPasswordFunc, isPending } = useForgotPassword();
   
   const onFinish = (values) => {
-    forgotPasswordFunc({ ...values, host: window.location.origin });
+    forgotPasswordFunc(
+      { ...values, host: window.location.origin },
+      {
+        onSuccess: () => {
+          toast.success("Password reset email sent successfully!");
+        },
+      }
+    );
   };
 
   return (
     <Layout className="bg-[#f9f9f9]">
+      <Toaster />
       <Layout.Content className="max-w-[1200px] mx-auto w-full">
         <Row gutter={0} className="h-full">
           <Col

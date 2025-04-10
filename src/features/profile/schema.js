@@ -9,7 +9,17 @@ export const ChangePasswordSchema = Yup.object().shape({
     .min(8, "New password must be at least 8 characters"),
   newPasswordConfirmation: Yup.string()
     .oneOf([Yup.ref("newPassword"), null], "Passwords must match")
-    .required("New password confirmation is required"),
+    .required("New password confirmation is required")
+    .when('newPassword', {
+      is: val => val && val.length > 0,
+      then: schema => schema.test({
+        name: 'passwords-match',
+        message: 'Passwords must match',
+        test: function(value) {
+          return this.parent.newPassword === value;
+        }
+      })
+    }),
 });
 
 

@@ -92,20 +92,7 @@ const ChangePassword = ({ isOpen, onClose }) => {
               required={false}
               dependencies={["newPassword"]}
               className="w-full md:max-w-[458px]"
-              rules={[
-                {
-                  required: true,
-                  message: "New password confirmation is required",
-                },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue("newPassword") === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(new Error("New passwords must match"));
-                  },
-                }),
-              ]}
+              rules={[yupSync(ChangePasswordSchema)]}
             >
               <Input.Password className="h-[46px] w-full max-w-[458px] rounded-lg" placeholder="Confirm new password" />
             </Form.Item>
