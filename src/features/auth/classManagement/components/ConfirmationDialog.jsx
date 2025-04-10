@@ -20,7 +20,8 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
       } catch (error) {
         notification.error({
           message: "Error deleting class",
-          description: "An error occurred while deleting the class. Please try again.",
+          description:
+            "An error occurred while deleting the class. Please try again.",
           icon: <CloseCircleOutlined style={{ color: "#ff4d4f" }} />,
           placement: "topRight",
         });
@@ -41,17 +42,17 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
       centered
       className="confirm-delete-modal"
       style={{
-        borderRadius: '16px',
-        overflow: 'hidden',
-        maxWidth: '90vw'
+        borderRadius: "16px",
+        overflow: "hidden",
+        maxWidth: "90vw",
       }}
     >
       <div className="p-6 sm:p-8">
         <div className="flex flex-col sm:flex-row items-center sm:items-start gap-3 mb-2">
           <div className="w-[60px] h-[60px] flex items-center justify-center shrink-0">
-            <img 
-              src={WarningIcon} 
-              alt="Warning" 
+            <img
+              src={WarningIcon}
+              alt="Warning"
               className="w-full h-full object-contain select-none"
             />
           </div>
@@ -71,9 +72,9 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
             className="w-full sm:w-[109px] h-[50px] rounded-[50px]"
             disabled={isDeleting}
             style={{
-              WebkitAppearance: 'none',
-              MozAppearance: 'none',
-              appearance: 'none'
+              WebkitAppearance: "none",
+              MozAppearance: "none",
+              appearance: "none",
             }}
           >
             Cancel
@@ -85,9 +86,9 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
             loading={isDeleting}
             className="w-full sm:w-[109px] h-[50px] rounded-[50px]"
             style={{
-              WebkitAppearance: 'none',
-              MozAppearance: 'none',
-              appearance: 'none'
+              WebkitAppearance: "none",
+              MozAppearance: "none",
+              appearance: "none",
             }}
           >
             Delete

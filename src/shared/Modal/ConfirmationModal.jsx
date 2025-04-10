@@ -7,12 +7,13 @@ const ConfirmationModal = ({ isOpen, onClose, title, message, okText, okButtonCo
     <Modal
       title={
         <div className="flex items-center">
-          <div className="w-12 h-12 bg-[#FFF1F0] rounded-full flex items-center justify-center mr-2">
+          <div className="w-12 h-12 rounded-full flex items-center justify-center mr-2">
             <img src={Warning} alt="Warning Icon" className="w-10 h-10" />
           </div>
           <span className="text-lg font-semibold text-black">{title}</span>
         </div>
       }
+      closable={false}
       open={isOpen}
       onOk={onConfirm}
       onCancel={onClose}
@@ -32,7 +33,7 @@ const ConfirmationModal = ({ isOpen, onClose, title, message, okText, okButtonCo
         },
       }}
     >
-      <p className="text-[#595959] pl-14">{message}</p>
+      <p className={`text-[#595959] ${okText !== "Delete" ? "ml-14" : "ml-1"}`}>{message}</p>
     </Modal>
   );
 };
