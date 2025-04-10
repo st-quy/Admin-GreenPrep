@@ -5,7 +5,7 @@ import {
   UnorderedListOutlined,
 } from "@ant-design/icons";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const StudentInfoCard = ({ student, onPrevious, onNext, onViewList }) => {
   return (

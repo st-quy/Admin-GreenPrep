@@ -1,29 +1,26 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Assessment } from "@features/grading/ui/Assessment";
+import { useParams } from "react-router-dom";
+import { Spin } from "antd";
+
+import Assessment from "@features/grading/ui/Assessment";
 import AssessmentScores from "@features/grading/ui/AssessmentScores";
 import StudentInfoCard from "@features/grading/ui/StudentInfoCard";
 import StudentListModal from "@features/grading/ui/StudentListModal";
-import { SpeakingApi, WritingApi } from "@features/grading/api";
-import { Spin } from "antd";
+import { SpeakingApi, WritingApi, ParticipantApi } from "@features/grading/api";
 
-export const GradingPage = () => {
+const GradingPage = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const {
-    isPending: isWritingPending,
-    error: writingError,
-    data: writingData,
-  } = useQuery({
+  const { sessionId, participantId } = useParams();
+
+  const { isPending: isWritingPending, data: writingData } = useQuery({
     queryKey: ["writingData"],
     queryFn: WritingApi.getWriting,
   });
 
-  const {
-    isPending: isSpeakingPending,
-    error: speakingError,
-    data: speakingData,
-  } = useQuery({
+  const { isPending: isSpeakingPending, data: speakingData } = useQuery({
     queryKey: ["speakingData"],
     queryFn: SpeakingApi.getSpeaking,
   });
@@ -31,7 +28,7 @@ export const GradingPage = () => {
   const onTabChange = (key) => {
     setIsSpeaking(key);
   };
-  const [isModalOpen, setIsModalOpen] = useState(false);
+
   const data1 = {
     name: "Trung",
     studentId: "123123",
@@ -40,7 +37,10 @@ export const GradingPage = () => {
     phone: "123123123",
   };
 
-  if (isWritingPending || isSpeakingPending) return <Spin size="large" className="flex justify-center items-center h-60" />;
+  if (isWritingPending || isSpeakingPending)
+    return (
+      <Spin size="large" className="flex justify-center items-center h-60" />
+    );
 
   return (
     <>
@@ -48,9 +48,10 @@ export const GradingPage = () => {
       <StudentInfoCard
         student={data1}
         onViewList={() => setIsModalOpen(true)}
+        onNext={() => {}}
+        onPrevious={() => {}}
       />
       <AssessmentScores onTabChange={onTabChange} />
-
       <Assessment
         isSpeaking={isSpeaking}
         data={isSpeaking ? speakingData : writingData}
@@ -61,7 +62,10 @@ export const GradingPage = () => {
         data={[]}
         visible={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        handleSelect={() => {}}
       />
     </>
   );
 };
+
+export default GradingPage;

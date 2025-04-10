@@ -1,9 +1,7 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
-import { GradingPage } from "@pages/grading/GradingPage.jsx";
-const ProfilePage = lazy(
-  () => import("@pages/ProfilePage/ProfilePage.jsx")
-);
+import GradingPage from "@pages/Grading/GradingPage";
+const ProfilePage = lazy(() => import("@pages/ProfilePage/ProfilePage.jsx"));
 import ClassManagement from "@pages/ClassManagement/classManagement.jsx";
 import Dashboard from "@pages/Dashboard/Dashboard.jsx";
 
@@ -51,7 +49,7 @@ const PrivateRoute = [
                         element: <div>Student Detail</div>,
                       },
                       {
-                        path: "grade",
+                        path: "grade/:participantId",
                         element: <GradingPage />,
                         breadcrumb: "Grade",
                       },
@@ -68,11 +66,11 @@ const PrivateRoute = [
         path: "profile",
         breadcrumb: "Profile",
         children: [
-          { 
-            path: "", 
+          {
+            path: "",
             element: <ProfilePage />,
             breadcrumb: "",
-         },
+          },
         ],
       },
     ],

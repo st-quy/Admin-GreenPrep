@@ -1,8 +1,9 @@
+import "./index.css";
 import { Modal, Table, Button } from "antd";
 import { EditOutlined, AudioOutlined } from "@ant-design/icons";
-import "./index.css";
 
 const StudentListModal = ({ data, visible, onClose, handleSelect }) => {
+  console.log(data);
   // Define and customize the columns
   const columns = [
     {
@@ -21,8 +22,8 @@ const StudentListModal = ({ data, visible, onClose, handleSelect }) => {
           <span>Writing</span>
         </div>
       ),
-      dataIndex: "writing",
-      key: "writing",
+      dataIndex: "Writing",
+      key: "Writing",
       align: "center",
       onHeaderCell: () => ({
         style: { backgroundColor: "transparent" },
@@ -38,8 +39,8 @@ const StudentListModal = ({ data, visible, onClose, handleSelect }) => {
       onHeaderCell: () => ({
         style: { backgroundColor: "transparent" },
       }),
-      dataIndex: "speaking",
-      key: "speaking",
+      dataIndex: "Speaking",
+      key: "Speaking",
       align: "center",
     },
     {
@@ -74,7 +75,7 @@ const StudentListModal = ({ data, visible, onClose, handleSelect }) => {
           // @ts-ignore
           columns={columns}
           pagination={false}
-          rowKey="id"
+          rowKey="ID"
           scroll={{ y: 500 }}
         />
       </div>

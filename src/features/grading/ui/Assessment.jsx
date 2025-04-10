@@ -1,11 +1,11 @@
 import "antd/dist/reset.css";
+import "./index.css";
 import { QuestionAnswer } from "./QuestionAnswer";
 import ScoreCommentForm from "./ScoreCommentForm";
 import { Card, Tabs, Button, message } from "antd";
-import "./index.css";
 import { useState, useEffect } from "react";
 
-export const Assessment = ({ isSpeaking, data }) => {
+const Assessment = ({ isSpeaking, data }) => {
   const [activeTab, setActiveTab] = useState("1");
   // Track part totals for each skill
   const [totalScore, setTotalScore] = useState({ speaking: {}, writing: {} });
@@ -41,9 +41,7 @@ export const Assessment = ({ isSpeaking, data }) => {
     }
   };
 
-  const handleSubmitScore = () => {
-
-  };
+  const handleSubmitScore = () => {};
   const handleDisplayPart = () => {
     if (!partData) return "";
     if (isSpeaking && activeTab === "4") {
@@ -154,3 +152,5 @@ export const Assessment = ({ isSpeaking, data }) => {
     </div>
   );
 };
+
+export default Assessment;

@@ -2,7 +2,7 @@ import ResetPasswordSuccessfullyPage from "@pages/ResetPasswordSuccessfully/Rese
 import { PublicLayout } from "@app/layout/PublicLayout";
 import ForgotPasswordForm from "@features/auth/ui/ForgotPasswordForm";
 import LoginPage from "../../features/auth/ui/LoginForm";
-import { GradingPage } from "@pages/grading/GradingPage";
+import GradingPage from "@pages/Grading/GradingPage";
 
 const PublicRoute = [
   {
@@ -22,7 +22,7 @@ const PublicRoute = [
         element: <ResetPasswordSuccessfullyPage />,
       },
       {
-        path: "testing",
+        path: "session/:sessionId/testing/:participantId",
         element: <GradingPage />,
       },
     ],
