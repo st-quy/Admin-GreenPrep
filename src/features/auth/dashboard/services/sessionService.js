@@ -1,9 +1,11 @@
 import axios from "axios";
 
+const API_BASE_URL = "https://dev-api-greenprep.onrender.com/api";
+
 export const fetchSessions = async (classId) => {
   try {
     const response = await axios.get(
-      `https://dev-api-greenprep.onrender.com/api/sessions?classId=${classId}`
+      `${API_BASE_URL}/sessions?classId=${classId}`
     );
     return response.data.data || [];
   } catch (error) {
@@ -14,9 +16,7 @@ export const fetchSessions = async (classId) => {
 
 export const fetchAllSessions = async () => {
   try {
-    const response = await axios.get(
-      "https://dev-api-greenprep.onrender.com/api/sessions"
-    );
+    const response = await axios.get(`${API_BASE_URL}/sessions/all`);
     return response.data.data || [];
   } catch (error) {
     console.error("Error fetching all sessions:", error);

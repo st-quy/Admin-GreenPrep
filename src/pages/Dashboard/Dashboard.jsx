@@ -1,209 +1,23 @@
 import React, { useState, useEffect } from "react";
-import {
-  Table,
-  Card,
-  Button,
-  Input,
-  Row,
-  Col,
-  Spin,
-  Badge,
-  Typography,
-  Progress,
-} from "antd";
+import { Table, Card, Button, Input, Row, Col, Spin, Typography } from "antd";
 import { DownloadOutlined, SearchOutlined } from "@ant-design/icons";
-import { fetchClassesWithSessionCount } from "../../features/auth/dashboard/services/classService";
 import { fetchTotalUsers } from "../../features/auth/dashboard/services/userService";
 import { exportToPDF } from "../../features/auth/dashboard/services/pdfService";
-import axios from "axios";
+import {
+  fetchAllSessions,
+  getSessionStatusStatistics,
+} from "../../features/auth/dashboard/services/sessionService";
+import {
+  ColumnChart,
+  StatusChart,
+} from "../../features/auth/dashboard/components/ChartComponents";
+import { StatCard } from "../../features/auth/dashboard/components/StatCard";
+import { TableHeaderCell } from "../../features/auth/dashboard/components/TableHeaderCell";
+import { StatusBadge } from "../../features/auth/dashboard/components/StatusBadge";
+import { ActionButton } from "../../features/auth/dashboard/components/ActionButton";
+import { getAllClasses } from "../../features/auth/dashboard/services/classService";
 
 const { Title, Text } = Typography;
-
-// Modern Statistic Card Component
-const StatCard = ({
-  icon,
-  title,
-  value,
-  subText = null,
-  color = "#1890ff",
-  increase = null,
-}) => (
-  <div className="p-4 md:p-5 bg-white rounded-md shadow-sm h-full">
-    <div className="flex items-center mb-2 md:mb-3">
-      {icon}
-      <span className="ml-2 text-gray-500 text-sm md:text-base">{title}</span>
-    </div>
-    <div className="flex justify-between items-end mb-2 md:mb-3">
-      <div>
-        <Title
-          level={4}
-          style={{ margin: 0, fontSize: "20px", fontWeight: "500" }}
-          className="md:text-[28px]"
-        >
-          {value}
-        </Title>
-      </div>
-      {subText && <Text className="text-gray-400 text-xs">{subText}</Text>}
-    </div>
-    <div className="mt-2 md:mt-3">
-      {increase && (
-        <Text className="text-xs text-green-600 mb-1 block">
-          {increase} <span className="ml-1">↑</span>
-        </Text>
-      )}
-      <Progress
-        percent={100}
-        showInfo={false}
-        strokeColor={color}
-        trailColor="#f0f0f0"
-        strokeWidth={3}
-      />
-    </div>
-  </div>
-);
-
-// Modern Column Chart Component
-const ColumnChart = ({ data, title }) => {
-  const maxValue = Math.max(...data.map((item) => item.value));
-  const colors = {
-    bar: "#6366F1",
-    text: "#4B5563",
-    title: "#111827",
-    background: "#F9FAFB",
-    border: "#E5E7EB",
-  };
-
-  return (
-    <Card
-      title={
-        <Text strong className="text-lg" style={{ color: colors.title }}>
-          {title}
-        </Text>
-      }
-      className="shadow-sm hover:shadow-md transition-shadow duration-300"
-      bodyStyle={{ padding: "1.5rem" }}
-      bordered={false}
-    >
-      <div className="space-y-4">
-        {data.length === 0 ? (
-          <div className="text-center py-8">
-            <Text type="secondary">No session data available</Text>
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {data.map((item, index) => (
-              <div key={index} className="relative">
-                <div className="flex items-center justify-between mb-2">
-                  <Text
-                    strong
-                    className="text-sm"
-                    style={{ color: colors.text }}
-                  >
-                    {item.type}
-                  </Text>
-                  <Text className="text-sm" style={{ color: colors.text }}>
-                    {item.value}
-                  </Text>
-                </div>
-                <div className="relative h-4 w-full bg-gray-100 rounded-full overflow-hidden">
-                  <div
-                    className="absolute top-0 left-0 h-full rounded-full transition-all duration-500 ease-out"
-                    style={{
-                      width: `${(item.value / maxValue) * 100}%`,
-                      backgroundColor: colors.bar,
-                      opacity: 0.9 - index * 0.1,
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    </Card>
-  );
-};
-
-// Modern Status Chart Component
-const StatusChart = ({ data, title }) => {
-  const total = data.reduce((sum, item) => sum + item.value, 0);
-  const colors = {
-    NOT_STARTED: "#6366F1",
-    ON_GOING: "#10B981",
-    COMPLETED: "#F59E0B",
-    CANCELLED: "#EF4444",
-  };
-
-  return (
-    <Card
-      title={
-        <Text strong className="text-lg">
-          {title}
-        </Text>
-      }
-      className="shadow-sm hover:shadow-md transition-shadow duration-300"
-      bodyStyle={{ padding: "1.5rem" }}
-      bordered={false}
-    >
-      {data.length === 0 ? (
-        <div className="text-center py-8">
-          <Text type="secondary">No status data available</Text>
-        </div>
-      ) : (
-        <div className="space-y-6">
-          <div className="grid grid-cols-2 gap-4">
-            {data.map((item, index) => (
-              <div
-                key={index}
-                className="bg-gray-50 rounded-lg p-4 hover:shadow-sm transition-shadow duration-300"
-              >
-                <div className="flex items-center space-x-2 mb-2">
-                  <div
-                    className="w-3 h-3 rounded-full"
-                    style={{ backgroundColor: colors[item.type] || "#6366F1" }}
-                  />
-                  <Text strong className="text-sm">
-                    {item.type}
-                  </Text>
-                </div>
-                <div className="space-y-1">
-                  <Text className="text-2xl font-semibold">{item.value}</Text>
-                  <Text className="text-xs text-gray-500">
-                    {Math.round((item.value / total) * 100)}% of total
-                  </Text>
-                </div>
-                <div className="mt-2 h-1 w-full bg-gray-200 rounded-full overflow-hidden">
-                  <div
-                    className="h-full rounded-full transition-all duration-500 ease-out"
-                    style={{
-                      width: `${(item.value / total) * 100}%`,
-                      backgroundColor: colors[item.type] || "#6366F1",
-                    }}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="pt-4 border-t border-gray-100">
-            <Text className="text-sm text-gray-500">
-              Total Sessions: {total}
-            </Text>
-          </div>
-        </div>
-      )}
-    </Card>
-  );
-};
-
-// Custom Table Header Cell Component
-const TableHeaderCell = ({ children, ...props }) => (
-  <th
-    {...props}
-    className="bg-gray-50 px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-  >
-    {children}
-  </th>
-);
 
 const Dashboard = () => {
   const [classes, setClasses] = useState([]);
@@ -213,32 +27,6 @@ const Dashboard = () => {
   const [searchText, setSearchText] = useState("");
   const [sessionStats, setSessionStats] = useState([]);
   const [classSessionData, setClassSessionData] = useState([]);
-
-  // Fetch all sessions
-  const fetchAllSessions = async () => {
-    try {
-      const response = await axios.get(
-        "https://dev-api-greenprep.onrender.com/api/sessions/all"
-      );
-      return response.data.data;
-    } catch (error) {
-      console.error("Error fetching sessions:", error);
-      return [];
-    }
-  };
-
-  // Process sessions to get statistics
-  const processSessionStats = (sessions) => {
-    const statusCounts = sessions.reduce((acc, session) => {
-      acc[session.status] = (acc[session.status] || 0) + 1;
-      return acc;
-    }, {});
-
-    return Object.entries(statusCounts).map(([type, value]) => ({
-      type,
-      value,
-    }));
-  };
 
   // Process class session data
   const processClassSessionData = (sessions) => {
@@ -258,24 +46,17 @@ const Dashboard = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        // Fetch all sessions
+        // Fetch all sessions using sessionService
         const sessionsData = await fetchAllSessions();
         setSessions(sessionsData);
 
-        // Process sessions to get unique classes
-        const uniqueClasses = Array.from(
-          new Set(sessionsData.map((session) => session.Classes))
-        ).map((classInfo) => ({
-          ...classInfo,
-          sessionCount: sessionsData.filter(
-            (s) => s.Classes.ID === classInfo.ID
-          ).length,
-        }));
-        setClasses(uniqueClasses);
-
-        // Process session statistics
-        const stats = processSessionStats(sessionsData);
+        // Get session statistics using sessionService
+        const stats = await getSessionStatusStatistics();
         setSessionStats(stats);
+
+        // Fetch all classes using classService
+        const allClasses = await getAllClasses();
+        setClasses(allClasses);
 
         // Process class session data
         const chartData = processClassSessionData(sessionsData);
@@ -297,61 +78,6 @@ const Dashboard = () => {
 
   // Calculate total sessions
   const totalSessions = sessions.length;
-
-  // Status Badge Component
-  const StatusBadge = ({ count }) => {
-    let color = count > 5 ? "#10B981" : count > 0 ? "#6366F1" : "#9CA3AF";
-    return (
-      <div className="inline-flex items-center">
-        <span
-          className="w-2 h-2 rounded-full mr-2"
-          style={{ backgroundColor: color }}
-        />
-        <span
-          className="px-2.5 py-0.5 rounded-full text-sm font-medium"
-          style={{
-            backgroundColor: `${color}15`,
-            color: color,
-          }}
-        >
-          {count || 0}
-        </span>
-      </div>
-    );
-  };
-
-  // Action Button Component
-  const ActionButton = ({ record }) => (
-    <div className="flex items-center gap-2">
-      <Button
-        type="primary"
-        ghost
-        size="small"
-        className="flex items-center gap-1 hover:scale-105 transition-transform"
-      >
-        <svg
-          className="w-4 h-4"
-          fill="none"
-          stroke="currentColor"
-          viewBox="0 0 24 24"
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-          />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-          />
-        </svg>
-        Class Details
-      </Button>
-    </div>
-  );
 
   // Columns for class table
   const classColumns = [
