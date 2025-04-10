@@ -2,7 +2,13 @@ import "./index.css";
 import { Modal, Table, Button } from "antd";
 import { EditOutlined, AudioOutlined } from "@ant-design/icons";
 
-const StudentListModal = ({ data, visible, onClose, handleSelect }) => {
+const StudentListModal = ({
+  currentUser,
+  data,
+  visible,
+  onClose,
+  handleSelect,
+}) => {
   //Filter Data
   const filterData = [];
   data.map((item) => {
@@ -64,13 +70,16 @@ const StudentListModal = ({ data, visible, onClose, handleSelect }) => {
           type="primary"
           ghost
           shape="round"
-          className="!border-[#003087] !text-[#003087] hover:bg-blue-50 !px-7"
+          className={
+            (record.ID === currentUser.ID
+              ? "!border-[#DF6B2E] !text-[#DF6B2E]"
+              : "!border-[#003087] !text-[#003087]") + " w-24"
+          }
           onClick={() => {
-            console.log(record.ID);
             handleSelect(record.ID);
           }}
         >
-          Select
+          {record.ID === currentUser.ID ? "Selected" : "Select"}
         </Button>
       ),
     },

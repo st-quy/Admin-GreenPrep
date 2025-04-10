@@ -38,22 +38,40 @@ const GradingPage = () => {
     setIsSpeaking(key);
   };
 
+  // Function to handle the change of participant
   const changeParticipant = (participantId) => {
     const newPath = location.pathname.replace(
       /participant\/[^/]+/,
       `participant/${participantId}`
     );
     setIsModalOpen(false);
+    setIsSpeaking(false);
     navigate(newPath);
   };
 
-  const data1 = {
-    name: "Trung",
-    studentId: "123123",
-    classId: "gcd1102",
-    email: "trung@gmail.com",
-    phone: "123123123",
+  const handleNextParticipant = () => {
+    const currentIndex = participantsData?.data.data.findIndex(
+      (item) => item.ID === participantId
+    );
+    const nextIndex = (currentIndex + 1) % participantsData?.data.data.length;
+    const nextParticipantId = participantsData?.data.data[nextIndex].ID;
+    changeParticipant(nextParticipantId);
   };
+
+  const handlePreviousParticipant = () => {
+    const currentIndex = participantsData?.data.data.findIndex(
+      (item) => item.ID === participantId
+    );
+    const previousIndex =
+      (currentIndex - 1 + participantsData?.data.data.length) %
+      participantsData?.data.data.length;
+    const previousParticipantId = participantsData?.data.data[previousIndex].ID;
+    changeParticipant(previousParticipantId);
+  };
+
+  const userData = participantsData?.data.data.find(
+    (item) => item.ID === participantId
+  );
 
   if (isWritingPending || isSpeakingPending || isParticipantsPending)
     return (
@@ -64,10 +82,10 @@ const GradingPage = () => {
     <>
       {/* Student Information Card */}
       <StudentInfoCard
-        student={data1}
+        student={userData}
         onViewList={() => setIsModalOpen(true)}
-        onNext={() => {}}
-        onPrevious={() => {}}
+        onNext={handleNextParticipant}
+        onPrevious={handlePreviousParticipant}
       />
       <AssessmentScores onTabChange={onTabChange} />
       <Assessment
@@ -76,6 +94,7 @@ const GradingPage = () => {
       />{" "}
       {/* Student List Modal */}
       <StudentListModal
+        currentUser={userData}
         data={participantsData?.data.data}
         visible={isModalOpen}
         onClose={() => setIsModalOpen(false)}
