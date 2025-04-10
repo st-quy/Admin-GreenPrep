@@ -33,12 +33,12 @@ const LoginPage = () => {
 
   return (
     <div className="bg-[#f9f9f9] flex justify-center items-center">
-      <div className="w-full max-w-[1600px] flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 md:gap-8 lg:gap-12 xl:gap-16 px-4 lg:px-8">
+      <div className="w-full max-w-[1400px] flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 md:gap-8 lg:gap-12 xl:gap-16 px-12 lg:px-24">
         {/* Login Form */}
         <div 
           className="bg-white rounded-lg shadow-[0_12px_34px_0_rgba(13,10,44,0.08)] w-full 
-                    min-w-[380px] max-w-[600px] 
-                    h-auto min-h-[699px] p-8
+                    min-w-[380px] max-w-[570px] 
+                    h-auto min-h-[590px] p-8
                     lg:w-[600px]"
         >
           <div className="h-full flex flex-col">
@@ -62,7 +62,7 @@ const LoginPage = () => {
                 layout="vertical"
                 onFinish={onSubmit}
                 requiredMark={false}
-                className="space-y-5"
+                className="space-y-5 md:max-w-[516px]"
               >
                 <Form.Item
                   name="email"
@@ -77,7 +77,7 @@ const LoginPage = () => {
                   <Input
                     suffix={<MailOutlined className="text-gray-400" />}
                     placeholder="Enter your email here"
-                    className="h-[46px] rounded-lg border-gray-300"
+                    className="max-w-[516px] h-[46px] rounded-lg border-gray-300"
                   />
                 </Form.Item>
 
@@ -93,7 +93,7 @@ const LoginPage = () => {
                 >
                   <Input.Password
                     placeholder="* * * * * * * *"
-                    className="h-[46px] rounded-lg border-gray-300"
+                    className="max-w-[516px] h-[46px] rounded-lg border-gray-300"
                     iconRender={(visible) =>
                       visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
                     }
@@ -123,24 +123,12 @@ const LoginPage = () => {
                   Login
                 </Button>
               </div>
-
-              <div className="text-center mt-4">
-                <Text className="text-gray-600 text-sm">
-                  Don't have an account?{" "}
-                  <span
-                    className="text-blue-700 hover:underline cursor-pointer"
-                    onClick={() => navigate("/register")}
-                  >
-                    Sign up
-                  </span>
-                </Text>
-              </div>
             </div>
           </div>
         </div>
 
         {/* Image */}
-        <div className="flex justify-center w-full md:w-auto">
+        <div className="hidden lg:flex justify-center w-full md:w-auto">
           <img
             src={loginHappyStudent}
             alt="Happy students celebrating"

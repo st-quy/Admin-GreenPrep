@@ -36,11 +36,11 @@ const ChangePassword = ({ isOpen, onClose }) => {
       footer={null}
       centered
       onCancel={onClose}
-      className="w-[90%] md:w-[600px] lg:w-[600px]"
-      width={600}
+      className="w-[90%] md:w-[500px] lg:w-[500px]"
+      width={500}
     >
-      <div className="p-4 md:p-6 lg:p-8 h-full">
-        <Typography.Title level={2} className="font-bold mb-1 text-[30px]">
+      <div className="h-full">
+        <Typography.Title level={2} className="font-bold mb-1 text-[30px] mt-4">
           Change Password
         </Typography.Title>
         <p className="text-gray-600 mb-3 text-[16px]">
@@ -63,9 +63,9 @@ const ChangePassword = ({ isOpen, onClose }) => {
               name="currentPassword"
               required={false}
               rules={[yupSync(ChangePasswordSchema)]}
-              className="w-full"
+              className="w-full md:max-w-[458px]"
             >
-              <Input.Password className="h-[46px] w-full rounded-lg" placeholder="Current password" />
+              <Input.Password className="h-[46px] w-full max-w-[458px] rounded-lg" placeholder="Current password" />
             </Form.Item>
             <Form.Item
               label={
@@ -77,9 +77,9 @@ const ChangePassword = ({ isOpen, onClose }) => {
               name="newPassword"
               required={false}
               rules={[yupSync(ChangePasswordSchema)]}
-              className="w-full"
+              className="w-full md:max-w-[458px]"
             >
-              <Input.Password className="h-[46px] w-full rounded-lg" placeholder="New password" />
+              <Input.Password className="h-[46px] w-full max-w-[458px] rounded-lg" placeholder="New password" />
             </Form.Item>
             <Form.Item
               label={
@@ -91,7 +91,7 @@ const ChangePassword = ({ isOpen, onClose }) => {
               name="confirmNewPassword"
               required={false}
               dependencies={["newPassword"]}
-              className="w-full"
+              className="w-full md:max-w-[458px]"
               rules={[
                 {
                   required: true,
@@ -107,11 +107,11 @@ const ChangePassword = ({ isOpen, onClose }) => {
                 }),
               ]}
             >
-              <Input.Password className="h-[46px] w-full rounded-lg" placeholder="Confirm new password" />
+              <Input.Password className="h-[46px] w-full max-w-[458px] rounded-lg" placeholder="Confirm new password" />
             </Form.Item>
           </div>
 
-          <div className="w-full flex justify-end gap-3 mt-6">
+          <div className="w-full flex justify-end gap-3 mt-6 mb-4">
             <Button
               type="default"
               htmlType="button"

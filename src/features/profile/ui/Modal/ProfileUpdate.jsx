@@ -63,9 +63,9 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
               name="fullName"
               required={false}
               rules={[yupSync(UpdateProfileSchema)]}
-              className="w-full md:w-auto"
+              className="w-full"
             >
-              <Input className="h-[46px] w-[458px] rounded-lg" />
+              <Input className="h-[46px] w-full max-w-[458px] rounded-lg" />
             </Form.Item>
 
             <Form.Item
@@ -78,9 +78,9 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
               name="code"
               required={false}
               rules={[yupSync(UpdateProfileSchema)]}
-              className="w-full md:w-auto"
+              className="w-full"
             >
-              <Input className="h-[46px] w-[458px] rounded-lg" disabled/>
+              <Input className="h-[46px] w-full max-w-[458px] rounded-lg" disabled/>
             </Form.Item>
 
             <Form.Item
@@ -92,9 +92,9 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
               name="bod"
               required={false}
               rules={[yupSync(UpdateProfileSchema)]}
-              className="w-full md:w-auto"
+              className="w-full"
             >
-              <Input className="h-[46px] w-[458px] rounded-lg" />
+              <Input className="h-[46px] w-full max-w-[458px] rounded-lg" placeholder="dd/mm/yyyy" />
             </Form.Item>
           </div>
 
@@ -109,9 +109,9 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
               name="email"
               required={false}
               rules={[yupSync(UpdateProfileSchema)]}
-              className="w-full md:w-auto"
+              className="w-full md:max-w-[458px]"
             >
-              <Input className="h-[46px] w-[458px] rounded-lg" disabled />
+              <Input className="h-[46px] w-full max-w-[458px] rounded-lg" disabled />
             </Form.Item>
 
             <Form.Item
@@ -122,9 +122,9 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
               }
               name="phoneNumber"
               rules={[yupSync(UpdateProfileSchema)]}
-              className="w-full md:w-auto"
+              className="w-full md:max-w-[458px]"
             >
-              <Input className="h-[46px] w-[458px] rounded-lg" />
+              <Input className="h-[46px] w-full max-w-[458px] rounded-lg" />
             </Form.Item>
 
             <Form.Item
@@ -134,9 +134,9 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
                 </div>
               }
               name="address"
-              className="w-full md:w-auto"
+              className="w-full md:max-w-[458px]"
             >
-              <Input className="h-[46px] w-[458px] rounded-lg" />
+              <Input className="h-[46px] w-full max-w-[458px] rounded-lg" />
             </Form.Item>
           </div>
 

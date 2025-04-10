@@ -39,8 +39,8 @@ const ProfilePage = () => {
   };
 
   const InfoField = ({ label, value }) => (
-    <div>
-      <Text className="text-gray-500 text-sm block mb-1">{label}</Text>
+    <div className="text-[16px]">
+      <Text className="text-gray-500 text-sm block mb-2">{label}</Text>
       <Text className={value !== 'No information' ? 'text-gray-900 font-semibold' : 'text-gray-500'}>
         {value || 'No information'}
       </Text>
@@ -58,14 +58,14 @@ const ProfilePage = () => {
           <Button
             type="default"
             onClick={() => setOpenKey("change-password")}
-            className="min-w-[140px] md:min-w-[160px] h-[40px] rounded-full border border-[#003087] text-[#003087] hover:text-[#0066CC] hover:border-[#0066CC] font-medium"
+            className="min-w-[140px] md:min-w-[160px] h-[50px] rounded-full border border-[#003087] text-[#003087] hover:text-[#0066CC] hover:border-[#0066CC] font-medium"
           >
             Change password
           </Button>
           <Button
             type="primary"
             onClick={() => setOpenKey("update-profile")}
-            className="min-w-[140px] md:min-w-[160px] h-[40px] rounded-full bg-[#003087] hover:bg-[#002A6B] border-none font-medium"
+            className="min-w-[140px] md:min-w-[160px] h-[50px] rounded-full bg-[#003087] hover:bg-[#002A6B] border-none font-medium"
           >
             Update profile
           </Button>
@@ -94,9 +94,9 @@ const ProfilePage = () => {
             />
           </div>
           <div>
-            <Title level={4} className="m-0">{user?.firstName } {user?.lastName}</Title>
-            <Text className="text-gray-500 font-semibold">{user?.role || 'N/A'}</Text>
-            <Text className="block text-gray-500 font-semibold">{user?.email}</Text>
+            <Title level={5} className="font-bold text-[#3758F9]">{user?.firstName } {user?.lastName}</Title>
+            <Text className="text-gray-500">{user?.role || 'N/A'}</Text>
+            <Text className="block text-gray-500">{user?.email}</Text>
           </div>
         </div>
       </div>
