@@ -32,8 +32,8 @@ const LoginPage = () => {
   }, [isAuth, navigate]);
 
   return (
-    <div className="bg-[#f9f9f9] flex justify-center items-center">
-      <div className="w-full max-w-[1400px] flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 md:gap-8 lg:gap-12 xl:gap-16 px-12 lg:px-24">
+    <div className="bg-[#f9f9f9] flex justify-center">
+      <div className="w-full max-w-[1400px] flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 md:gap-8 lg:gap-12 xl:gap-16 px-8 lg:px-20">
         {/* Login Form */}
         <div 
           className="bg-white rounded-lg shadow-[0_12px_34px_0_rgba(13,10,44,0.08)] w-full 
