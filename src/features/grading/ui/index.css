@@ -24,10 +24,6 @@
   }
 }
 
-.ant-table-wrapper .ant-table-tbody > tr > td {
-  padding: 0 !important;
-}
-
 .ant-tabs .ant-tabs-tab + .ant-tabs-tab {
   margin-left: 0 !important;
 }
@@ -70,16 +66,15 @@
     font-size: 16px !important;
     color: #637381 !important;
   }
-  .ant-tabs-tab-active
-  {
-    background-color: #E6F0FA !important;
+  .ant-tabs-tab-active {
+    background-color: #e6f0fa !important;
   }
   .ant-tabs-tab-active .ant-tabs-tab-btn {
     color: #003087 !important;
   }
   .ant-tabs-ink-bar {
     background-color: #003087 !important;
-    height:2px !important;
+    height: 2px !important;
   }
 }
 

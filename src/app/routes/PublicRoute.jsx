@@ -22,7 +22,7 @@ const PublicRoute = [
         element: <ResetPasswordSuccessfullyPage />,
       },
       {
-        path: "session/:sessionId/testing/:participantId",
+        path: "session/:sessionId/participant/:participantId",
         element: <GradingPage />,
       },
     ],

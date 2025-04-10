@@ -21,6 +21,6 @@ export const ParticipantApi = {
     return axiosInstance.get(``);
   },
   getParticipants: (sessionId) => {
-    return axiosInstance.get(`/sessions/${sessionId}`);
+    return axiosInstance.get(`/session-participants/${sessionId}`);
   },
 };
