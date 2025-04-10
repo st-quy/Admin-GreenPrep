@@ -3,7 +3,10 @@ import * as Yup from "yup";
 export const ResetPasswordSchema = Yup.object().shape({
   password: Yup.string()
     .required("Password is required")
-    .min(6, "Password must be at least 6 characters"),
+    .matches(
+      /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
+      "Password must be at least 8 characters, include lowercase letter, 1 uppercase letter, 1 number and 1 special character(@$!%*?&)."
+    ),
   passwordConfirmation: Yup.string()
     .oneOf([Yup.ref("password"), null], "Passwords must match")
     .required("Password confirmation is required"),
