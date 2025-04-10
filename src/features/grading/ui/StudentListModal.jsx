@@ -3,7 +3,6 @@ import { Modal, Table, Button } from "antd";
 import { EditOutlined, AudioOutlined } from "@ant-design/icons";
 
 const StudentListModal = ({ data, visible, onClose, handleSelect }) => {
-  console.log(data);
   // Define and customize the columns
   const columns = [
     {

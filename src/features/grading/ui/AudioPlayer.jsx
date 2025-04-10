@@ -94,16 +94,28 @@ export default function AudioPlayer({ audioUrl, audioFileName = "audio-file" }) 
   }
 
   const downloadAudio = async () => {
-    // This approach works if the server hosting the file allows direct downloads/Access-Control-Allow-Origin.
-    const a = document.createElement("a")
-    a.href = audioUrl
-    a.download = `${audioFileName}.mp3`
-    document.body.appendChild(a)
-    a.click()
-    document.body.removeChild(a)
+    try {
+      const response = await fetch(audioUrl, { mode: "cors" });
+      if (!response.ok) {
+        throw new Error(`Failed to fetch the audio file. Status: ${response.status}`);
+      }
 
-    // This is just for test pls remove it later
-    // Should work for CORS issues but should avoid using it in production as they may introduce security risks.
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = blobUrl;
+      a.download = `${audioFileName}.mp3`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+
+      // Revoke the object URL to free up memory
+      URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error("Error downloading the audio file:", error);
+    }
+    // Not safe use if the the url does not have CORS enabled
     // const proxyUrl = "https://cors-anywhere.herokuapp.com/";
     // try {
     //   const response = await fetch(proxyUrl + audioUrl); // Use proxy to fetch the file
