@@ -6,6 +6,7 @@ import { useResetPassword } from "@features/auth/hooks";
 import { ResetPasswordSchema } from "./schema";
 import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
+import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
 
 const { Title, Text } = Typography;
 
@@ -84,7 +85,10 @@ const ResetPassword = () => {
                         placeholder="Password" 
                         size="large"
                         className="h-12 text-base rounded-lg placeholder:text-[#9CA3AF]"
-                      />
+                        iconRender={(visible) =>
+                          visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
+                        }
+                        onCopy={(e) => e.preventDefault()}/>
                     </Form.Item>
 
                     <Form.Item
@@ -114,7 +118,11 @@ const ResetPassword = () => {
                         placeholder="Confirm password" 
                         size="large"
                         className="h-12 text-base rounded-lg placeholder:text-[#9CA3AF]"
-                      />
+                        iconRender={(visible) =>
+                          visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
+                        }
+                        onCopy={(e) => e.preventDefault()}
+                        />
                     </Form.Item>
 
                     <Form.Item className="mt-2">
