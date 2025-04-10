@@ -87,9 +87,12 @@ const GradingPage = () => {
         onNext={handleNextParticipant}
         onPrevious={handlePreviousParticipant}
       />
-      <AssessmentScores onTabChange={onTabChange} />
+      <AssessmentScores 
+        onTabChange={onTabChange} 
+        currentUser={participantId} />
       <Assessment
         isSpeaking={isSpeaking}
+        currentUser={participantId}
         data={isSpeaking ? speakingData : writingData}
       />{" "}
       {/* Student List Modal */}

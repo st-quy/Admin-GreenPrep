@@ -8,7 +8,6 @@ import {
 const { Title } = Typography;
 
 const StudentInfoCard = ({ student, onPrevious, onNext, onViewList }) => {
-  console.log(student);
   return (
     <div className="w-full">
       {/* Header */}

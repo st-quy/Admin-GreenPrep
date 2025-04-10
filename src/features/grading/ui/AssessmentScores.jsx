@@ -1,9 +1,9 @@
 import "./index.css";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, Button, Form, InputNumber } from "antd";
 import { EditOutlined, AudioOutlined } from "@ant-design/icons";
 
-const AssessmentScores = ({ onTabChange }) => {
+const AssessmentScores = ({ onTabChange, currentUser }) => {
   const [activeTab, setActiveTab] = useState("writing");
 
   const handleTabClick = (key) => {
@@ -12,6 +12,10 @@ const AssessmentScores = ({ onTabChange }) => {
       onTabChange(false);
     } else onTabChange(true);
   };
+  
+  useEffect(() => {
+    setActiveTab("writing");
+  }, [currentUser]);
 
   // Function to determine category based on total score
   const getCategoryFromScore = (score, type) => {

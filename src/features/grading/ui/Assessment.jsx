@@ -5,7 +5,7 @@ import ScoreCommentForm from "./ScoreCommentForm";
 import { Card, Tabs, Button, message } from "antd";
 import { useState, useEffect } from "react";
 
-const Assessment = ({ isSpeaking, data }) => {
+const Assessment = ({ isSpeaking, currentUser, data }) => {
   const [activeTab, setActiveTab] = useState("1");
   // Track part totals for each skill
   const [totalScore, setTotalScore] = useState({ speaking: {}, writing: {} });
@@ -20,7 +20,7 @@ const Assessment = ({ isSpeaking, data }) => {
   // Reset to part 1 when isSpeaking changes
   useEffect(() => {
     setActiveTab("1");
-  }, [isSpeaking]);
+  }, [isSpeaking, currentUser]);
 
   useEffect(() => {
     handleDataChange();
