@@ -99,17 +99,17 @@ const ResetPassword = () => {
                         </span>
                       }
                       dependencies={["password"]}
+                      required={false}
                       rules={[
-                        {
-                          required: true,
-                          message: "Password confirmation is required",
-                        },
+                        yupSync(ResetPasswordSchema),
                         ({ getFieldValue }) => ({
                           validator(_, value) {
                             if (!value || getFieldValue("password") === value) {
                               return Promise.resolve();
                             }
-                            return Promise.reject(new Error("Passwords must match"));
+                            return Promise.reject(
+                              new Error("The two passwords that you entered do not match!")
+                            );
                           },
                         }),
                       ]}
