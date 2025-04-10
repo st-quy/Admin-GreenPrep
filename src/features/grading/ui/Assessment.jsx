@@ -41,6 +41,9 @@ export const Assessment = ({ isSpeaking, data }) => {
     }
   };
 
+  const handleSubmitScore = () => {
+
+  };
   const handleDisplayPart = () => {
     if (!partData) return "";
     if (isSpeaking && activeTab === "4") {
