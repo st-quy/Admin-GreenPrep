@@ -55,8 +55,7 @@ const GradingPage = () => {
       <Assessment
         isSpeaking={isSpeaking}
         data={isSpeaking ? speakingData : writingData}
-      />
-
+      />{" "}
       {/* Student List Modal */}
       <StudentListModal
         data={[]}
