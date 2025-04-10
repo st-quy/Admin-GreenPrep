@@ -39,9 +39,9 @@ const ProfilePage = () => {
   };
 
   const InfoField = ({ label, value }) => (
-    <div className="text-[16px]">
-      <Text className="text-gray-500 text-sm block mb-2">{label}</Text>
-      <Text className={value !== 'No information' ? 'text-gray-900 font-semibold' : 'text-gray-500'}>
+    <div>
+      <Text className="text-[#374151] text-[16px] font-normal block mb-2">{label}</Text>
+      <Text className={value !== 'No information' ? 'text-[#1F2A37] text-[16px] font-semibold' : 'text-[#6B7280] text-[16px] font-normal'}>
         {value || 'No information'}
       </Text>
     </div>
@@ -51,8 +51,8 @@ const ProfilePage = () => {
     <div className="p-6 space-y-6 max-w-[1920px] mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="w-full sm:w-auto">
-          <Title level={4} className="m-0">My profile</Title>
-          <Text className="text-gray-500">Summary of personal information.</Text>
+          <Title level={3} className="m-0 font-bold text-black  ">My profile</Title>
+          <Text className="text-[#637381] text-[18px]">Summary of personal information.</Text>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:space-x-0">
           <Button
@@ -94,45 +94,45 @@ const ProfilePage = () => {
             />
           </div>
           <div>
-            <Title level={5} className="font-bold text-[#3758F9]">{user?.firstName } {user?.lastName}</Title>
-            <Text className="text-gray-500">{user?.role || 'N/A'}</Text>
-            <Text className="block text-gray-500">{user?.email}</Text>
+            <Text className="font-bold text-[#003087] text-[18px] block">{user?.firstName + ' ' + user?.lastName || 'N/A'}</Text>
+            <Text className="text-[#6B7280] text-[16px] block">{user?.role ? String(user?.role).charAt(0).toUpperCase() + String(user?.role).slice(1) : 'N/A'}</Text>
+            <Text className="block text-[#6B7280] text-[16px]">{user?.email}</Text>
           </div>
         </div>
       </div>
 
       <div className="bg-white rounded-[8px] shadow-lg border border-gray-100 w-full mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8">
-          <div className="space-y-1 w-[200px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 p-6 sm:p-8">
+          <div className="space-y-1">
             <InfoField label="First Name" value={user?.firstName} />
           </div>
-          <div className="space-y-1 ">
+          <div className="space-y-1">
             <InfoField label="Last Name" value={user?.lastName} />
           </div>
-          <div className="space-y-1 ">
+          <div className="space-y-1">
             <InfoField label="Email" value={user?.email} />
           </div>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8 border-t border-gray-100">
-          <div className="space-y-1 ">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 p-6 sm:p-8 border-t border-gray-100">
+          <div className="space-y-1">
             <InfoField label="BOD" value={user?.bod || 'No information'} />
           </div>
-          <div className="space-y-1 ">
+          <div className="space-y-1">
             <InfoField label="Phone number" value={user?.phone || 'No information'} />
           </div>
-          <div className="space-y-1 ">
+          <div className="space-y-1">
             <InfoField label="Address" value={user?.address || 'No information'} />
           </div>
         </div>
       </div>
 
       <div className="bg-white rounded-[8px] shadow-lg border border-gray-100 w-full mx-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 p-6 sm:p-8">
-          <div className="space-y-1 w-[200px]">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 p-6 sm:p-8">
+          <div className="space-y-1">
             <InfoField label="Teacher Code" value={user?.teacherCode || 'No information'} />
           </div>
           
-          <div className="space-y-1 w-[200px]">
+          <div className="space-y-1">
             <InfoField label="Role" value={user?.role || 'No information'} />
           </div>
         </div>
