@@ -5,8 +5,8 @@ const ResetPasswordSuccessfullyPage = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-[#F3F4F6]">
-      <div className="text-center max-w-[824px] w-full px-4 mx-auto -mt-40">
+    <div className="flex flex-col items-center justify-center bg-[#F9F9F9]">
+      <div className="text-center max-w-[824px] w-full px-4 mx-auto">
         <img
           src={RSPassword}
           alt="Reset Password Successfully"
@@ -21,7 +21,7 @@ const ResetPasswordSuccessfullyPage = () => {
         <div className="flex justify-center">
           <button
             className="reset-password-button w-[250px] h-[50px] rounded-[50px] bg-[#003087] text-white hover:bg-[#002A6B] transition-colors text-sm sm:text-base outline-none focus:outline-none border-none"
-            onClick={() => navigate("/")}
+            onClick={() => navigate("/login")}
           >
             Back to login
           </button>

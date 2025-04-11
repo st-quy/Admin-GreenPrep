@@ -1,11 +1,13 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { Table, Select, Pagination, Spin } from "antd";
-import { TableType, StatusType, LevelEnum } from "../constraint/TableEnum";
+import { TableType, StatusType, LevelEnum } from "../constant/TableEnum";
 import {
   useSessionParticipants,
   useStudentParticipants,
 } from "../hooks/useSession";
+import "../css/index.scss";
 import { useNavigate } from "react-router-dom";
+
 function getSkillLevel(score, skill) {
   const thresholds = {
     Listening: [8, 16, 24, 34, 42],
@@ -23,6 +25,7 @@ function getSkillLevel(score, skill) {
   );
   return levelIndex === -1 ? "C" : LevelEnum[levelIndex];
 }
+
 const StudentSessionTable = ({
   id,
   searchKeyword,
@@ -32,24 +35,25 @@ const StudentSessionTable = ({
 }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(10); 
   const [levels, setLevels] = useState({});
+
   const { data, isLoading } =
-    type == TableType.SESSION
-      ? useSessionParticipants(id)
-      : useStudentParticipants(id);
+    type === TableType.SESSION
+      ? useSessionParticipants(id, { page: currentPage, limit: pageSize })
+      : useStudentParticipants(id, { page: currentPage, limit: pageSize });
 
   const processedData = useMemo(() => {
     return (data?.data || []).map((record) => ({
       ...record,
       Total:
-        (record.GrammarVocab || 0) +
         (record.Listening || 0) +
         (record.Reading || 0) +
         (record.Speaking || 0) +
         (record.Writing || 0),
     }));
   }, [data]);
+
   useEffect(() => {
     setLevels(
       processedData.reduce((acc, cur) => ({ ...acc, [cur.ID]: cur.Level }), {})
@@ -58,7 +62,6 @@ const StudentSessionTable = ({
 
   const filteredData = useMemo(() => {
     const keyword = searchKeyword?.toLowerCase().trim() || "";
-    console.log(keyword);
     if (!keyword) return processedData;
     return processedData.filter((item) => {
       const fullName = String(item.User?.fullName || "").toLowerCase();
@@ -85,6 +88,7 @@ const StudentSessionTable = ({
       onAllQuestionGraded?.();
     }
   }, [processedData, levels]);
+
   useEffect(() => {
     if (type === TableType.SESSION && status !== StatusType.PUBLISHED) {
       checkIsAllQuestionGraded();
@@ -100,15 +104,17 @@ const StudentSessionTable = ({
       title: "GRAMMAR & VOCABULARY",
       dataIndex: "GrammarVocab",
       key: "GrammarVocab",
-      render: (text) => <div>{text || "No Data"}</div>,
+      width: "240px",
+      render: (text) => <span>{text || "No Data"}</span>,
     },
     {
       title: "LISTENING",
       dataIndex: "Listening",
       key: "Listening",
+      width: "120px",
       render: (text, record) => (
-        <span className="text-[14px]  text-[#637381]">
-          {text + "I" + getSkillLevel(text, "Listening") || "Ungraded"}
+        <span>
+          {text ? text + " | " + getSkillLevel(text, "Listening") : "No Data"}
         </span>
       ),
     },
@@ -116,9 +122,10 @@ const StudentSessionTable = ({
       title: "READING",
       dataIndex: "Reading",
       key: "Reading",
+      width: "120px",
       render: (text, record) => (
-        <span className="text-[14px]  text-[#637381]">
-          {text + "I" + getSkillLevel(text, "Reading") || "Ungraded"}
+        <span>
+          {text ? text + " | " + getSkillLevel(text, "Reading") : "No Data"}
         </span>
       ),
     },
@@ -126,6 +133,7 @@ const StudentSessionTable = ({
       title: "SPEAKING",
       dataIndex: "Speaking",
       key: "Speaking",
+      width: "120px",
       render: (text, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
@@ -134,13 +142,13 @@ const StudentSessionTable = ({
                 `/class/session/student/${record.User.ID}/grade?skill=speaking`
               )
             }
-            className="cursor-pointer underline text-[14px] hover:opacity-80"
+            className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
-            {text + "I" + getSkillLevel(text, "Speaking") || "Ungraded"}
+            {text ? text + " | " + getSkillLevel(text, "Speaking") : "Ungraded"}
           </a>
         ) : (
-          <span className="text-[14px]  text-[#637381]">
-            {text + "I" + getSkillLevel(text, "Speaking") || "Ungraded"}
+          <span>
+            {text ? text + " | " + getSkillLevel(text, "Speaking") : "Ungraded"}
           </span>
         ),
     },
@@ -148,6 +156,7 @@ const StudentSessionTable = ({
       title: "WRITING",
       dataIndex: "Writing",
       key: "Writing",
+      width: "120px",
       render: (text, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
@@ -156,21 +165,23 @@ const StudentSessionTable = ({
                 `/class/session/student/${record.User.ID}/grade?skill=writing`
               )
             }
-            className="cursor-pointer underline text-[14px] hover:opacity-80"
+            className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
-            {text + "I" + getSkillLevel(text, "Writing") || "Ungraded"}
+            {text ? text + " | " + getSkillLevel(text, "Writing") : "Ungraded"}
           </a>
         ) : (
-          <span className="text-[14px]  text-[#637381]">
-            {text + "I" + getSkillLevel(text, "Writing") || "Ungraded"}
+          <span>
+            {text ? text + " | " + getSkillLevel(text, "Writing") : "Ungraded"}
           </span>
         ),
     },
-    { title: "TOTAL", dataIndex: "Total", key: "Total" },
+    { title: "TOTAL", width: "90px", dataIndex: "Total", key: "Total" },
     {
       title: "LEVEL",
       dataIndex: "Level",
       key: "Level",
+      fixed: "right",
+      width: "90px",
       render: (level, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <Select
@@ -180,7 +191,7 @@ const StudentSessionTable = ({
               status === StatusType.PUBLISHED || type === TableType.STUDENT
             }
             onChange={(value) => onLevelChange(record.ID, value)}
-            className="w-20"
+            className="p-0"
           >
             {LevelEnum.map((lvl) => (
               <Select.Option key={lvl} value={lvl}>
@@ -189,8 +200,17 @@ const StudentSessionTable = ({
             ))}
           </Select>
         ) : (
-          <span className="text-[14px]  text-[#637381]">{level}</span>
+          <span>{level || "No Data"}</span>
         ),
+      onHeaderCell: () => {
+        return {
+          style: {
+            textAlign: "center",
+            backgroundColor: "#E6F0FA",
+          },
+        };
+      },
+      className: "shadow-[-4px_0px_0_rgba(0,0,0,0.1)] md:shadow-none",
     },
   ];
 
@@ -201,16 +221,20 @@ const StudentSessionTable = ({
           title: "STUDENT NAME",
           dataIndex: ["User", "fullName"],
           key: "fullName",
-          render: (text, record) => (
-            <a
-              onClick={() =>
-                navigate(`/class/session/student/${record.User.ID}`)
-              }
-              className="cursor-pointer underline text-[14px] hover:opacity-80"
-            >
-              {text || "Unknown"}
-            </a>
-          ),
+          width: "260px",
+          render: (text, record) =>
+            text ? (
+              <a
+                onClick={() =>
+                  navigate(`/class/session/student/${record.User.ID}`)
+                }
+                className="cursor-pointer underline underline-offset-4 hover:opacity-80"
+              >
+                {text}
+              </a>
+            ) : (
+              "Unknown"
+            ),
         },
         ...commonColumns,
       ];
@@ -220,42 +244,56 @@ const StudentSessionTable = ({
           title: "SESSION NAME",
           dataIndex: ["Session", "sessionName"],
           key: "SessionID",
-          render: (text) => <span>{text || "Unknown"}</span>,
+          render: (text) => (
+            <span className="cursor-pointer hover:opacity-80">
+              {text || "Unknown"}
+            </span>
+          ),
         },
         ...commonColumns,
       ];
     }
   }, [type, status, levels]);
 
+  // if (isLoading) return <Spin />;
+  // if (isLoading) return <Spin />;
+
   return (
-    <Table
-      columns={columns}
-      dataSource={filteredData.map((item) => ({ ...item, key: item.ID }))}
-      pagination={{
-        current: currentPage,
-        pageSize: pageSize,
-        total: filteredData.length,
-        showSizeChanger: true,
-        pageSizeOptions: ["5", "10", "15", "20"],
-        showTotal: (total, range) =>
-          `Showing ${range[0]}-${range[1]} of ${total}`,
-        onChange: (page, size) => {
-          setCurrentPage(page);
-          setPageSize(size);
-        },
-      }}
-      bordered
-      className="border border-gray-200 pagination w-full p-0 m-0 overflow-x-auto bg-none"
-      rowClassName="text-center"
-      scroll={{ x: 768 }}
-      components={{
-        header: {
-          wrapper: (props) => (
-            <thead {...props} className="bg-[#E6F0FA] text-[#637381]" />
-          ),
-        },
-      }}
-    />
+    <div>
+      {isLoading ? (
+        <Spin tip="Loading..." />
+      ) : (
+        <Table
+          // @ts-ignore
+          columns={columns}
+          dataSource={filteredData.map((item) => ({ ...item, key: item.ID }))}
+          pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            total: data?.pagination?.totalItems || 0,
+            showSizeChanger: true,
+            pageSizeOptions: ["5", "10", "15", "20"],
+            showTotal: (total, range) =>
+              `Showing ${range[0]}-${range[1]} of ${total}`,
+            onChange: (page, size) => {
+              setCurrentPage(page);
+              setPageSize(size);
+            },
+          }}
+          bordered
+          className="border border-gray-200 pagination w-full p-0 m-0 overflow-x-auto bg-none"
+          rowClassName="text-center"
+          scroll={{ x: 768 }}
+          components={{
+            header: {
+              wrapper: (props) => (
+                <thead {...props} className="bg-[#E6F0FA] text-[#637381]" />
+              ),
+            },
+          }}
+        />
+      )}
+    </div>
   );
 };
 
