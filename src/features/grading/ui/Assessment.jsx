@@ -2,7 +2,7 @@ import "antd/dist/reset.css";
 import "./index.scss";
 import { QuestionAnswer } from "./QuestionAnswer";
 import ScoreCommentForm from "./ScoreCommentForm";
-import { Card, Tabs, Button, message } from "antd";
+import { Card, Tabs } from "antd";
 import { useState, useEffect } from "react";
 
 const Assessment = ({ isSpeaking, currentUser, data }) => {
@@ -11,7 +11,6 @@ const Assessment = ({ isSpeaking, currentUser, data }) => {
   const [totalScore, setTotalScore] = useState({ speaking: {}, writing: {} });
   const [partData, setPartData] = useState({});
   const [scores, setScores] = useState({ speaking: {}, writing: {} });
-  const [messageApi, contextHolder] = message.useMessage();
 
   const handleTabChange = (key) => {
     setActiveTab(key);
@@ -28,7 +27,7 @@ const Assessment = ({ isSpeaking, currentUser, data }) => {
 
   const handleDataChange = () => {
     try {
-      const parts = data.data.Parts;
+      const parts = data.data.data.topic.Parts;
       if (parts && parts.length > 0) {
         const currentPart = `PART ${activeTab}`;
         const currentPartIndex = parts.findIndex((p) =>
@@ -41,7 +40,7 @@ const Assessment = ({ isSpeaking, currentUser, data }) => {
     }
   };
 
-  const handleSubmitScore = () => {};
+  const handleSubmitScore = () => { };
   const handleDisplayPart = () => {
     if (!partData) return "";
     if (isSpeaking && activeTab === "4") {
@@ -94,7 +93,6 @@ const Assessment = ({ isSpeaking, currentUser, data }) => {
 
   return (
     <div className="w-full">
-      {contextHolder}
       <div className="py-[2.3125rem]">
         <div className="w-full">
           <div className="flex flex-col">
@@ -135,18 +133,6 @@ const Assessment = ({ isSpeaking, currentUser, data }) => {
         </div>
       </div>
       <div className="flex flex-col gap-6 w-full">
-        {!isSpeaking && partData && (
-          <Card
-            variant="borderless"
-            className="rounded-lg overflow-hidden w-[78%] px-[43px] py-[41px]"
-            styles={{ body: { padding: 0 } }}
-          >
-            <div>{partData.Content || ""}</div>
-            <div className="text-gray-500 font-bold">
-              {partData.SubContent || ""}
-            </div>
-          </Card>
-        )}
         {!isSpeaking && partData && (
           <Card
             variant="borderless"

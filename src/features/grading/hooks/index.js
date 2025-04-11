@@ -1,5 +1,5 @@
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { ParticipantApi, SpeakingApi, WritingApi, SessionApi } from "../api";
+import { GradeApi, ParticipantApi } from "../api";
 
 export const useScoreMutation = (mutationFn) => {
   const querryClient = useQueryClient();
@@ -14,20 +14,6 @@ export const useScoreMutation = (mutationFn) => {
   });
 };
 
-export const useGetSpeaking = (topicID) => {
-  return useQuery({
-    queryKey: ["speakingData"],
-    queryFn: async () => await SpeakingApi.getSpeaking(topicID),
-  });
-}
-
-export const useGetWriting = (topicID) => {
-  return useQuery({
-    queryKey: ["writingData"],
-    queryFn: async () => await WritingApi.getWriting(topicID),
-  });
-}
-
 export const useGetParticipants = (sessionId) => {
   return useQuery(
     {
@@ -37,14 +23,24 @@ export const useGetParticipants = (sessionId) => {
   );
 }
 
-export const useGetSessionDetail = (sessionId) => {
+export const useGetWritingQuestionsAnswers = (participantId) => {
   return useQuery(
     {
-      queryKey: ["session"],
-      queryFn: async () => await SessionApi.getSessionDetail(sessionId),
+      queryKey: ["writing"],
+      queryFn: async () => await GradeApi.getGrade(participantId, "writing"),
     }
   );
 }
+
+export const useGetSpeakingQuestionsAnswers = (participantId) => {
+  return useQuery(
+    {
+      queryKey: ["speaking"],
+      queryFn: async () => await GradeApi.getGrade(participantId, "speaking"),
+    }
+  );
+}
+
 
 
 

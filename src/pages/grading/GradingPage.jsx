@@ -7,9 +7,8 @@ import StudentInfoCard from "@features/grading/ui/StudentInfoCard";
 import StudentListModal from "@features/grading/ui/StudentListModal";
 import {
   useGetParticipants,
-  useGetSessionDetail,
-  useGetSpeaking,
-  useGetWriting,
+  useGetSpeakingQuestionsAnswers,
+  useGetWritingQuestionsAnswers,
 } from "@features/grading/hooks";
 
 const GradingPage = () => {
@@ -20,16 +19,9 @@ const GradingPage = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { isPending: isSessionPending, data: sessionData } =
-    useGetSessionDetail(sessionId);
-
-  let writingData, isWritingPending, speakingData, isSpeakingPending;
-  if (sessionData?.data?.data?.examSet) {
-    ({ isPending: isWritingPending, data: writingData } = useGetWriting(sessionData.data.data.examSet));
-    ({ isPending: isSpeakingPending, data: speakingData } = useGetSpeaking(sessionData.data.data.examSet));
-  }
-  const { isPending: isParticipantsPending, data: participantsData } =
-    useGetParticipants(sessionId);
+  const { isPending: isWritingPending, data: writingData } = useGetWritingQuestionsAnswers(participantId);
+  const { isPending: isSpeakingPending, data: speakingData } = useGetSpeakingQuestionsAnswers(participantId);
+  const { isPending: isParticipantsPending, data: participantsData } = useGetParticipants(sessionId);
   const onTabChange = (key) => {
     setIsSpeaking(key);
   };
@@ -70,7 +62,6 @@ const GradingPage = () => {
   );
 
   if (
-    isSessionPending ||
     isWritingPending ||
     isSpeakingPending ||
     isParticipantsPending

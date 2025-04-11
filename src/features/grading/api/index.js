@@ -1,20 +1,5 @@
 import axiosInstance from "@shared/config/axios";
 
-export const SpeakingApi = {
-  getSpeaking: (topicID) => {
-    return axiosInstance.get(
-      `/topics/${topicID}?skillName=SPEAKING`
-    );
-  },
-};
-
-export const WritingApi = {
-  getWriting: (topicID) => {
-    return axiosInstance.get(
-      `/topics/${topicID}?skillName=WRITING`
-    );
-  },
-};
 
 export const ParticipantApi = {
   getParticipant: (sessionId, participantId) => {
@@ -25,8 +10,16 @@ export const ParticipantApi = {
   },
 };
 
-export const SessionApi = {
-  getSessionDetail: (sessionId) => {
-    return axiosInstance.get(`/sessions/${sessionId}`)
-  }
-}
+export const GradeApi = {
+  getGrade: (participantId, skill) => {
+    return axiosInstance.get(
+      `/grades/participants?sessionParticipantId=${participantId}&skillName=${skill}`
+    );
+  },
+  // postGrade: (data) => {
+  //   return axiosInstance.post(
+  //     `/grades/teacher-grade`,
+  //     data
+  //   );
+  // },
+};

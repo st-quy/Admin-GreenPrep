@@ -5,43 +5,15 @@ import * as yup from "yup";
 import "./index.scss";
 
 const ScoreCommentForm = ({
-  partNumber,
-  questionIndex,
-  // savedData = null,
-  isSpeaking = false,
+  data,
 }) => {
-  // const [comment, setComment] = useState(savedData?.comment || "");
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = useState(data?.studentAnswer?.Comment || "");
   const [form] = Form.useForm();
 
   const schema = yup.object().shape({
-    comment: yup.string().trim().nullable().optional(), // không bắt buộc nhập
+    comment: yup.string().trim().nullable().optional(),
   });
 
-  // useEffect(() => {
-  //   // Update form when savedData changes
-  //   if (savedData) {
-  //     setComment(savedData.comment || "");
-  //     form.setFieldsValue({
-  //       comment: savedData.comment || "",
-  //     });
-  //   }
-  // }, [savedData, form]);
-
-  // // Update when partNumber or questionIndex changes to ensure correct data is shown
-  // useEffect(() => {
-  //   if (savedData) {
-  //     setComment(savedData.comment || "");
-  //     form.setFieldsValue({
-  //       comment: savedData.comment || "",
-  //     });
-  //   } else {
-  //     setComment("");
-  //     form.setFieldsValue({
-  //       comment: "",
-  //     });
-  //   }
-  // }, [partNumber, questionIndex, savedData, form]);
 
   const handleCommentChange = (e) => {
     const value = e.target.value;
@@ -52,7 +24,7 @@ const ScoreCommentForm = ({
     <Form
       form={form}
       className="w-full h-fit rounded-lg shadow px-[22px] py-[16px] bg-white"
-      // initialValues={{ comment: comment }}
+      initialValues={{ comment: comment }}
     >
       <Form.Item
         name="comment"
@@ -67,7 +39,7 @@ const ScoreCommentForm = ({
           <Input.TextArea
             className="w-full !h-[100px] px-5 py-3 rounded-md border !resize-none"
             placeholder="Enter comment"
-            // value={comment}
+            value={comment}
             onChange={handleCommentChange}
           />
         </div>
