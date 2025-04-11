@@ -9,5 +9,5 @@ export const TableType = Object.freeze({
     PUBLISHED: "published",
   });
   
-  export const LevelEnum = ["A1","A2", "B1","B2", "C"];
+  export const LevelEnum = ["X","A1","A2", "B1","B2", "C"];
   

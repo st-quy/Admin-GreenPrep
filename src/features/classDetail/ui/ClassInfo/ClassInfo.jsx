@@ -3,7 +3,7 @@ import Group from "@assets/icons/class-detail/group.png";
 
 const ClassInfo = ({ data }) => {
   return (
-    <div className="flex w-full items-center justify-between pb-6">
+    <div className="flex w-full items-center justify-between">
       <div>
         <h4 className="font-[700] lg:text-[30px] md:text-[28px]">
           Class Information

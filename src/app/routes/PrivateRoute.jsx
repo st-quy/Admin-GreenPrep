@@ -2,7 +2,7 @@ import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
 import SessionLayout from "../../pages/SessionManagement/SessionLayout.jsx";
 import SessionInformation from "@pages/SessionManagement/SessionInformation.jsx";
-import { TableType } from "@features/session/constraint/TableEnum.js";
+import { TableType } from "@features/session/constant/TableEnum.js";
 import { GradingPage } from "@pages/grading/GradingPage.jsx";
 const ProfilePage = lazy(() => import("@pages/ProfilePage/ProfilePage.jsx"));
 import ClassManagement from "@pages/ClassManagement/classManagement.jsx";
@@ -46,6 +46,7 @@ const PrivateRoute = [
               },
               {
                 path: "student",
+                breadcrumb: "Student Detail",
                 children: [
                   {
                     path: ":studentId",
@@ -53,17 +54,13 @@ const PrivateRoute = [
                     children: [
                       {
                         index: true,
-                        element: <StudentDetail />,
+                        element: <SessionInformation type={TableType.STUDENT} />,
                       },
-                      {
-                        path: "grade",
-                        element: <GradingPage />,
-                        breadcrumb: "Grade",
-                      },
+                     
                     ],
                   },
                 ],
-                breadcrumb: "Student Detail",
+
               },
             ],
           },
