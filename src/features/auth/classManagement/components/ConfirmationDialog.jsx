@@ -1,9 +1,7 @@
 import React, { useState } from "react";
-import { Modal, Button, notification, Space } from "antd";
-import {
-  ExclamationCircleFilled,
-  CloseCircleOutlined,
-} from "@ant-design/icons";
+import { Modal, Button, notification, Spin } from "antd";
+import { Warning } from "../../../../assets/images";
+import { CloseCircleOutlined } from "@ant-design/icons";
 
 const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
   const [isDeleting, setIsDeleting] = useState(false);
@@ -42,34 +40,35 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
 
   return (
     <Modal
-      title={null}
       open={isOpen}
       onCancel={onClose}
       footer={null}
-      width={440}
       centered
-      className="confirm-delete-modal"
-      maskStyle={{ backgroundColor: "rgba(0, 0, 0, 0.3)" }}
-      style={{ borderRadius: "12px", overflow: "hidden" }}
+      width={448}
+      closable={false}
     >
-      <div className="flex flex-col items-center text-center py-4">
-        <div className="mb-4 relative">
-          <div className="h-16 w-16 flex items-center justify-center bg-red-50 rounded-full">
-            <ExclamationCircleFilled className="text-4xl text-red-500" />
+      <div className="flex flex-col items-center text-center">
+        <div className="mb-4">
+          <div className="h-12 w-12 flex items-center justify-center">
+            <img
+              src={Warning}
+              alt="Warning"
+              className="w-full h-full object-contain"
+            />
           </div>
         </div>
-
         <h3 className="text-xl font-semibold text-gray-900 mb-2">
           Are you sure you want to delete this class?
         </h3>
-        <p className="text-sm text-gray-500 mb-6">
+        <p className="text-sm text-gray-600 mb-6">
           After you delete this class, you cannot view this class again.
         </p>
 
-        <Space size="middle">
+        <div className="flex justify-center gap-4 mt-auto">
           <Button
             onClick={onClose}
-            className="min-w-[113px] h-[40px] !text-gray-700 border-gray-300 hover:!text-gray-900 hover:!border-gray-400 rounded-[50px] font-medium text-[15px]"
+            type="default"
+            className="w-[113px] h-[40px] !text-[#003087] shadow-[0_0_0_2px_rgba(255,255,255,0.3)] !border-gray-120 rounded-[50px] font-inter font-medium text-[16px] leading-[24px] bg-[#FFFFFF] text-[#003087] hover:!text-[#003087] focus:!bg-[#FFFFFF] focus:!text-[#003087] hover:!border-[#D0D5DD]"
             disabled={isDeleting}
           >
             Cancel
@@ -78,12 +77,12 @@ const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
             onClick={handleDelete}
             type="primary"
             danger
+            className="w-[113px] h-[40px] rounded-[50px] font-inter font-medium text-[16px] leading-[24px] bg-[#E10E0E] text-[#FFFFFF] hover:!bg-[#c70c0c] hover:!text-[#FFFFFF] focus:!bg-[#E10E0E] focus:!text-[#FFFFFF]"
             loading={isDeleting}
-            className="min-w-[113px] h-[40px] rounded-[50px] font-medium text-[15px] hover:!bg-red-600 focus:!bg-red-500"
           >
-            Delete
+            {isDeleting ? <Spin size="small" /> : "Delete"}
           </Button>
-        </Space>
+        </div>
       </div>
     </Modal>
   );

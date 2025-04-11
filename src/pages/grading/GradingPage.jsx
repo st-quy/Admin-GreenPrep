@@ -80,7 +80,7 @@ const GradingPage = () => {
     );
 
   return (
-    <>
+    <div className="p-8">
       {/* Student Information Card */}
       <StudentInfoCard
         student={userData}
@@ -102,7 +102,7 @@ const GradingPage = () => {
         onClose={() => setIsModalOpen(false)}
         handleSelect={changeParticipant}
       />
-    </>
+    </div>
   );
 };
 

@@ -1,7 +1,9 @@
-import ResetPasswordSuccessfullyPage from "@pages/ResetPasswordSuccessfully/ResetPasswordSuccessfullyPage.jsx";
+// Define public routes accessible to all users
 import { PublicLayout } from "@app/layout/PublicLayout";
-import ForgotPasswordForm from "@features/auth/ui/ForgotPasswordForm";
-import LoginPage from "../../features/auth/ui/LoginForm";
+import ForgotPassword from "@pages/ForgotPassword/index";
+import LoginPage from "@pages/Login/index";
+import ResetPassword from "@pages/ResetPassword/index";
+import ResetPasswordSuccess from "@pages/ResetPassword/ResetSuccess";
 import GradingPage from "@pages/Grading/GradingPage";
 
 const PublicRoute = [
@@ -15,11 +17,15 @@ const PublicRoute = [
       },
       {
         path: "forgot-password",
-        element: <ForgotPasswordForm />,
+        element: <ForgotPassword />,
       },
       {
-        path: "reset-password-success",
-        element: <ResetPasswordSuccessfullyPage />,
+        path: "reset-password",
+        element: <ResetPassword />,
+      },
+      {
+        path: "reset-success",
+        element: <ResetPasswordSuccess />,
       },
       {
         path: "session/:sessionId/participant/:participantId",

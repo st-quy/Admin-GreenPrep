@@ -51,12 +51,12 @@ const SearchBar = ({
       onSubmit={handleSubmit}
       className={`flex items-center gap-2 ${className}`}
     >
-      <div className="relative w-full shadow-[0px_4px_4px_0px_#0000001A]">
+      <div className="relative w-full">
         <input
           type="text"
           placeholder={placeholder}
-          className="w-full h-[48px] rounded-[6px] border border-[#DFE4EA] bg-white pt-[12px] pr-[40px] pb-[12px] pl-[20px] 
-          focus:outline-none focus:ring-1 focus:ring-[#0B3B6A] font-['Inter'] text-[16px] leading-[24px] tracking-[0px] 
+          className="w-full h-[48px] rounded-lg bg-white pt-[12px] pr-[40px] pb-[12px] pl-[20px] 
+          focus:outline-none  font-['Inter'] text-[16px] leading-[24px] tracking-[0px] 
           placeholder:text-[#9CA3AF] placeholder:font-['Inter'] placeholder:font-normal placeholder:text-[16px] 
           placeholder:leading-[24px]"
           value={internalValue}

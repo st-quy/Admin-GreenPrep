@@ -91,6 +91,7 @@ const Assessment = ({ isSpeaking, currentUser, data }) => {
       </div>
     ));
   };
+  };
 
   return (
     <div className="w-full">
@@ -135,6 +136,18 @@ const Assessment = ({ isSpeaking, currentUser, data }) => {
         </div>
       </div>
       <div className="flex flex-col gap-6 w-full">
+        {!isSpeaking && partData && (
+          <Card
+            variant="borderless"
+            className="rounded-lg overflow-hidden w-[78%] px-[43px] py-[41px]"
+            styles={{ body: { padding: 0 } }}
+          >
+            <div>{partData.Content || ""}</div>
+            <div className="text-gray-500 font-bold">
+              {partData.SubContent || ""}
+            </div>
+          </Card>
+        )}
         {!isSpeaking && partData && (
           <Card
             variant="borderless"
