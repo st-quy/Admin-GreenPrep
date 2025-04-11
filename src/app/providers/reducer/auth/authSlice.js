@@ -15,27 +15,15 @@ const getUserRole = () => {
     const token = getStorageData(ACCESS_TOKEN);
     if (!token) return null;
     const decodedToken = jwtDecode(token);
-    console.log(decodedToken, 'decodedToken');
     
     // @ts-ignore - JWT payload may contain custom fields
-    return decodedToken.RoleIDs?.[0] || null;
+    return decodedToken.RoleIDs || null;
   } catch (error) {
     console.error("Error decoding token:", error);
     return null;
   }
 };
 
-const getUserData = () => {
-  try {
-    const token = getStorageData(ACCESS_TOKEN);
-    if (!token) return null;
-    const decodedToken = jwtDecode(token);
-    return decodedToken || null;
-  } catch (error) {
-    console.error("Error decoding token:", error);
-    return null;
-  }
-};
 
 const getUserId = () => {
   try {

@@ -99,7 +99,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
   return (
     <>
       {isEdit ? (
-        <span className="text-3xl">
+        <span className="text-xl">
           <EditOutlined onClick={showModal} className="hover:opacity-50" />
         </span>
       ) : (

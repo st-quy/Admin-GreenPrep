@@ -83,7 +83,6 @@ export const useResetPassword = () => {
 
 export const useGetProfile = () => {
   const { userId } = useSelector((state) => state.auth);
-  console.log(userId);
   const dispatch = useDispatch();
 
   return useQuery({

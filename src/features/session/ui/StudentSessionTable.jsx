@@ -35,7 +35,7 @@ const StudentSessionTable = ({
 }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10); 
+  const [pageSize, setPageSize] = useState(10);
   const [levels, setLevels] = useState({});
 
   const { data, isLoading } =
@@ -138,9 +138,7 @@ const StudentSessionTable = ({
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
             onClick={() =>
-              navigate(
-                `/class/session/student/${record.User.ID}/grade?skill=speaking`
-              )
+              navigate(`student/${record.User.ID}/grade?skill=speaking`)
             }
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
@@ -161,9 +159,7 @@ const StudentSessionTable = ({
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
             onClick={() =>
-              navigate(
-                `/class/session/student/${record.User.ID}/grade?skill=writing`
-              )
+              navigate(`student/${record.User.ID}/grade?skill=writing`)
             }
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
@@ -225,9 +221,7 @@ const StudentSessionTable = ({
           render: (text, record) =>
             text ? (
               <a
-                onClick={() =>
-                  navigate(`/class/session/student/${record.User.ID}`)
-                }
+                onClick={() => navigate(`student/${record.User.ID}`)}
                 className="cursor-pointer underline underline-offset-4 hover:opacity-80"
               >
                 {text}
@@ -254,9 +248,6 @@ const StudentSessionTable = ({
       ];
     }
   }, [type, status, levels]);
-
-  // if (isLoading) return <Spin />;
-  // if (isLoading) return <Spin />;
 
   return (
     <div>

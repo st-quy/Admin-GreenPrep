@@ -1,19 +1,17 @@
-import React, { useRef, useState } from 'react';
-import { Button, Typography, Avatar, message, Form } from 'antd';
-import { UserOutlined, CameraOutlined } from '@ant-design/icons';
-import defaultAvatar from '@assets/images/avatar.png';
-import ProfileUpdate from '@features/profile/ui/Modal/ProfileUpdate';
-import ChangePassword from '@features/profile/ui/Modal/ChangePassword';
-import { useSelector } from 'react-redux';
+import React, { useRef, useState } from "react";
+import { Button, Spin, Tag, Typography, message } from "antd";
+import { CameraOutlined } from "@ant-design/icons";
+import defaultAvatar from "@assets/images/avatar.png";
+import ProfileUpdate from "@features/profile/ui/Modal/ProfileUpdate";
+import ChangePassword from "@features/profile/ui/Modal/ChangePassword";
+import { useSelector } from "react-redux";
 const { Title, Text } = Typography;
-
 
 const ProfilePage = () => {
   const fileInputRef = useRef(null);
   const [avatar, setAvatar] = useState(defaultAvatar);
   const [openKey, setOpenKey] = useState(null);
   const { user } = useSelector((state) => state.auth);
-  
 
   const handleAvatarClick = () => {
     fileInputRef.current?.click();
@@ -22,12 +20,13 @@ const ProfilePage = () => {
   const handleFileChange = (event) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 2 * 1024 * 1024) { // 2MB limit
-        message.error('Image size should be less than 2MB');
+      if (file.size > 2 * 1024 * 1024) {
+        // 2MB limit
+        message.error("Image size should be less than 2MB");
         return;
       }
-      if (!file.type.startsWith('image/')) {
-        message.error('Please upload an image file');
+      if (!file.type.startsWith("image/")) {
+        message.error("Please upload an image file");
         return;
       }
       const reader = new FileReader();
@@ -37,22 +36,45 @@ const ProfilePage = () => {
       reader.readAsDataURL(file);
     }
   };
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
+  }
 
   const InfoField = ({ label, value }) => (
     <div>
-      <Text className="text-[#374151] text-[16px] font-normal block mb-2">{label}</Text>
-      <Text className={value !== 'No information' ? 'text-[#1F2A37] text-[16px] font-semibold' : 'text-[#6B7280] text-[16px] font-normal'}>
-        {value || 'No information'}
+      <Text className="text-[#374151] text-[16px] font-normal block mb-2">
+        {label}
+      </Text>
+      <Text
+        className={
+          value !== "No information"
+            ? "text-[#1F2A37] text-[16px] font-semibold"
+            : "text-[#6B7280] text-[16px] font-normal"
+        }
+      >
+        {Array.isArray(value)
+          ? value.map((item, index) => {
+              return <Tag key={index}>{item.toUpperCase()}</Tag>;
+            })
+          : value || "No information"}
       </Text>
     </div>
   );
 
   return (
-    <div className="p-6 space-y-6 max-w-[1920px] mx-auto">
+    <div className="p-8 space-y-6 max-w-[1920px] mx-auto">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div className="w-full sm:w-auto">
-          <Title level={3} className="m-0 font-bold text-black  ">My profile</Title>
-          <Text className="text-[#637381] text-[18px]">Summary of personal information.</Text>
+          <Title level={3} className="m-0 font-bold text-black  ">
+            My profile
+          </Title>
+          <Text className="text-[#637381] text-[18px]">
+            Summary of personal information.
+          </Text>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:space-x-0">
           <Button
@@ -74,9 +96,12 @@ const ProfilePage = () => {
 
       <div className="bg-white rounded-lg shadow-lg border border-gray-100 p-6 sm:p-8">
         <div className="flex items-center gap-4 sm:gap-6 flex-wrap sm:flex-nowrap">
-          <div className="relative group cursor-pointer" onClick={handleAvatarClick}>
+          <div
+            className="relative group cursor-pointer"
+            onClick={handleAvatarClick}
+          >
             <div className="w-[114px] h-[122px] relative">
-              <img 
+              <img
                 src={avatar}
                 alt="Profile"
                 className="w-full h-full object-cover bg-blue-100 rounded-lg"
@@ -94,9 +119,18 @@ const ProfilePage = () => {
             />
           </div>
           <div>
-            <Text className="font-bold text-[#003087] text-[18px] block">{user?.firstName + ' ' + user?.lastName || 'N/A'}</Text>
-            <Text className="text-[#6B7280] text-[16px] block">{user?.role ? String(user?.role).charAt(0).toUpperCase() + String(user?.role).slice(1) : 'N/A'}</Text>
-            <Text className="block text-[#6B7280] text-[16px]">{user?.email}</Text>
+            <Text className="font-bold text-[#003087] text-[18px] block">
+              {user?.firstName + " " + user?.lastName || "N/A"}
+            </Text>
+            <Text className="text-[#6B7280] text-[16px] block">
+              {user?.role
+                ? String(user?.role).charAt(0).toUpperCase() +
+                  String(user?.role).slice(1)
+                : "N/A"}
+            </Text>
+            <Text className="block text-[#6B7280] text-[16px]">
+              {user?.email}
+            </Text>
           </div>
         </div>
       </div>
@@ -115,13 +149,19 @@ const ProfilePage = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 p-6 sm:p-8 border-t border-gray-100">
           <div className="space-y-1">
-            <InfoField label="BOD" value={user?.bod || 'No information'} />
+            <InfoField label="BOD" value={user?.bod || "No information"} />
           </div>
           <div className="space-y-1">
-            <InfoField label="Phone number" value={user?.phone || 'No information'} />
+            <InfoField
+              label="Phone number"
+              value={user?.phone || "No information"}
+            />
           </div>
           <div className="space-y-1">
-            <InfoField label="Address" value={user?.address || 'No information'} />
+            <InfoField
+              label="Address"
+              value={user?.address || "No information"}
+            />
           </div>
         </div>
       </div>
@@ -129,22 +169,25 @@ const ProfilePage = () => {
       <div className="bg-white rounded-[8px] shadow-lg border border-gray-100 w-full mx-auto">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 p-6 sm:p-8">
           <div className="space-y-1">
-            <InfoField label="Teacher Code" value={user?.teacherCode || 'No information'} />
+            <InfoField
+              label="Teacher Code"
+              value={user?.teacherCode || "No information"}
+            />
           </div>
-          
+
           <div className="space-y-1">
-            <InfoField label="Role" value={user?.role || 'No information'} />
+            <InfoField label="Role" value={user?.role || "No information"} />
           </div>
         </div>
       </div>
 
-      <ProfileUpdate 
+      <ProfileUpdate
         isOpen={openKey === "update-profile"}
         onClose={() => setOpenKey(null)}
         userData={user}
       />
 
-      <ChangePassword 
+      <ChangePassword
         isOpen={openKey === "change-password"}
         onClose={() => setOpenKey(null)}
       />
@@ -152,4 +195,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage; 
+export default ProfilePage;
