@@ -1,4 +1,4 @@
-import "./index.css";
+import "./index.scss";
 import { useState, useEffect } from "react";
 import { Tabs, Button, Form, InputNumber } from "antd";
 import { EditOutlined, AudioOutlined } from "@ant-design/icons";
@@ -12,7 +12,7 @@ const AssessmentScores = ({ onTabChange, currentUser }) => {
       onTabChange(false);
     } else onTabChange(true);
   };
-  
+
   useEffect(() => {
     setActiveTab("writing");
   }, [currentUser]);

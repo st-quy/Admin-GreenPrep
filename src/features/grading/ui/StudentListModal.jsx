@@ -1,4 +1,4 @@
-import "./index.css";
+import "./index.scss";
 import { Modal, Table, Button } from "antd";
 import { EditOutlined, AudioOutlined } from "@ant-design/icons";
 

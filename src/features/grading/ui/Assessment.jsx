@@ -1,5 +1,5 @@
 import "antd/dist/reset.css";
-import "./index.css";
+import "./index.scss";
 import { QuestionAnswer } from "./QuestionAnswer";
 import ScoreCommentForm from "./ScoreCommentForm";
 import { Card, Tabs, Button, message } from "antd";

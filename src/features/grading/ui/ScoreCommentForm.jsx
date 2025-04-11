@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Input, Form, InputNumber } from "antd";
 import { yupSync } from "@shared/lib/utils";
 import * as yup from "yup";
-import "./index.css";
+import "./index.scss";
 
 const ScoreCommentForm = ({
   partNumber,
@@ -15,11 +15,7 @@ const ScoreCommentForm = ({
   const [form] = Form.useForm();
 
   const schema = yup.object().shape({
-    comment: yup
-      .string()
-      .trim()
-      .nullable()
-      .optional(), // không bắt buộc nhập
+    comment: yup.string().trim().nullable().optional(), // không bắt buộc nhập
   });
 
   // useEffect(() => {
@@ -58,10 +54,12 @@ const ScoreCommentForm = ({
       className="w-full h-fit rounded-lg shadow px-[22px] py-[16px] bg-white"
       // initialValues={{ comment: comment }}
     >
-      <Form.Item name="comment" 
-      // @ts-ignore
-      rules={[yupSync(schema)]} 
-      noStyle={true}>
+      <Form.Item
+        name="comment"
+        // @ts-ignore
+        rules={[yupSync(schema)]}
+        noStyle={true}
+      >
         <div>
           <label className="block text-base font-medium mt-[12px] mb-[6px]">
             Comment
