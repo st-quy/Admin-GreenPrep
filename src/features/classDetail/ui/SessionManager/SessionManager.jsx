@@ -1,12 +1,73 @@
 import React, { useState } from "react";
-import SessionTable from "../SessionTable/SessionTable";
 import ActionModal from "../SessionModal/ActionModal/ActionModal";
-import { Input, Select } from "antd";
-import { StatusEnum } from "@features/classDetail/constant/statusEnum";
+import TableSearch from "@shared/ui/TableSearch";
+import { Link } from "react-router-dom";
+import { formatDateTime } from "@shared/lib/utils/formatString";
+import DeleteModal from "../SessionModal/DeleteModal/DeleteModal";
 
 const SessionManager = ({ data }) => {
-  const [searchKeyword, setSearchKeyword] = useState("");
-  const [statusFilter, setStatusFilter] = useState("");
+  const sessionColumns = [
+    {
+      title: "SESSION NAME",
+      dataIndex: "sessionName",
+      key: "sessionName",
+      className: "!text-center",
+      render: (text, record) => (
+        <Link to={`/class/session/${record.ID}`} className="text-[#003087]">
+          {text}
+        </Link>
+      ),
+    },
+    {
+      title: "SESSION KEY",
+      dataIndex: "sessionKey",
+      key: "sessionKey",
+      className: "!text-center",
+    },
+    {
+      title: "START TIME",
+      dataIndex: "startTime",
+      key: "startTime",
+      className: "!text-center",
+      render: (text) => formatDateTime(text),
+    },
+    {
+      title: "END TIME",
+      dataIndex: "endTime",
+      key: "endTime",
+      className: "!text-center",
+      render: (text) => formatDateTime(text),
+    },
+    {
+      title: "NUMBER OF PARTICIPANTS",
+      dataIndex: "numberOfParticipants",
+      key: "numberOfParticipants",
+      className: "!text-center",
+    },
+    {
+      title: "STATUS",
+      dataIndex: "status",
+      key: "status",
+      className: "!text-center",
+      render: (text) => {
+        const statusClass =
+          text === "active" ? "text-green-500" : "text-red-500";
+        return <span className={statusClass}>{text}</span>;
+      },
+    },
+    {
+      title: "ACTION",
+      key: "action",
+      className: "!text-center",
+      render: (_, record) => (
+        <div className="flex justify-center items-center gap-4">
+          <ActionModal initialData={record} />
+          <DeleteModal sessionID={record.ID} />
+        </div>
+      ),
+    },
+  ];
+
   return (
     <>
       <div className="flex w-full items-center justify-between pt-8">
@@ -20,31 +81,8 @@ const SessionManager = ({ data }) => {
         </div>
         <ActionModal classId={data.ID} />
       </div>
-
-      <div className="mb-[10px] mt-4 flex gap-4">
-        <Input
-          placeholder="Search session by name"
-          className="!w-[250px] !h-[48px]"
-          onChange={(e) => setSearchKeyword(e.target.value)}
-          value={searchKeyword}
-          allowClear
-          onClear={() => setSearchKeyword("")}
-        />
-        <Select
-          placeholder="Select Status"
-          className="!w-[180px] !h-[48px]"
-          onChange={(value) => setStatusFilter(value)}
-        >
-          <Select.Option value={StatusEnum.ALL}>All</Select.Option>
-          <Select.Option value={StatusEnum.COMPLETED}>Completed</Select.Option>
-          <Select.Option value={StatusEnum.NOTSTARTED}>
-            Not Started
-          </Select.Option>
-          <Select.Option value={StatusEnum.ONGOING}>Ongoing</Select.Option>
-        </Select>
-      </div>
       <div className="mt-8">
-        <SessionTable dataSource={data.Sessions} />
+        <TableSearch data={data.Sessions} columns={sessionColumns} />
       </div>
     </>
   );

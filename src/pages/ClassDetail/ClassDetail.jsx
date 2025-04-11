@@ -1,9 +1,7 @@
-import { classInfo, sessionsData } from "@features/classDetail/exampleData";
 import { useClassDetailQuery } from "@features/classDetail/hooks/useClassDetail";
 import ClassInfo from "@features/classDetail/ui/ClassInfo/ClassInfo";
-
 import SessionManager from "@features/classDetail/ui/SessionManager/SessionManager";
-import { Divider, Spin } from "antd";
+import { Spin } from "antd";
 import React from "react";
 import { useParams } from "react-router-dom";
 

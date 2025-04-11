@@ -83,3 +83,13 @@ export const useUpdateSession = () => {
     },
   });
 };
+
+export const useGetTopics = () => {
+  return useQuery({
+    queryKey: ["topics"],
+    queryFn: async () => {
+      const response = await ClassDetailApi.getTopics();
+      return response.data.data;
+    },
+  });
+};

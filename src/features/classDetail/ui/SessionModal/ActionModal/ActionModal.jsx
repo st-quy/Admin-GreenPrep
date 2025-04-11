@@ -17,6 +17,7 @@ import { sessionSchema } from "@features/classDetail/validate";
 import {
   useCreateSession,
   useGenerateSessionKeyMutation,
+  useGetTopics,
   useUpdateSession,
 } from "@features/classDetail/hooks/useClassDetail";
 import dayjs from "dayjs";
@@ -32,6 +33,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const isEdit = initialData !== null;
+  const { data: topics, isLoading: isLoadingTopics } = useGetTopics();
   const { mutateAsync: generateKey, isPending: isGenerating } =
     useGenerateSessionKeyMutation();
   const { mutate: sessionAction, isPending: isLoading } = isEdit
@@ -64,7 +66,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
         startTime: values.dateRange ? values.dateRange[0].toISOString() : null,
         endTime: values.dateRange ? values.dateRange[1].toISOString() : null,
         examSet: values.examSet,
-        ClassId: classId,
+        ClassID: classId,
       };
       sessionAction(
         // @ts-ignore
@@ -83,7 +85,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
             message.error(
               // @ts-ignore
               error?.response?.data?.message ||
-                `Failed to ${isEdit ? "update" : "create"} account.`
+                `Failed to ${isEdit ? "update" : "create"} session.`
             );
           },
         }
@@ -188,13 +190,14 @@ const ActionModal = ({ initialData = null, classId = null }) => {
             >
               <Select
                 className="!h-[46px] !w-full"
-                placeholder="Exam Set"
-                options={[
-                  { label: "Exam 1", value: "english" },
-                  { label: "Exam 2", value: "math" },
-                  { label: "Exam 3", value: "history" },
-                  { label: "Exam 4", value: "museum" },
-                ]}
+                placeholder="Select Exam Set"
+                loading={isLoadingTopics}
+                options={
+                  topics?.map((topic) => ({
+                    label: topic.Name,
+                    value: topic.ID,
+                  })) || []
+                }
               />
             </Form.Item>
             <Form.Item
