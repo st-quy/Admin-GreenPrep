@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Spin } from "antd";
-
 import Assessment from "@features/grading/ui/Assessment";
 import AssessmentScores from "@features/grading/ui/AssessmentScores";
 import StudentInfoCard from "@features/grading/ui/StudentInfoCard";
 import StudentListModal from "@features/grading/ui/StudentListModal";
-import { SpeakingApi, WritingApi, ParticipantApi } from "@features/grading/api";
+import {
+  useGetParticipants,
+  useGetSessionDetail,
+  useGetSpeaking,
+  useGetWriting,
+} from "@features/grading/hooks";
 
 const GradingPage = () => {
   const navigate = useNavigate();
@@ -17,23 +20,16 @@ const GradingPage = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const { isPending: isParticipantsPending, data: participantsData } = useQuery(
-    {
-      queryKey: ["participants"],
-      queryFn: () => ParticipantApi.getParticipants(sessionId),
-    }
+  const { isPending: isSessionPending, data: sessionData } =
+    useGetSessionDetail(sessionId);
+  const { isPending: isWritingPending, data: writingData } = useGetWriting(
+    sessionData.data.data.examSet
   );
-
-  const { isPending: isWritingPending, data: writingData } = useQuery({
-    queryKey: ["writingData"],
-    queryFn: WritingApi.getWriting,
-  });
-
-  const { isPending: isSpeakingPending, data: speakingData } = useQuery({
-    queryKey: ["speakingData"],
-    queryFn: SpeakingApi.getSpeaking,
-  });
-
+  const { isPending: isSpeakingPending, data: speakingData } = useGetSpeaking(
+    sessionData.data.data.examSet
+  );
+  const { isPending: isParticipantsPending, data: participantsData } =
+    useGetParticipants(sessionId);
   const onTabChange = (key) => {
     setIsSpeaking(key);
   };
@@ -73,7 +69,12 @@ const GradingPage = () => {
     (item) => item.ID === participantId
   );
 
-  if (isWritingPending || isSpeakingPending || isParticipantsPending)
+  if (
+    isSessionPending ||
+    isWritingPending ||
+    isSpeakingPending ||
+    isParticipantsPending
+  )
     return (
       <Spin size="large" className="flex justify-center items-center h-60" />
     );
@@ -87,9 +88,7 @@ const GradingPage = () => {
         onNext={handleNextParticipant}
         onPrevious={handlePreviousParticipant}
       />
-      <AssessmentScores 
-        onTabChange={onTabChange} 
-        currentUser={participantId} />
+      <AssessmentScores onTabChange={onTabChange} currentUser={participantId} />
       <Assessment
         isSpeaking={isSpeaking}
         currentUser={participantId}

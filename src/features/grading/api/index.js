@@ -1,17 +1,17 @@
 import axiosInstance from "@shared/config/axios";
 
 export const SpeakingApi = {
-  getSpeaking: () => {
+  getSpeaking: (topicID) => {
     return axiosInstance.get(
-      "/topics/ef6b69aa-2ec2-4c65-bf48-294fd12e13fc?skillName=SPEAKING"
+      `/topics/${topicID}?skillName=SPEAKING`
     );
   },
 };
 
 export const WritingApi = {
-  getWriting: () => {
+  getWriting: (topicID) => {
     return axiosInstance.get(
-      "/topics/ef6b69aa-2ec2-4c65-bf48-294fd12e13fc?skillName=WRITING"
+      `/topics/${topicID}?skillName=WRITING`
     );
   },
 };
@@ -24,3 +24,9 @@ export const ParticipantApi = {
     return axiosInstance.get(`/session-participants/${sessionId}`);
   },
 };
+
+export const SessionApi = {
+  getSessionDetail: (sessionId) => {
+    return axiosInstance.get(`/sessions/${sessionId}`)
+  }
+}
