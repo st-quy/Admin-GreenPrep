@@ -22,12 +22,12 @@ const GradingPage = () => {
 
   const { isPending: isSessionPending, data: sessionData } =
     useGetSessionDetail(sessionId);
-  const { isPending: isWritingPending, data: writingData } = useGetWriting(
-    sessionData.data.data.examSet
-  );
-  const { isPending: isSpeakingPending, data: speakingData } = useGetSpeaking(
-    sessionData.data.data.examSet
-  );
+
+  let writingData, isWritingPending, speakingData, isSpeakingPending;
+  if (sessionData?.data?.data?.examSet) {
+    ({ isPending: isWritingPending, data: writingData } = useGetWriting(sessionData.data.data.examSet));
+    ({ isPending: isSpeakingPending, data: speakingData } = useGetSpeaking(sessionData.data.data.examSet));
+  }
   const { isPending: isParticipantsPending, data: participantsData } =
     useGetParticipants(sessionId);
   const onTabChange = (key) => {
