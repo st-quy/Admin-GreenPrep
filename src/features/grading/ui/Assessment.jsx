@@ -1,95 +1,106 @@
-import "antd/dist/reset.css";
-import "./index.scss";
-import { QuestionAnswer } from "./QuestionAnswer";
-import ScoreCommentForm from "./ScoreCommentForm";
-import { Card, Tabs } from "antd";
-import { useState, useEffect } from "react";
+import "antd/dist/reset.css"
+import "./index.scss"
+import { QuestionAnswer } from "./QuestionAnswer"
+import CommentForm from "./CommentForm"
+import { Card, Tabs } from "antd"
+import { useState, useEffect } from "react"
 
-const Assessment = ({ isSpeaking, currentUser, data }) => {
-  const [activeTab, setActiveTab] = useState("1");
+const Assessment = ({ isSpeaking, currentUser, data, onCommentChange, speakingComments, writingComments }) => {
+  const [activeTab, setActiveTab] = useState("1")
   // Track part totals for each skill
-  const [totalScore, setTotalScore] = useState({ speaking: {}, writing: {} });
-  const [partData, setPartData] = useState({});
-  const [scores, setScores] = useState({ speaking: {}, writing: {} });
+  const [partData, setPartData] = useState({})
 
   const handleTabChange = (key) => {
-    setActiveTab(key);
-  };
+    setActiveTab(key)
+  }
 
   // Reset to part 1 when isSpeaking changes
   useEffect(() => {
-    setActiveTab("1");
-  }, [isSpeaking, currentUser]);
+    setActiveTab("1")
+  }, [isSpeaking, currentUser])
 
   useEffect(() => {
-    handleDataChange();
-  }, [activeTab, isSpeaking]);
+    handleDataChange()
+  }, [activeTab, isSpeaking])
 
   const handleDataChange = () => {
     try {
-      const parts = data.data.data.topic.Parts;
+      const parts = data.data.data.topic.Parts
       if (parts && parts.length > 0) {
-        const currentPart = `PART ${activeTab}`;
-        const currentPartIndex = parts.findIndex((p) =>
-          p.Content.toLowerCase().includes(currentPart.toLowerCase())
-        );
-        setPartData(parts[currentPartIndex]);
+        const currentPart = `PART ${activeTab}`
+        const currentPartIndex = parts.findIndex((p) => p.Content.toLowerCase().includes(currentPart.toLowerCase()))
+        setPartData(parts[currentPartIndex])
       }
     } catch (error) {
-      console.error("Error parsing data:", error);
+      console.error("Error parsing data:", error)
     }
-  };
+  }
 
-  const handleSubmitScore = () => { };
+  const handleCommentChange = (commentData) => {
+    if (onCommentChange) {
+      onCommentChange({
+        ...commentData,
+        isSpeaking,
+        part: activeTab,
+      })
+    }
+  }
+
+  // Find existing comment for a question
+  const findExistingComment = (questionData) => {
+    const comments = isSpeaking ? speakingComments : writingComments
+    const studentAnswerId = questionData?.studentAnswer?.ID
+
+    if (!comments || !studentAnswerId) return ""
+
+    // Find comment that matches both studentAnswerId and current part
+    const comment = comments.find((c) => c.studentAnswerId === studentAnswerId && c.part === activeTab)
+
+    return comment ? comment.messageContent : ""
+  }
+
+  const handleSubmitScore = () => { }
   const handleDisplayPart = () => {
-    if (!partData) return "";
+    if (!partData) return ""
     if (isSpeaking && activeTab === "4") {
-      const partFourQuestions = partData.Questions || [];
+      const partFourQuestions = partData.Questions || []
       return (
         <div className="flex gap-10 relative">
           <div className="w-[80%] h-fit shadow-md rounded-lg">
-            <QuestionAnswer
-              isSpeaking={isSpeaking}
-              fileName="LoL"
-              speakingPartFour={partFourQuestions}
-              currentPart={activeTab}
-              currentQuestionIndex={0}
-            />
+            <QuestionAnswer isSpeaking={isSpeaking} fileName="LoL" speakingPartFour={partFourQuestions} />
           </div>
-          <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
-            <ScoreCommentForm
-              partNumber={activeTab}
-              questionIndex={0}
-              // savedData={}
+          {partFourQuestions[0]?.studentAnswer?.ID && <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
+            <CommentForm
+              key={`speaking-part4-${partFourQuestions[0]?.studentAnswer?.ID}`}
+              data={partFourQuestions[0]}
+              onCommentChange={handleCommentChange}
               isSpeaking={isSpeaking}
+              activeTab={activeTab}
+              existingComment={findExistingComment(partFourQuestions[0])}
             />
-          </div>
+          </div>}
         </div>
-      );
+      )
     }
 
     return partData.Questions?.map((question, index) => (
       <div className="flex gap-10 relative" key={index}>
         <div className="w-[80%] h-fit shadow-md rounded-lg">
-          <QuestionAnswer
-            isSpeaking={isSpeaking}
-            fileName="haha"
-            quesntionsAnswerData={question}
-            currentPart={activeTab}
-            currentQuestionIndex={index}
-          />
+          <QuestionAnswer isSpeaking={isSpeaking} fileName="haha" quesntionsAnswerData={question} />
         </div>
         <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
-          <ScoreCommentForm
-            partNumber={activeTab}
-            questionIndex={index}
-            // savedData={}
+          {question?.studentAnswer?.ID && <CommentForm
+            key={`${isSpeaking ? "speaking" : "writing"}-part${activeTab}-${question?.studentAnswer?.ID}`}
+            data={question}
+            onCommentChange={handleCommentChange}
             isSpeaking={isSpeaking}
-          />
+            activeTab={activeTab}
+            existingComment={findExistingComment(question)}
+          />}
         </div>
       </div>
-    ));
-  };
+    ))
+  }
 
   return (
     <div className="w-full">
@@ -140,15 +151,13 @@ const Assessment = ({ isSpeaking, currentUser, data }) => {
             styles={{ body: { padding: 0 } }}
           >
             <div>{partData.Content || ""}</div>
-            <div className="text-gray-500 font-bold">
-              {partData.SubContent || ""}
-            </div>
+            <div className="text-gray-500 font-bold">{partData.SubContent || ""}</div>
           </Card>
         )}
         {handleDisplayPart()}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Assessment;
+export default Assessment

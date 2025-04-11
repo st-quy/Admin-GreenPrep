@@ -16,10 +16,10 @@ export const GradeApi = {
       `/grades/participants?sessionParticipantId=${participantId}&skillName=${skill}`
     );
   },
-  // postGrade: (data) => {
-  //   return axiosInstance.post(
-  //     `/grades/teacher-grade`,
-  //     data
-  //   );
-  // },
+  postGrade: (params) => {
+    return axiosInstance.post(
+      `/grades/teacher-grade`,
+      params
+    );
+  },
 };

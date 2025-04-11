@@ -6,8 +6,6 @@ export const QuestionAnswer = ({
   isSpeaking = false,
   fileName = "",
   speakingPartFour = [],
-  currentPart = "",
-  currentQuestionIndex = -1,
 }) => {
   const studentAnswers = () => {
     if (isSpeaking) {

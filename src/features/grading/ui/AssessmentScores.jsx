@@ -1,41 +1,66 @@
-import "./index.scss";
-import { useState, useEffect } from "react";
-import { Tabs, Button, Form, InputNumber } from "antd";
-import { EditOutlined, AudioOutlined } from "@ant-design/icons";
+import "./index.scss"
+import { useState, useEffect } from "react"
+import { Tabs, Button, Form, InputNumber, message } from "antd"
+import { EditOutlined, AudioOutlined } from "@ant-design/icons"
+import { usePostGrade } from "../hooks"
 
-const AssessmentScores = ({ onTabChange, currentUser }) => {
-  const [activeTab, setActiveTab] = useState("writing");
+const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], writingComments = [] }) => {
+  const [scores, setScores] = useState(0)
+  const [activeTab, setActiveTab] = useState("writing")
+  const { mutateAsync: postGrade } = usePostGrade()
 
   const handleTabClick = (key) => {
-    setActiveTab(key);
+    setActiveTab(key)
+    setScores(null)
     if (key === "writing") {
-      onTabChange(false);
-    } else onTabChange(true);
-  };
+      onTabChange(false)
+    } else onTabChange(true)
+  }
 
   useEffect(() => {
-    setActiveTab("writing");
-  }, [currentUser]);
+    setActiveTab("writing")
+    setScores(null)
+  }, [currentUser])
 
   // Function to determine category based on total score
-  const getCategoryFromScore = (score, type) => {
-    if (type === "speaking") {
-      if (score < 4) return "X";
-      if (score < 16) return "A1";
-      if (score < 26) return "A2";
-      if (score < 41) return "B1";
-      if (score < 48) return "B2";
-      return "C";
-    } else {
-      // writing
-      if (score < 6) return "X";
-      if (score < 18) return "A1";
-      if (score < 26) return "A2";
-      if (score < 40) return "B1";
-      if (score < 48) return "B2";
-      return "C";
+  // const getCategoryFromScore = (score, type) => {
+  //   if (type === "speaking") {
+  //     if (score < 4) return "X"
+  //     if (score < 16) return "A1"
+  //     if (score < 26) return "A2"
+  //     if (score < 41) return "B1"
+  //     if (score < 48) return "B2"
+  //     return "C"
+  //   } else {
+  //     if (score < 6) return "X"
+  //     if (score < 18) return "A1"
+  //     if (score < 26) return "A2"
+  //     if (score < 40) return "B1"
+  //     if (score < 48) return "B2"
+  //     return "C"
+  //   }
+  // }
+
+  const handleSubmit = async () => {
+    if (scores === null) {
+      message.error("Please enter a score")
+      return
     }
-  };
+
+    try {
+      // @ts-ignore
+      await postGrade({
+        sessionParticipantID: currentUser,
+        teacherGradedScore: scores,
+        skillName: activeTab === "writing" ? "WRITING" : "SPEAKING",
+        studentAnswers: activeTab === "writing" ? writingComments : speakingComments,
+      })
+      message.success(`${activeTab === "writing" ? "Writing" : "Speaking"} assessment submitted successfully`)
+    } catch (error) {
+      message.error("Failed to submit assessment")
+      console.error("Error submitting assessment:", error)
+    }
+  }
 
   return (
     <>
@@ -73,8 +98,7 @@ const AssessmentScores = ({ onTabChange, currentUser }) => {
             {activeTab === "writing" ? "Writing" : "Speaking"} Assessment Parts
           </h2>
           <p className="font-medium text-[18px] leading-[26px] text-[#637381]">
-            Detailed breakdown of each part in the{" "}
-            {activeTab === "writing" ? "writing" : "speaking"} assessment.
+            Detailed breakdown of each part in the {activeTab === "writing" ? "writing" : "speaking"} assessment.
           </p>
         </div>
         {/* Score Input */}
@@ -83,9 +107,11 @@ const AssessmentScores = ({ onTabChange, currentUser }) => {
             <Form layout="vertical">
               <Form.Item label="Total Score">
                 <InputNumber
-                  controls={false}
                   min={0}
                   max={50}
+                  value={scores}
+                  changeOnWheel={true}
+                  onChange={(value) => setScores(value)}
                   className="w-[170px] h-auto border border-[#637381] rounded-[10px]"
                 />
               </Form.Item>
@@ -93,7 +119,7 @@ const AssessmentScores = ({ onTabChange, currentUser }) => {
           </div>
           <div className="flex">
             <Button
-              // onClick={}
+              onClick={handleSubmit}
               type="primary"
               className="h-auto px-[41.5px] py-[13px] text-base bg-[#003087] rounded-[50px]"
             >
@@ -103,7 +129,7 @@ const AssessmentScores = ({ onTabChange, currentUser }) => {
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default AssessmentScores;
+export default AssessmentScores

@@ -31,11 +31,11 @@ const StudentSessionTable = ({
   searchKeyword,
   type,
   status = "draft",
-  onAllQuestionGraded = () => {},
+  onAllQuestionGraded = () => { },
 }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10); 
+  const [pageSize, setPageSize] = useState(10);
   const [levels, setLevels] = useState({});
 
   const { data, isLoading } =
@@ -139,7 +139,7 @@ const StudentSessionTable = ({
           <a
             onClick={() =>
               navigate(
-                `/class/session/student/${record.User.ID}/grade?skill=speaking`
+                `/class/session/student/${record.Session.ID}/grade?skill=speaking`
               )
             }
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
