@@ -10,6 +10,7 @@ import {
 import LogoutButton from "@shared/ui/LogoutButton";
 import { Breadcrumb } from "../../components/Breadcrumb/Breadcrumb";
 import PrivateRoute from "../PrivateRoute";
+import { useGetProfile } from "@features/auth/hooks";
 
 const { Header, Content } = Layout;
 
@@ -59,6 +60,10 @@ export const ProtectedRoute = () => {
         break;
     }
   };
+
+  const { data, isLoading } = useGetProfile();
+  console.log(data, useGetProfile());
+
 
   return (
     <Layout className="min-h-screen">
