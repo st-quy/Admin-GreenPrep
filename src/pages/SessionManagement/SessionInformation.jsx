@@ -10,7 +10,7 @@ import { TableType } from "@features/session/constant/TableEnum";
 
 const SessionInformation = ({ type }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
-  const { id, studentId } = useParams();
+  const { sessionId, studentId } = useParams();
   const [pendingCount, setPendingCount] = useState(0);
 
   const handlePendingCountChange = (count) => {
@@ -28,7 +28,7 @@ const SessionInformation = ({ type }) => {
         <StudentSessionTable
           searchKeyword={searchKeyword}
           type={type}
-          id={type == TableType.SESSION ? id : studentId}
+          id={type == TableType.SESSION ? sessionId : studentId}
         />
       ),
     },
@@ -44,7 +44,7 @@ const SessionInformation = ({ type }) => {
       key: "item-2",
       children: (
         <StudentMonitoring
-          sessionId={id}
+          sessionId={sessionId}
           searchKeyword={searchKeyword}
           onPendingCountChange={handlePendingCountChange}
         />
@@ -61,7 +61,10 @@ const SessionInformation = ({ type }) => {
 
   return (
     <div className="session-container flex flex-col p-2 md:p-8">
-      <Details type={type} id={type == TableType.SESSION ? id : studentId} />
+      <Details
+        type={type}
+        id={type == TableType.SESSION ? sessionId : studentId}
+      />
 
       <div className="w-full">
         <div className="flex justify-between">

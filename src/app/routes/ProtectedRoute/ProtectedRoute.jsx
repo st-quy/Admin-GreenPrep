@@ -1,22 +1,22 @@
 import { Logo } from "@assets/images";
-import { Layout, Menu } from "antd";
+import { ConfigProvider, Layout, Menu, Segmented } from "antd";
 import {
   Outlet,
   useLocation,
   useNavigate,
   matchRoutes,
-  useParams,
 } from "react-router-dom";
-import LogoutButton from "@shared/ui/LogoutButton";
 import { Breadcrumb } from "../../components/Breadcrumb/Breadcrumb";
 import PrivateRoute from "../PrivateRoute";
 import { useGetProfile } from "@features/auth/hooks";
+import ProfileMenu from "@features/auth/ui/ProfileMenu";
+import { useState } from "react";
 
 const { Header, Content } = Layout;
 
 export const ProtectedRoute = () => {
+  const [currentKey, setCurrentKey] = useState("1");
   const location = useLocation();
-  const { studentId } = useParams();
 
   const navigate = useNavigate();
 
@@ -25,15 +25,6 @@ export const ProtectedRoute = () => {
 
   const breadcrumbPaths = routes.map(({ pathname, params, route }) => {
     let breadcrumb = route.breadcrumb;
-
-    // Replace route parameters with actual values
-    if (
-      studentId &&
-      breadcrumb &&
-      breadcrumb.includes(`:${Object.keys(params)[0]}`)
-    ) {
-      breadcrumb = breadcrumb.replace(`:${Object.keys(params)[0]}`, studentId);
-    }
 
     return {
       name: breadcrumb,
@@ -54,39 +45,59 @@ export const ProtectedRoute = () => {
         navigate("/class");
         break;
       case "3":
-        navigate("/profile");
+        navigate("/teacher");
         break;
       default:
+        setCurrentKey(key);
         break;
     }
   };
 
   const { data, isLoading } = useGetProfile();
-  console.log(data, useGetProfile());
-
 
   return (
-    <Layout className="min-h-screen">
-      <Header className="flex items-center h-28 bg-white shadow-xl">
-        <img src={Logo} className="max-w-[11rem]" />
-        <Menu
-          theme="light"
-          mode="horizontal"
-          defaultSelectedKeys={["1"]}
-          className="flex-1 justify-center"
-          items={[
-            { key: "1", label: "Dashboard" },
-            { key: "2", label: "Class Management" },
-            { key: "3", label: "Profile" },
-          ]}
-          onClick={(e) => navigateTo(e.key)}
-        />
-        <LogoutButton />
-      </Header>
-      <Content className="p-10 pt-4">
-        {location.pathname !== "/" && <Breadcrumb paths={breadcrumbPaths} />}
-        <Outlet />
-      </Content>
-    </Layout>
+    <ConfigProvider
+      theme={{
+        components: {
+          Segmented: {
+            itemSelectedBg: "#003087",
+            itemSelectedColor: "#fff",
+            itemColor: "black",
+            itemHoverColor: "black",
+          },
+        },
+      }}
+    >
+      <Layout className="min-h-screen">
+        <Header className="flex items-center justify-between h-28 bg-white shadow-xl">
+          <div className="w-[200px] flex items-center h-28">
+            <img src={Logo} className="max-w-[11rem]" />
+          </div>
+
+          <Segmented
+            size="large"
+            shape="round"
+            className="!p-0"
+            options={[
+              {
+                value: "1",
+                label: "Dashboard",
+              },
+              { value: "2", label: "Class Management" },
+              { value: "3", label: "Teacher Management" },
+              ,
+            ]}
+            onChange={(value) => navigateTo(value)}
+          />
+          <div className="w-[200px]">
+            <ProfileMenu />
+          </div>
+        </Header>
+        <Content className="p-10 pt-4">
+          {location.pathname !== "/" && <Breadcrumb paths={breadcrumbPaths} />}
+          <Outlet />
+        </Content>
+      </Layout>
+    </ConfigProvider>
   );
 };
