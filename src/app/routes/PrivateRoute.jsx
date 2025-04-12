@@ -8,6 +8,8 @@ import Dashboard from "@pages/Dashboard/Dashboard.jsx";
 import ClassDetail from "@pages/ClassDetail/ClassDetail.jsx";
 import TeacherAccountManagement from "@pages/TeacherManagement/TeacherAccountManagement.jsx";
 import ClassManagement from "@pages/ClassManagement/index.jsx";
+import RedirectByRole from "./RedirectByRole/index.jsx";
+
 const PrivateRoute = [
   {
     path: "/",
@@ -16,6 +18,11 @@ const PrivateRoute = [
     children: [
       {
         index: true,
+        element: <RedirectByRole />,
+        breadcrumb: "Dashboard",
+      },
+      {
+        path: "dashboard",
         element: <Dashboard />,
         breadcrumb: "Dashboard",
         role: ["admin"],

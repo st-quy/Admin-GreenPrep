@@ -1,9 +1,5 @@
-import { PlusOutlined, SearchOutlined } from "@ant-design/icons";
 import TeacherManagement from "@features/teacher/ui/TeacherManagement";
-import { Button, Input, Select, Table } from "antd";
 import React from "react";
-import { Outlet } from "react-router-dom";
-const Option = Select.Option;
 const TeacherAccountManagement = () => {
   return (
     <div className="px-8 mt-8">

@@ -38,8 +38,10 @@ const ProfileMenu = () => {
       {user && (
         <Dropdown menu={{ items, onClick }} className="cursor-pointer">
           <a onClick={(e) => e.preventDefault()}>
-            <Space className="font-semibold">
-              {user.firstName + " " + user.lastName}
+            <Space className="font-semibold !text-[#121212] hover:!text-[#4d4d4d]">
+              <span className="text-[14px] ">
+                {user.firstName + " " + user.lastName}
+              </span>
               <DownOutlined className="text-[14px]" />
             </Space>
           </a>

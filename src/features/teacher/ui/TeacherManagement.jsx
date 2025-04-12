@@ -162,7 +162,7 @@ const TeacherManagement = () => {
         // @ts-ignore
         columns={columns}
         dataSource={teachersData?.data?.teachers}
-        rowKey="id"
+        rowKey={(record) => record.ID}
         scroll={{ x: 600 }}
         className="mb-4"
         components={tableComponents}

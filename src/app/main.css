@@ -26,7 +26,3 @@ body {
 .ant-segmented.ant-segmented-lg .ant-segmented-item-label {
   padding: 0 20px !important;
 }
-
-.ant-segmented.ant-segmented-lg .ant-segmented-item {
-  transition: #003087 0.3s #fff !important;
-}

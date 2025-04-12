@@ -4,16 +4,17 @@ import ForgotPassword from "@pages/ForgotPassword/index";
 import LoginPage from "@pages/Login/index";
 import ResetPassword from "@pages/ResetPassword/index";
 import ResetPasswordSuccess from "@pages/ResetPassword/ResetSuccess";
-    
+import Unauthorized from "@pages/Unauthorized";
+
 const PublicRoute = [
   {
-    path:"/",
-    element:<PublicLayout />,
+    path: "/",
+    element: <PublicLayout />,
     children: [
       {
         path: "login",
-          element: <LoginPage />,
-      }, 
+        element: <LoginPage />,
+      },
       {
         path: "forgot-password",
         element: <ForgotPassword />,
@@ -28,8 +29,10 @@ const PublicRoute = [
       },
     ],
   },
+  {
+    path: "unauthorized",
+    element: <Unauthorized />,
+  },
 ];
-
-
 
 export default PublicRoute;

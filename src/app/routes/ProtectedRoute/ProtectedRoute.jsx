@@ -5,16 +5,19 @@ import {
   useLocation,
   useNavigate,
   matchRoutes,
+  Navigate,
 } from "react-router-dom";
 import { Breadcrumb } from "../../components/Breadcrumb/Breadcrumb";
 import PrivateRoute from "../PrivateRoute";
-import { useGetProfile } from "@features/auth/hooks";
 import ProfileMenu from "@features/auth/ui/ProfileMenu";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 const { Header, Content } = Layout;
 
 export const ProtectedRoute = () => {
+  const { isAuth, user } = useSelector((state) => state.auth);
+
   const [currentKey, setCurrentKey] = useState("1");
   const location = useLocation();
 
@@ -53,7 +56,52 @@ export const ProtectedRoute = () => {
     }
   };
 
-  const { data, isLoading } = useGetProfile();
+  useEffect(() => {
+    const path = location.pathname.split("/")[1];
+    if (path === "class") {
+      setCurrentKey("2");
+    } else if (path === "teacher") {
+      setCurrentKey("3");
+    } else {
+      setCurrentKey("1");
+    }
+  }, [location.pathname]);
+
+  const requiredRoles =
+    routes.find((route) => route.route?.role)?.route?.role || [];
+
+  if (
+    requiredRoles.length > 0 &&
+    !requiredRoles.some((item) => user?.role.includes(item))
+  ) {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  const segmentedOptions = [
+    {
+      value: "1",
+      label: "Dashboard",
+      roles: ["admin"], // Ai cũng được truy cập
+    },
+    {
+      value: "2",
+      label: "Class Management",
+      roles: ["admin"], // Ai cũng được truy cập
+    },
+    {
+      value: "3",
+      label: "Teacher Management",
+      roles: ["admin"],
+    },
+  ];
+
+  const allowedSegmentedOptions = segmentedOptions.filter((option) =>
+    option.roles.some((role) => user?.role.includes(role))
+  );
+
+  useEffect(() => {
+    if (!isAuth) navigate("/login");
+  }, [isAuth, navigate]);
 
   return (
     <ConfigProvider
@@ -62,8 +110,6 @@ export const ProtectedRoute = () => {
           Segmented: {
             itemSelectedBg: "#003087",
             itemSelectedColor: "#fff",
-            itemColor: "black",
-            itemHoverColor: "black",
           },
         },
       }}
@@ -71,22 +117,22 @@ export const ProtectedRoute = () => {
       <Layout className="min-h-screen">
         <Header className="flex items-center justify-between h-28 bg-white shadow-xl">
           <div className="w-[200px] flex items-center h-28">
-            <img src={Logo} className="max-w-[11rem]" />
+            <img
+              src={Logo}
+              className="max-w-[11rem] cursor-pointer"
+              onClick={() => navigate("/")}
+            />
           </div>
 
           <Segmented
             size="large"
             shape="round"
             className="!p-0"
-            options={[
-              {
-                value: "1",
-                label: "Dashboard",
-              },
-              { value: "2", label: "Class Management" },
-              { value: "3", label: "Teacher Management" },
-              ,
-            ]}
+            options={allowedSegmentedOptions.map(({ value, label }) => ({
+              value,
+              label,
+            }))}
+            value={currentKey}
             onChange={(value) => navigateTo(value)}
           />
           <div className="w-[200px]">
