@@ -45,7 +45,7 @@ export const ProtectedRoute = () => {
         navigate("/class");
         break;
       case "3":
-        navigate("/profile");
+        navigate("/teacher");
         break;
       default:
         setCurrentKey(key);
@@ -84,6 +84,7 @@ export const ProtectedRoute = () => {
                 label: "Dashboard",
               },
               { value: "2", label: "Class Management" },
+              { value: "3", label: "Teacher Management" },
               ,
             ]}
             onChange={(value) => navigateTo(value)}

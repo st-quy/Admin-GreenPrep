@@ -6,6 +6,7 @@ import { TableType } from "@features/session/constant/TableEnum.js";
 const ProfilePage = lazy(() => import("@pages/Profile/index.jsx"));
 import Dashboard from "@pages/Dashboard/Dashboard.jsx";
 import ClassDetail from "@pages/ClassDetail/ClassDetail.jsx";
+import TeacherAccountManagement from "@pages/TeacherManagement/TeacherAccountManagement.jsx";
 import ClassManagement from "@pages/ClassManagement/index.jsx";
 const PrivateRoute = [
   {
@@ -18,6 +19,12 @@ const PrivateRoute = [
         element: <Dashboard />,
         breadcrumb: "Dashboard",
         role: ["admin"],
+      },
+      {
+        path: "teacher",
+        role: ["admin"],
+        breadcrumb: "Teacher",
+        element: <TeacherAccountManagement />,
       },
       {
         path: "class",
