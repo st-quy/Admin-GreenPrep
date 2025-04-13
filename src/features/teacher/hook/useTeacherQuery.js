@@ -14,7 +14,7 @@ export const useFetchTeachers = (filterData = {}) => {
 export const useCreateTeacher = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn:  (data) => createTeachers(data),
+    mutationFn: (data) => createTeachers(data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["teachers"] });
     },

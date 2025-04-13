@@ -30,11 +30,16 @@ export const useLogin = () => {
       if (decodedToken?.role.includes("student")) {
         return navigate("/unauthorized");
       }
+      if (decodedToken?.role.includes("teacher")) {
+        navigate("/class");
+      }
+      if (decodedToken?.role.includes("admin")) {
+        navigate("/dashboard");
+      }
 
       setStorageData(ACCESS_TOKEN, data.data.access_token);
       setStorageData(REFRESH_TOKEN, data.data.refresh_token);
       dispatch(login());
-      navigate("/");
       return data.data;
     },
     onError({ response }) {

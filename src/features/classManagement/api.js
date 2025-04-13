@@ -1,8 +1,12 @@
 import axiosInstance from "@shared/config/axios";
 
 export const ClassApi = {
-  getAll: () => {
-    return axiosInstance.get("/classes");
+  getAll: (teacherId = null) => {
+    return axiosInstance.get("/classes", {
+      params: {
+        teacherId,
+      },
+    });
   },
   createClass: (params) => {
     return axiosInstance.post(`/classes`, params);
