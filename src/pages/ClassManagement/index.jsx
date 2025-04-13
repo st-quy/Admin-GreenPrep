@@ -7,12 +7,14 @@ import { Button, Typography } from "antd";
 import { Link } from "react-router-dom";
 import UpdateClassModal from "@features/classManagement/ui/Modal/UpdateClass";
 import DeleteClassModal from "@features/classManagement/ui/Modal/DeleteClass";
+import { useSelector } from "react-redux";
 
 const ClassManagement = () => {
   const [isOpen, setIsOpen] = useState("");
   const [dataClass, setClassData] = useState(null);
+  const { userId } = useSelector((state) => state.auth);
 
-  const { data: classList, isLoading } = useGetAllClass();
+  const { data: classList, isLoading } = useGetAllClass(userId);
 
   const handleUpdateClass = (record) => () => {
     setIsOpen("Update");
