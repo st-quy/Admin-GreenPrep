@@ -25,7 +25,7 @@ const DeleteModal = ({ sessionID, isOpen, onClose }) => {
         <div className="flex justify-end gap-4 py-4">
           <Button
             onClick={onClose}
-            className="h-[50px] w-[106px] rounded-[50px] shadow-[0px_1px_3px_rgba(166,175,195,0.4)] text-[#003087] lg:text-[16px] md:text-[14px]"
+            className="h-[50px] w-[106px] rounded-[50px] shadow-[0px_1px_3px_rgba(166,175,195,0.4)] text-primaryColor lg:text-[16px] md:text-[14px]"
           >
             Cancel
           </Button>
@@ -46,7 +46,7 @@ const DeleteModal = ({ sessionID, isOpen, onClose }) => {
           </div>
           <h6 className="text-[20px]">Are you sure to delete this session?</h6>
         </div>
-        <p className="text-[#637381] text-[14px]">
+        <p className="text-primaryTextColor text-[14px]">
           Once you delete this session, all associated data will be permanently
           removed and cannot be recovered. Please confirm if you want to proceed
           with this action.

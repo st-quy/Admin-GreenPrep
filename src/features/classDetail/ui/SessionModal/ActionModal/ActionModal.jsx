@@ -107,7 +107,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
       ) : (
         <Button
           onClick={showModal}
-          className="!rounded-[50px] !bg-[#003087] !p-6 !text-white font-[500] lg:text-[16px] md:text-[14px]"
+          className="!rounded-[50px] !bg-primaryColor !p-6 !text-white font-[500] lg:text-[16px] md:text-[14px]"
         >
           Create Session
         </Button>
@@ -131,7 +131,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
           <h4 className="font-[700] lg:text-[30px] md:text-[28px]">
             {isEdit ? "Update session" : "Create Session"}
           </h4>
-          <p className="mb-6 font-[500] text-[#637381] lg:text-[18px] md:text-[16px]">
+          <p className="mb-6 font-[500] text-primaryTextColor lg:text-[18px] md:text-[16px]">
             {isEdit
               ? "Modify and extend the current session."
               : "Set up a new session quickly and easily."}
@@ -219,7 +219,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
         <div className="flex justify-end gap-4">
           <Button
             onClick={handleCancel}
-            className="h-[52px] w-[124px] rounded-[50px] border-[1px] border-[#003087] text-[#003087] lg:text-[16px] md:text-[14px]"
+            className="h-[52px] w-[124px] rounded-[50px] border-[1px] border-primaryColor text-primaryColor lg:text-[16px] md:text-[14px]"
           >
             Cancel
           </Button>
@@ -227,7 +227,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
             onClick={onAction}
             loading={isLoading}
             htmlType="submit"
-            className="h-[52px] w-[124px] rounded-[50px] bg-[#003087] text-white lg:text-[16px] md:text-[14px]"
+            className="h-[52px] w-[124px] rounded-[50px] bg-primaryColor text-white lg:text-[16px] md:text-[14px]"
           >
             {isEdit ? "Update" : "Create"}
           </Button>

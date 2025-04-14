@@ -32,6 +32,7 @@ const StudentSessionTable = ({
   type,
   status = "draft",
   onAllQuestionGraded = () => {},
+  onDataReady,
 }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,6 +54,12 @@ const StudentSessionTable = ({
         (record.Writing || 0),
     }));
   }, [data]);
+
+  useEffect(() => {
+    if (onDataReady) {
+      onDataReady(processedData);
+    }
+  }, [processedData]);  
 
   useEffect(() => {
     setLevels(
@@ -137,9 +144,7 @@ const StudentSessionTable = ({
       render: (text, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
-            onClick={() =>
-              navigate(`student/${record.User.ID}/grade?skill=speaking`)
-            }
+            onClick={() => navigate(`participant/${record.ID}?skill=speaking`)}
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
             {text ? text + " | " + getSkillLevel(text, "Speaking") : "Ungraded"}
@@ -158,9 +163,7 @@ const StudentSessionTable = ({
       render: (text, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
-            onClick={() =>
-              navigate(`student/${record.User.ID}/grade?skill=writing`)
-            }
+            onClick={() => navigate(`participant/${record.ID}?skill=writing`)}
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
             {text ? text + " | " + getSkillLevel(text, "Writing") : "Ungraded"}
@@ -278,7 +281,10 @@ const StudentSessionTable = ({
           components={{
             header: {
               wrapper: (props) => (
-                <thead {...props} className="bg-[#E6F0FA] text-[#637381]" />
+                <thead
+                  {...props}
+                  className="bg-tableHeadColor text-primaryTextColor"
+                />
               ),
             },
           }}

@@ -91,10 +91,9 @@ const StudentMonitoring = ({
 
   const handleBulkAction = (type = "approve") => {
     const isApprove = type === "approve";
-    const selectedRequestIds = 
-      filteredData
-        .filter((req) => selectedRowKeys.includes(req.key))
-        .map((req) => req.requestId);
+    const selectedRequestIds = filteredData
+      .filter((req) => selectedRowKeys.includes(req.key))
+      .map((req) => req.requestId);
 
     setModalConfig({
       title: `Are you sure you want to ${isApprove ? "approve" : "reject"} all selected students?`,
@@ -104,15 +103,12 @@ const StudentMonitoring = ({
       onConfirm: async () => {
         try {
           const mutate = isApprove ? approveSelected : rejectSelected;
-          mutate(
-            selectedRequestIds,
-            {
-              onSuccess: () => {
-                setSelectedRowKeys([]);
-              },
-              onError: () => {},
-            }
-          );
+          mutate(selectedRequestIds, {
+            onSuccess: () => {
+              setSelectedRowKeys([]);
+            },
+            onError: () => {},
+          });
         } catch (error) {
           message.error(`Error processing bulk ${type}: ` + error.message);
         }
@@ -185,7 +181,7 @@ const StudentMonitoring = ({
     onShowSizeChange: onShowSizeChange,
     onChange: (page) => setCurrentPage(page),
     showTotal: (total, range) => (
-      <span className="text-center md:text-[16px] text-[10px] text-[#637381]">
+      <span className="text-center md:text-[16px] text-[10px] text-primaryTextColor">
         Showing {range[0].toString().padStart(2)}-
         {range[1].toString().padStart(2)} of {total}
       </span>
@@ -198,14 +194,14 @@ const StudentMonitoring = ({
         {selectedRowKeys.length > 0 && (
           <div className="flex">
             <div
-              className="text-[#637381] rounded-none md:text-sm text-[10px] h-8 px-3 hover:font-bold hover:text-[#22AD5C] hover:underline hover:cursor-pointer"
+              className="text-primaryTextColor rounded-none md:text-sm text-[10px] h-8 px-3 hover:font-bold hover:text-[#22AD5C] hover:underline hover:cursor-pointer"
               onClick={() => handleBulkAction("approve")}
             >
               Approve
             </div>
             <div>|</div>
             <div
-              className="text-[#637381] rounded-none md:text-sm text-[10px] h-8 px-3 hover:font-bold hover:text-[#F23030] hover:underline hover:cursor-pointer"
+              className="text-primaryTextColor rounded-none md:text-sm text-[10px] h-8 px-3 hover:font-bold hover:text-[#F23030] hover:underline hover:cursor-pointer"
               onClick={() => handleBulkAction("reject")}
             >
               Reject
@@ -228,7 +224,7 @@ const StudentMonitoring = ({
             wrapper: (props) => (
               <thead
                 {...props}
-                className="bg-[#E6F0FA] text-[10px] font-[700] md:text-[16px] text-[#637381] uppercase"
+                className="bg-tableHeadColor text-[10px] font-[700] md:text-[16px] text-primaryTextColor uppercase"
               />
             ),
             cell: (props) => (
@@ -242,7 +238,7 @@ const StudentMonitoring = ({
             cell: (props) => (
               <td
                 {...props}
-                className="font-[500] tracking-wider text-center py-4 px-0 whitespace-nowrap text-[10px] md:text-[14px] text-[#637381]"
+                className="font-[500] tracking-wider text-center py-4 px-0 whitespace-nowrap text-[10px] md:text-[14px] text-primaryTextColor"
               />
             ),
           },

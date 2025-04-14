@@ -72,7 +72,7 @@ const ProfilePage = () => {
           <Title level={3} className="m-0 font-bold text-black  ">
             My profile
           </Title>
-          <Text className="text-[#637381] text-[18px]">
+          <Text className="text-primaryTextColor text-[18px]">
             Summary of personal information.
           </Text>
         </div>
@@ -80,14 +80,14 @@ const ProfilePage = () => {
           <Button
             type="default"
             onClick={() => setOpenKey("change-password")}
-            className="min-w-[140px] md:min-w-[160px] h-[50px] rounded-full border border-[#003087] text-[#003087] hover:text-[#0066CC] hover:border-[#0066CC] font-medium"
+            className="min-w-[140px] md:min-w-[160px] h-[50px] rounded-full border border-primaryColor text-primaryColor hover:text-[#0066CC] hover:border-[#0066CC] font-medium"
           >
             Change password
           </Button>
           <Button
             type="primary"
             onClick={() => setOpenKey("update-profile")}
-            className="min-w-[140px] md:min-w-[160px] h-[50px] rounded-full bg-[#003087] hover:bg-[#002A6B] border-none font-medium"
+            className="min-w-[140px] md:min-w-[160px] h-[50px] rounded-full bg-primaryColor hover:bg-[#002A6B] border-none font-medium"
           >
             Update profile
           </Button>
@@ -119,7 +119,7 @@ const ProfilePage = () => {
             />
           </div>
           <div>
-            <Text className="font-bold text-[#003087] text-[18px] block">
+            <Text className="font-bold text-primaryColor text-[18px] block">
               {user?.firstName + " " + user?.lastName || "N/A"}
             </Text>
             <Text className="text-[#6B7280] text-[16px] block">
