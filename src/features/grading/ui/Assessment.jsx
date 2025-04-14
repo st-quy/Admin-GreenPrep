@@ -21,27 +21,34 @@ const Assessment = ({
     setActiveTab(key);
   };
 
-  // Reset to part 1 when isSpeaking changes
+  // Reset to part 1 when isSpeaking changes or currentUser changes
   useEffect(() => {
     setActiveTab("1");
   }, [isSpeaking, currentUser]);
 
   useEffect(() => {
     handleDataChange();
-  }, [activeTab, isSpeaking]);
+  }, [activeTab, isSpeaking, data]);
 
   const handleDataChange = () => {
     try {
-      const parts = data.data.data.topic.Parts;
+      const parts = data?.data?.data?.topic?.Parts;
       if (parts && parts.length > 0) {
         const currentPart = `PART ${activeTab}`;
         const currentPartIndex = parts.findIndex((p) =>
-          p.Content.toLowerCase().includes(currentPart.toLowerCase())
+          p.Content?.toLowerCase().includes(currentPart.toLowerCase())
         );
-        setPartData(parts[currentPartIndex]);
+        if (currentPartIndex >= 0) {
+          setPartData(parts[currentPartIndex]);
+        } else {
+          setPartData({});
+        }
+      } else {
+        setPartData({});
       }
     } catch (error) {
       console.error("Error parsing data:", error);
+      setPartData({});
     }
   };
 
@@ -99,9 +106,12 @@ const Assessment = ({
 
   const handleSubmitScore = () => {};
   const handleDisplayPart = () => {
-    if (!partData) return "";
+    if (!partData || !partData.Questions) return "";
+
     if (isSpeaking && activeTab === "4") {
       const partFourQuestions = partData.Questions || [];
+      if (partFourQuestions.length === 0) return "";
+
       return (
         <div className="flex gap-10 relative">
           <div className="w-[80%] h-fit shadow-md rounded-lg">
@@ -111,18 +121,16 @@ const Assessment = ({
               speakingPartFour={partFourQuestions}
             />
           </div>
-          {partFourQuestions[0]?.studentAnswer?.ID && (
-            <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
-              <CommentForm
-                key={`speaking-part4-${partFourQuestions[0]?.studentAnswer?.ID}`}
-                data={partFourQuestions[0]}
-                onCommentChange={handleCommentChange}
-                isSpeaking={isSpeaking}
-                activeTab={activeTab}
-                existingComment={findExistingComment(partFourQuestions[0])}
-              />
-            </div>
-          )}
+          <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
+            <CommentForm
+              key={`speaking-part4-${partFourQuestions[0]?.studentAnswer?.ID}-${currentUser}`} // Add currentUser to force re-render
+              data={partFourQuestions[0]}
+              onCommentChange={handleCommentChange}
+              isSpeaking={isSpeaking}
+              activeTab={activeTab}
+              existingComment={findExistingComment(partFourQuestions[0])}
+            />
+          </div>
         </div>
       );
     }
@@ -137,16 +145,14 @@ const Assessment = ({
           />
         </div>
         <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
-          {question?.studentAnswer?.ID && (
-            <CommentForm
-              key={`${isSpeaking ? "speaking" : "writing"}-part${activeTab}-${question?.studentAnswer?.ID}`}
-              data={question}
-              onCommentChange={handleCommentChange}
-              isSpeaking={isSpeaking}
-              activeTab={activeTab}
-              existingComment={findExistingComment(question)}
-            />
-          )}
+          <CommentForm
+            key={`${isSpeaking ? "speaking" : "writing"}-part${activeTab}-${question?.studentAnswer?.ID}-${currentUser}`} // Add currentUser to force re-render
+            data={question}
+            onCommentChange={handleCommentChange}
+            isSpeaking={isSpeaking}
+            activeTab={activeTab}
+            existingComment={findExistingComment(question)}
+          />
         </div>
       </div>
     ));

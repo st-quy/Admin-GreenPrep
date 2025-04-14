@@ -1,27 +1,36 @@
-import { useEffect, useState } from "react"
-import { Input, Form } from "antd"
-import { yupSync } from "@shared/lib/utils"
-import * as yup from "yup"
-import "./index.scss"
+import { useEffect, useState } from "react";
+import { Input, Form } from "antd";
+import { yupSync } from "@shared/lib/utils";
+import * as yup from "yup";
+import "./index.scss";
 
-const CommentForm = ({ data, onCommentChange, isSpeaking, activeTab, existingComment }) => {
-  const [comment, setComment] = useState(existingComment || data?.studentAnswer?.Comment || "")
-  const [form] = Form.useForm()
+const CommentForm = ({
+  data,
+  onCommentChange,
+  isSpeaking,
+  activeTab,
+  existingComment,
+}) => {
+  const [comment, setComment] = useState(
+    existingComment || data?.studentAnswer?.Comment || ""
+  );
+  const [form] = Form.useForm();
 
   const schema = yup.object().shape({
     comment: yup.string().trim().nullable().optional(),
-  })
+  });
 
   // Reset form when skill or data changes
   useEffect(() => {
-    const initialComment = existingComment || data?.studentAnswer?.Comment || ""
-    setComment(initialComment)
-    form.setFieldsValue({ comment: initialComment })
-  }, [data, existingComment, form, isSpeaking])
+    const initialComment =
+      existingComment || data?.studentAnswer?.Comment || "";
+    setComment(initialComment);
+    form.setFieldsValue({ comment: initialComment });
+  }, [data, existingComment, form, isSpeaking]);
 
   const handleCommentChange = (e) => {
-    const value = e.target.value
-    setComment(value)
+    const value = e.target.value;
+    setComment(value);
 
     // Pass the comment up to the parent component with the studentAnswerId and part
     if (onCommentChange) {
@@ -30,9 +39,9 @@ const CommentForm = ({ data, onCommentChange, isSpeaking, activeTab, existingCom
         messageContent: value,
         isSpeaking,
         part: activeTab,
-      })
+      });
     }
-  }
+  };
 
   return (
     <Form
@@ -42,7 +51,9 @@ const CommentForm = ({ data, onCommentChange, isSpeaking, activeTab, existingCom
     >
       <Form.Item name="comment" rules={[yupSync(schema)]} noStyle={true}>
         <div>
-          <label className="block text-base font-medium mt-[12px] mb-[6px]">Comment</label>
+          <label className="block text-base font-medium mt-[12px] mb-[6px]">
+            Comment
+          </label>
           <Input.TextArea
             className="w-full !h-[100px] px-5 py-3 rounded-md border !resize-none"
             placeholder="Enter comment"
@@ -52,7 +63,7 @@ const CommentForm = ({ data, onCommentChange, isSpeaking, activeTab, existingCom
         </div>
       </Form.Item>
     </Form>
-  )
-}
+  );
+};
 
-export default CommentForm
+export default CommentForm;
