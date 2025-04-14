@@ -1,5 +1,5 @@
-import { Card } from "antd";
-import AudioPlayers from "./AudioPlayer";
+import { Card } from "antd"
+import AudioPlayers from "./AudioPlayer"
 
 export const QuestionAnswer = ({
   quesntionsAnswerData = {},
@@ -9,23 +9,32 @@ export const QuestionAnswer = ({
 }) => {
   const studentAnswers = () => {
     if (isSpeaking) {
+      if (!quesntionsAnswerData?.studentAnswer?.AnswerAudio) {
+        return (
+          <div className="whitespace-pre-line">
+            {"No answer available"}
+          </div>
+        )
+      }
+
       return (
         <div className="place-self-center self-center">
           <AudioPlayers
-            audioUrl={""} // Replace with the actual audio URL variable
+            audioUrl={quesntionsAnswerData?.studentAnswer?.AnswerAudio || ""}
             audioFileName={fileName}
           />
         </div>
-      );
+      )
     }
-    return <p>{/* put the writing answer variable here */}</p>;
-  };
+
+    return (
+      <div className="whitespace-pre-line">
+        {quesntionsAnswerData?.studentAnswer?.AnswerText || "No answer available"}
+      </div>
+    )
+  }
   return (
-    <Card
-      variant="borderless"
-      className="rounded-lg overflow-hidden"
-      styles={{ body: { padding: 0 } }}
-    >
+    <Card variant="borderless" className="rounded-lg overflow-hidden" styles={{ body: { padding: 0 } }}>
       <div className="bg-[#E6F0FA] px-[4.375rem] py-[2.125rem] leading-6 text-base">
         <div className="flex">
           <div className="font-bold">Question:</div>
@@ -34,24 +43,14 @@ export const QuestionAnswer = ({
         {quesntionsAnswerData?.ImageKeys?.length > 0 && (
           <div className="mt-3 flex gap-1 flex-wrap">
             {quesntionsAnswerData?.ImageKeys?.map((image, index) => (
-              <img
-                key={index}
-                src={image || ""}
-                alt="speaking image"
-                className="w-1/2"
-              />
+              <img key={index} src={image || ""} alt="speaking image" className="w-1/2" />
             ))}
           </div>
         )}
         {speakingPartFour[0]?.ImageKeys?.length > 0 && (
           <div className="mt-3 flex gap-1 flex-wrap">
             {speakingPartFour[0]?.ImageKeys?.map((image, index) => (
-              <img
-                key={index}
-                src={image || ""}
-                alt="speaking image"
-                className="w-1/2"
-              />
+              <img key={index} src={image || ""} alt="speaking image" className="w-1/2" />
             ))}
           </div>
         )}
@@ -65,9 +64,9 @@ export const QuestionAnswer = ({
       </div>
 
       <div className="py-[1.875rem] px-[4.375rem] leading-6 text-base">
-        <div className="font-bold mb-2">Student answer</div>
+        <div className="font-bold mb-2">Student answer:</div>
         {studentAnswers()}
       </div>
     </Card>
-  );
-};
+  )
+}
