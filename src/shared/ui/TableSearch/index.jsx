@@ -3,7 +3,7 @@ import { Table, Input, Pagination } from "antd";
 
 const { Search } = Input;
 
-const TableSearch = ({ data, columns }) => {
+const TableSearch = ({ data, columns, isLoading }) => {
   const [searchText, setSearchText] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
@@ -31,7 +31,7 @@ const TableSearch = ({ data, columns }) => {
         className="mb-4 w-full max-w-[300px]"
         allowClear
       />
-      <div className="overflow-x-auto w-full">
+      <div className="w-full">
         <Table
           columns={columns}
           dataSource={paginatedData}
@@ -39,8 +39,8 @@ const TableSearch = ({ data, columns }) => {
           pagination={false} // Ẩn pagination mặc định
           scroll={{ x: "max-content" }}
           className="w-full"
+          loading={isLoading}
         />
-        {/* Container chứa Total & Pagination */}
         <div className="flex justify-between items-center mt-2 px-4">
           <span className="text-gray-500 text-sm">{`Showing ${start}-${end} of ${total}`}</span>
           <Pagination

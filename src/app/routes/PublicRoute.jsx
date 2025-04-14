@@ -4,6 +4,7 @@ import ForgotPassword from "@pages/ForgotPassword/index";
 import LoginPage from "@pages/Login/index";
 import ResetPassword from "@pages/ResetPassword/index";
 import ResetPasswordSuccess from "@pages/ResetPassword/ResetSuccess";
+import Unauthorized from "@pages/Unauthorized";
 import GradingPage from "@pages/Grading/GradingPage";
 
 const PublicRoute = [
@@ -32,6 +33,10 @@ const PublicRoute = [
         element: <GradingPage />,
       },
     ],
+  },
+  {
+    path: "unauthorized",
+    element: <Unauthorized />,
   },
 ];
 

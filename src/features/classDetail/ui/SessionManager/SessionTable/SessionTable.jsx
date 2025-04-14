@@ -4,14 +4,19 @@ import { useNavigate } from "react-router-dom";
 import { formatDateTime } from "@shared/lib/utils/formatString";
 import ActionModal from "../../SessionModal/ActionModal/ActionModal";
 import DeleteModal from "../../SessionModal/DeleteModal/DeleteModal";
-import { calc } from "antd/es/theme/internal";
+import { DeleteOutlined } from "@ant-design/icons";
+
 const SessionTable = ({ dataSource, searchKeyword, statusFilter }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
+  const [isOpen, setIsOpen] = useState(false);
+  const [sessionData, setSessionData] = useState(null);
+
   const handleNavigate = (id) => {
-    navigate(`/class/session/${id}`);
+    navigate(`session/${id}`);
   };
+
   const statusTag = (status) => {
     const statusMap = {
       COMPLETED: { color: "green", text: "Completed" },
@@ -29,6 +34,7 @@ const SessionTable = ({ dataSource, searchKeyword, statusFilter }) => {
       </div>
     );
   };
+
   const sortedSessions = useMemo(() => {
     return dataSource.sort((a, b) => {
       return (
@@ -37,6 +43,7 @@ const SessionTable = ({ dataSource, searchKeyword, statusFilter }) => {
       );
     });
   }, [dataSource]);
+
   const filteredData = useMemo(() => {
     const keyword = searchKeyword?.toLowerCase().trim() || "";
     if (!keyword && !statusFilter) return dataSource;
@@ -51,6 +58,12 @@ const SessionTable = ({ dataSource, searchKeyword, statusFilter }) => {
       );
     });
   }, [dataSource, searchKeyword, statusFilter]);
+
+  const handleDelete = (record) => {
+    setSessionData(record);
+    setIsOpen(true);
+  };
+
   const columns = [
     {
       title: "SESSION NAME",
@@ -106,15 +119,14 @@ const SessionTable = ({ dataSource, searchKeyword, statusFilter }) => {
       fixed: "right",
       width: "10%",
       render: (_, record) => (
-        <div className="flex gap-4 w-full">
-          <div className="w-1/2">
-            {" "}
-            <ActionModal initialData={record} />
-          </div>
-          <div className="w-1/2">
-            {" "}
-            <DeleteModal sessionID={record.ID} />
-          </div>
+        <div className="flex gap-4 w-full justify-center">
+          <ActionModal initialData={record} />
+          {record.SessionParticipants.length === 0 && (
+            <DeleteOutlined
+              className="hover:opacity-50 text-xl text-red-500 cursor-pointer"
+              onClick={() => handleDelete(record)}
+            />
+          )}
         </div>
       ),
       onHeaderCell: () => {
@@ -151,28 +163,35 @@ const SessionTable = ({ dataSource, searchKeyword, statusFilter }) => {
   };
 
   return (
-    <Table
-      // @ts-ignore
-      columns={columns}
-      dataSource={filteredData}
-      scroll={{ x: "max-content" }}
-      rowKey={(record) => record.ID}
-      components={components}
-      bordered
-      pagination={{
-        current: currentPage,
-        pageSize: pageSize,
-        total: filteredData.length,
-        showSizeChanger: true,
-        pageSizeOptions: ["5", "10", "15", "20"],
-        showTotal: (total, range) =>
-          `Showing ${range[0]}-${range[1]} of ${total}`,
-        onChange: (page, size) => {
-          setCurrentPage(page);
-          setPageSize(size);
-        },
-      }}
-    />
+    <>
+      <Table
+        // @ts-ignore
+        columns={columns}
+        dataSource={filteredData}
+        scroll={{ x: "max-content" }}
+        rowKey={(record) => record.ID}
+        components={components}
+        bordered
+        pagination={{
+          current: currentPage,
+          pageSize: pageSize,
+          total: filteredData.length,
+          showSizeChanger: true,
+          pageSizeOptions: ["5", "10", "15", "20"],
+          showTotal: (total, range) =>
+            `Showing ${range[0]}-${range[1]} of ${total}`,
+          onChange: (page, size) => {
+            setCurrentPage(page);
+            setPageSize(size);
+          },
+        }}
+      />
+      <DeleteModal
+        sessionID={sessionData?.ID}
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+      />
+    </>
   );
 };
 
