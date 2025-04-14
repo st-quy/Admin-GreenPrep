@@ -101,7 +101,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
   return (
     <>
       {isEdit ? (
-        <span className="text-3xl">
+        <span className="text-xl">
           <EditOutlined onClick={showModal} className="hover:opacity-50" />
         </span>
       ) : (
@@ -138,7 +138,6 @@ const ActionModal = ({ initialData = null, classId = null }) => {
           </p>
           <Form
             form={form}
-            className=""
             layout="vertical"
             initialValues={{
               sessionName: isEdit ? initialData?.sessionName : "",
@@ -152,13 +151,14 @@ const ActionModal = ({ initialData = null, classId = null }) => {
           >
             <Form.Item
               label="Session Name"
-              // @ts-ignore
+              required
               rules={[yupSync(sessionSchema)]}
               name="sessionName"
             >
               <Input className="!h-[46px] " placeholder="Session Name" />
             </Form.Item>
             <Form.Item
+              required
               label="Session Key"
               // @ts-ignore
               rules={[yupSync(sessionSchema)]}
@@ -182,6 +182,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
               />
             </Form.Item>
             <Form.Item
+              required
               layout="vertical"
               label="Exam Set"
               // @ts-ignore
@@ -203,6 +204,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
             <Form.Item
               label="Date Range"
               // @ts-ignore
+              required
               rules={[yupSync(sessionSchema)]}
               name="dateRange"
             >

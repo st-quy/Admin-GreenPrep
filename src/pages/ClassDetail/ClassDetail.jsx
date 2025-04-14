@@ -6,11 +6,12 @@ import React from "react";
 import { useParams } from "react-router-dom";
 
 const ClassDetail = () => {
-  // Extract class ID from URL parameters
-  const { id } = useParams();
-
-  // Fetch class details using the custom hook
-  const { data: classDetail, isLoading, isError } = useClassDetailQuery(id);
+  const { classId } = useParams();
+  const {
+    data: classDetail,
+    isLoading,
+    isError,
+  } = useClassDetailQuery(classId);
 
   // Handle loading state
   if (isLoading) {

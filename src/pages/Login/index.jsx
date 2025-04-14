@@ -2,7 +2,12 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import loginHappyStudent from "@assets/images/login-happy-student.png";
 import { Form, Input, Button, Typography, Alert } from "antd";
-import { EyeOutlined, EyeInvisibleOutlined, MailOutlined, InfoCircleOutlined } from "@ant-design/icons";
+import {
+  EyeOutlined,
+  EyeInvisibleOutlined,
+  MailOutlined,
+  InfoCircleOutlined,
+} from "@ant-design/icons";
 import { loginSchema } from "./loginSchema";
 import { yupSync } from "@shared/lib/utils";
 import { useLogin } from "@features/auth/hooks/index";
@@ -32,13 +37,11 @@ const LoginPage = () => {
     if (isAuth) navigate("/");
   }, [isAuth, navigate]);
 
-  console.log(form.getFieldError('email'));
-
   return (
     <div className="bg-[#f9f9f9] flex justify-center">
       <div className="w-full max-w-[1400px] flex flex-col lg:flex-row justify-center lg:justify-between items-center gap-4 md:gap-8 lg:gap-12 xl:gap-16 px-8 lg:px-20">
         {/* Login Form */}
-        <div 
+        <div
           className="bg-white rounded-lg shadow-[0_12px_34px_0_rgba(13,10,44,0.08)] w-full 
                     min-w-[380px] max-w-[570px] 
                     h-auto min-h-[590px] p-8
@@ -47,8 +50,12 @@ const LoginPage = () => {
           <div className="h-full flex flex-col">
             <div className="space-y-5 pt-8">
               <div>
-                <Title level={1} className="text-xl font-bold text-black m-0">Welcome back!</Title>
-                <Text className="text-[#637381] text-[16px] font-normal">Welcome back! Please enter your details.</Text>
+                <Title level={1} className="text-xl font-bold text-black m-0">
+                  Welcome back!
+                </Title>
+                <Text className="text-[#637381] text-[16px] font-normal">
+                  Welcome back! Please enter your details.
+                </Text>
               </div>
 
               {errorMessage && (
@@ -67,7 +74,7 @@ const LoginPage = () => {
                 requiredMark={false}
                 className="space-y-5 md:max-w-[516px]"
                 onValuesChange={() => {
-                  form.validateFields(['email']);
+                  form.validateFields(["email"]);
                 }}
               >
                 <Form.Item
@@ -86,7 +93,8 @@ const LoginPage = () => {
                     className="max-w-[516px] h-[46px] rounded-lg border-gray-300"
                     onChange={(e) => {
                       form.setFieldsValue({ email: e.target.value });
-                      form.validateFields(['email'])
+                      form
+                        .validateFields(["email"])
                         .then(() => {
                           setEmailError(false);
                         })
@@ -96,7 +104,9 @@ const LoginPage = () => {
                     }}
                     suffix={
                       emailError ? (
-                        <InfoCircleOutlined style={{ color: 'red', pointerEvents: 'none' }} />
+                        <InfoCircleOutlined
+                          style={{ color: "red", pointerEvents: "none" }}
+                        />
                       ) : (
                         <MailOutlined className="text-gray-400 border-[#6B7280] border-[0.67px]" />
                       )
@@ -118,10 +128,14 @@ const LoginPage = () => {
                     placeholder="* * * * * * * *"
                     className="max-w-[516px] h-[46px] rounded-lg"
                     iconRender={(visible) =>
-                      form.getFieldError('password')?.length > 0 ? (
-                        <InfoCircleOutlined style={{ color: 'red', pointerEvents: 'none' }} />
+                      form.getFieldError("password")?.length > 0 ? (
+                        <InfoCircleOutlined
+                          style={{ color: "red", pointerEvents: "none" }}
+                        />
+                      ) : visible ? (
+                        <EyeOutlined />
                       ) : (
-                        visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
+                        <EyeInvisibleOutlined />
                       )
                     }
                   />
