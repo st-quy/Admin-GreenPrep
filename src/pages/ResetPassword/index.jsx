@@ -7,7 +7,7 @@ import { ResetPasswordSchema } from "./schema";
 import { useEffect } from "react";
 import { jwtDecode } from "jwt-decode";
 import { EyeInvisibleOutlined, EyeOutlined } from "@ant-design/icons";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 
 const { Title, Text } = Typography;
 
@@ -66,9 +66,7 @@ const ResetPassword = () => {
             md={{ span: 12 }}
             className="flex items-center justify-center p-4"
           >
-            <Card
-              className="w-full max-w-xl shadow-lg p-4 sm:p-8 min-h-[600px]"
-            >
+            <Card className="w-full max-w-xl shadow-lg p-4 sm:p-8 min-h-[600px]">
               <div className="mt-[30px] w-full">
                 <Title
                   level={2}
@@ -76,16 +74,12 @@ const ResetPassword = () => {
                 >
                   Create new password
                 </Title>
-                <Text className="font-normal text-base text-[#637381] block text-center sm:text-left mt-4 mb-8">
-                  Your previous password has been reseted. Please set a new password
-                  for your account.
+                <Text className="font-normal text-base text-primaryTextColor block text-center sm:text-left mt-4 mb-8">
+                  Your previous password has been reseted. Please set a new
+                  password for your account.
                 </Text>
 
-                <Form 
-                  layout="vertical" 
-                  onFinish={onFinish}
-                  className="w-full"
-                >
+                <Form layout="vertical" onFinish={onFinish} className="w-full">
                   <div className="grid grid-cols-1 gap-4 w-full">
                     <Form.Item
                       name="password"
@@ -97,46 +91,53 @@ const ResetPassword = () => {
                       required={false}
                       rules={[yupSync(ResetPasswordSchema)]}
                     >
-                      <Input.Password 
-                        placeholder="Password" 
-                        size="large"
-                        className="h-12 text-base rounded-lg placeholder:text-[#9CA3AF]"
-                        iconRender={(visible) =>
-                          visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
-                        }
-                        onCopy={(e) => e.preventDefault()}/>
-                    </Form.Item>
-
-                    <Form.Item
-                      name="passwordConfirmation"
-                      label={
-                        <span className="text-base lg:text-lg font-medium">
-                          Confirm Password <span className="text-red-500">*</span>
-                        </span>
-                      }
-                      dependencies={["password"]}
-                      required={false}
-                      rules={[
-                        { required: true, message: "Please confirm your password" },
-                        ({ getFieldValue }) => ({
-                          validator(_, value) {
-                            if (!value || getFieldValue('password') === value) {
-                              return Promise.resolve();
-                            }
-                            return Promise.reject(new Error('The two passwords do not match'));
-                          },
-                        }),
-                      ]}
-                    >
-                      <Input.Password 
-                        placeholder="Confirm password" 
+                      <Input.Password
+                        placeholder="Password"
                         size="large"
                         className="h-12 text-base rounded-lg placeholder:text-[#9CA3AF]"
                         iconRender={(visible) =>
                           visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
                         }
                         onCopy={(e) => e.preventDefault()}
-                        />
+                      />
+                    </Form.Item>
+
+                    <Form.Item
+                      name="passwordConfirmation"
+                      label={
+                        <span className="text-base lg:text-lg font-medium">
+                          Confirm Password{" "}
+                          <span className="text-red-500">*</span>
+                        </span>
+                      }
+                      dependencies={["password"]}
+                      required={false}
+                      rules={[
+                        {
+                          required: true,
+                          message: "Please confirm your password",
+                        },
+                        ({ getFieldValue }) => ({
+                          validator(_, value) {
+                            if (!value || getFieldValue("password") === value) {
+                              return Promise.resolve();
+                            }
+                            return Promise.reject(
+                              new Error("The two passwords do not match")
+                            );
+                          },
+                        }),
+                      ]}
+                    >
+                      <Input.Password
+                        placeholder="Confirm password"
+                        size="large"
+                        className="h-12 text-base rounded-lg placeholder:text-[#9CA3AF]"
+                        iconRender={(visible) =>
+                          visible ? <EyeOutlined /> : <EyeInvisibleOutlined />
+                        }
+                        onCopy={(e) => e.preventDefault()}
+                      />
                     </Form.Item>
 
                     <Form.Item className="mt-2">
@@ -144,7 +145,7 @@ const ResetPassword = () => {
                         type="primary"
                         htmlType="submit"
                         size="large"
-                        className="w-full max-w-[250px] h-[50px] rounded-full px-7 py-3 bg-[#003087] mx-auto flex items-center justify-center"
+                        className="w-full max-w-[250px] h-[50px] rounded-full px-7 py-3 bg-primaryColor mx-auto flex items-center justify-center"
                         loading={isPending}
                       >
                         Submit

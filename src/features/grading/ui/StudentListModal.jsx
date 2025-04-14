@@ -29,10 +29,11 @@ const StudentListModal = ({
         style: { backgroundColor: "transparent", color: "#637381" },
       }),
       render: (text) => <span className="text-primaryColor">{text}</span>,
+      render: (text) => <span className="text-primaryColor">{text}</span>,
     },
     {
       title: () => (
-        <div className="flex items-center justify-center text-[#637381]">
+        <div className="flex items-center justify-center text-primaryTextColor">
           <EditOutlined className="mr-2" />
           <span>Writing</span>
         </div>
@@ -46,7 +47,7 @@ const StudentListModal = ({
     },
     {
       title: () => (
-        <div className="flex items-center justify-center text-[#637381]">
+        <div className="flex items-center justify-center text-primaryTextColor">
           <AudioOutlined className="mr-2" />
           <span>Speaking</span>
         </div>
@@ -70,11 +71,7 @@ const StudentListModal = ({
           type="primary"
           ghost
           shape="round"
-          className={
-            (record.ID === currentUser.ID
-              ? "!border-[#DF6B2E] !text-[#DF6B2E]"
-              : "!border-primaryColor !text-primaryColor") + " w-24"
-          }
+          className="!border-primaryColor !text-primaryColor hover:bg-blue-50 !px-7"
           onClick={() => {
             handleSelect(record.ID);
           }}

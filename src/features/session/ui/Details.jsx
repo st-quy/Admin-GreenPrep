@@ -117,7 +117,7 @@ const Details = ({ type, id }) => {
           ? "Session information"
           : "Student information"}
       </p>
-      <p className="text-[18px] text-[#637381] font-medium mt-[10px]">
+      <p className="text-[18px] text-primaryTextColor font-medium mt-[10px]">
         {type == TableType.SESSION
           ? "Track student request and participation."
           : "View student details."}

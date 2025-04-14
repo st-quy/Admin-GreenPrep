@@ -3,9 +3,9 @@ import { Form, Input, Button, Card, Typography, Spin, Modal } from "antd";
 import { useUpdateProfile } from "@features/auth/hooks/index";
 import { UpdateProfileSchema } from "@features/profile/schema";
 import { yupSync } from "@shared/lib/utils";
-import { useSelector } from 'react-redux';
+import { useSelector } from "react-redux";
 
-const ProfileUpdate = ({ isOpen, onClose}) => {
+const ProfileUpdate = ({ isOpen, onClose }) => {
   const { mutate: updateProfile, isPending } = useUpdateProfile();
   const { user } = useSelector((state) => state.auth);
 
@@ -20,14 +20,13 @@ const ProfileUpdate = ({ isOpen, onClose}) => {
   const [form] = Form.useForm();
 
   const initialValues = {
-    fullName: `${user?.firstName || ''} ${user?.lastName || ''}`.trim(),
+    fullName: `${user?.firstName || ""} ${user?.lastName || ""}`.trim(),
     code: user?.teacherCode,
     bod: user?.bod,
     email: user?.email,
     phone: user?.phone,
     address: user?.address,
   };
-
 
   return (
     <Modal
@@ -39,7 +38,10 @@ const ProfileUpdate = ({ isOpen, onClose}) => {
       className="w-[90%] md:w-[80%] lg:w-[1242px] max-w-[1242px]"
     >
       <div className="p-4 md:p-6 lg:p-8">
-        <Typography.Title level={2} className="font-bold mb-1 text-2xl md:text-3xl">
+        <Typography.Title
+          level={2}
+          className="font-bold mb-1 text-2xl md:text-3xl"
+        >
           Update Profile
         </Typography.Title>
         <p className="text-gray-600 mb-3">
@@ -80,7 +82,10 @@ const ProfileUpdate = ({ isOpen, onClose}) => {
               rules={[yupSync(UpdateProfileSchema)]}
               className="w-full"
             >
-              <Input className="h-[46px] w-full max-w-[458px] rounded-lg" disabled/>
+              <Input
+                className="h-[46px] w-full max-w-[458px] rounded-lg"
+                disabled
+              />
             </Form.Item>
 
             <Form.Item
@@ -94,7 +99,11 @@ const ProfileUpdate = ({ isOpen, onClose}) => {
               rules={[yupSync(UpdateProfileSchema)]}
               className="w-full"
             >
-              <Input className="h-[46px] w-full max-w-[458px] rounded-lg" placeholder="dd/mm/yyyy" disabled/>
+              <Input
+                className="h-[46px] w-full max-w-[458px] rounded-lg"
+                placeholder="dd/mm/yyyy"
+                disabled
+              />
             </Form.Item>
           </div>
 
@@ -111,7 +120,10 @@ const ProfileUpdate = ({ isOpen, onClose}) => {
               rules={[yupSync(UpdateProfileSchema)]}
               className="w-full md:max-w-[458px]"
             >
-              <Input className="h-[46px] w-full max-w-[458px] rounded-lg" disabled />
+              <Input
+                className="h-[46px] w-full max-w-[458px] rounded-lg"
+                disabled
+              />
             </Form.Item>
 
             <Form.Item
@@ -152,11 +164,11 @@ const ProfileUpdate = ({ isOpen, onClose}) => {
             >
               Cancel
             </Button>
-            <Button 
-              type="primary" 
-              htmlType="submit" 
+            <Button
+              type="primary"
+              htmlType="submit"
               loading={isPending}
-              className="w-[100px] h-[50px] bg-[#003087] hover:bg-[#002A6B] rounded-full"
+              className="w-[100px] h-[50px] bg-primaryColor hover:bg-[#002A6B] rounded-full"
             >
               Update
             </Button>

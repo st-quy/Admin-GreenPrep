@@ -12,7 +12,7 @@ const Assessment = ({
   onCommentChange,
   speakingComments,
   writingComments,
-  fileNameInfo = ""
+  fileNameInfo = "",
 }) => {
   const [activeTab, setActiveTab] = useState("1");
   // Track part totals for each skill

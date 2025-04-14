@@ -93,13 +93,13 @@ const TeacherActionModal = ({ initialData = null }) => {
       {isEdit ? (
         <EditOutlined
           onClick={showModal}
-          className="text-[#003087] text-[20px]"
+          className="text-primaryColor text-[20px]"
         />
       ) : (
         <Button
           icon={<PlusCircleOutlined />}
           onClick={showModal}
-          className="bg-[#003087] text-white py-6 rounded-full px-4 text-base border-none"
+          className="bg-primaryColor text-white py-6 rounded-full px-4 text-base border-none"
         >
           Create new account
         </Button>
@@ -124,7 +124,7 @@ const TeacherActionModal = ({ initialData = null }) => {
           <div className="font-bold text-[26px] md:text-[30px]">
             {isEdit ? "Update an account" : "Create an account"}
           </div>
-          <p className="mb-8 text-[#637381] text-[16px]">
+          <p className="mb-8 text-primaryTextColor text-[16px]">
             {isEdit ? "Update a teacher account." : "Create a teacher account."}
           </p>
           <Form
@@ -230,7 +230,7 @@ const TeacherActionModal = ({ initialData = null }) => {
               <div className="flex justify-start w-1/2">
                 <Button
                   onClick={handleCancel}
-                  className="h-[50px] w-[100px] md:h-[52px] md:w-[124px] rounded-[50px] border-[1px] border-[#003087] text-[#003087] lg:text-[16px] md:text-[14px] mr-4"
+                  className="h-[50px] w-[100px] md:h-[52px] md:w-[124px] rounded-[50px] border-[1px] border-primaryColor text-primaryColor lg:text-[16px] md:text-[14px] mr-4"
                 >
                   Cancel
                 </Button>
@@ -239,7 +239,7 @@ const TeacherActionModal = ({ initialData = null }) => {
                   onClick={onAction}
                   loading={isOnAction}
                   htmlType="submit"
-                  className="h-[50px] w-[100px] md:h-[52px] md:w-[124px] rounded-[50px] bg-[#003087] text-white text-[14px] md:text-[16px] "
+                  className="h-[50px] w-[100px] md:h-[52px] md:w-[124px] rounded-[50px] bg-primaryColor text-white text-[14px] md:text-[16px] "
                 >
                   {isEdit ? "Update" : "Create"}
                 </Button>
