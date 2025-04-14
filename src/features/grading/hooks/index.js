@@ -40,8 +40,7 @@ export const useGetGrade = (participantId, skillName) => {
   return useQuery({
     queryKey: ["grade", participantId, skillName],
     queryFn: async () => {
-      const response =  await GradeApi.getGrade(participantId, skillName);
-      console.log(response);
+      const response = await GradeApi.getGrade(participantId, skillName);
       return response.data.data.scoreBySkill;
     },
   });
