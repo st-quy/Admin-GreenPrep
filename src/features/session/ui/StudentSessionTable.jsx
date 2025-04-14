@@ -281,7 +281,10 @@ const StudentSessionTable = ({
           components={{
             header: {
               wrapper: (props) => (
-                <thead {...props} className="bg-[#E6F0FA] text-[#637381]" />
+                <thead
+                  {...props}
+                  className="bg-tableHeadColor text-primaryTextColor"
+                />
               ),
             },
           }}

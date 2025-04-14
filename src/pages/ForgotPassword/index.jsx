@@ -5,7 +5,7 @@ import { LeftOutlined, MailOutlined } from "@ant-design/icons";
 import { ForgotPasswordImg } from "@assets/images";
 import { emailSchema } from "./schema";
 import { useForgotPassword } from "@features/auth/hooks";
-import toast, { Toaster } from 'react-hot-toast';
+import toast, { Toaster } from "react-hot-toast";
 
 const { Title, Text } = Typography;
 const { Content } = Layout;
@@ -13,7 +13,7 @@ const { Content } = Layout;
 const ForgotPassword = () => {
   const navigate = useNavigate();
   const { mutate: forgotPasswordFunc, isPending } = useForgotPassword();
-  
+
   const onFinish = (values) => {
     forgotPasswordFunc(
       { ...values, host: window.location.origin },
@@ -35,17 +35,13 @@ const ForgotPassword = () => {
             md={{ span: 12 }}
             className="flex items-center justify-center p-4"
           >
-            <Card
-              className="w-full max-w-xl shadow-lg p-4 sm:p-8 min-h-[600px]"
-            >
+            <Card className="w-full max-w-xl shadow-lg p-4 sm:p-8 min-h-[600px]">
               <div
                 className="mb-6 flex items-center cursor-pointer gap-2"
                 onClick={() => navigate("/login")}
               >
                 <LeftOutlined />
-                <Text
-                  className="font-semibold text-base sm:text-[16px] text-[#374151]"
-                >
+                <Text className="font-semibold text-base sm:text-[16px] text-[#374151]">
                   Back to login
                 </Text>
               </div>
@@ -58,9 +54,7 @@ const ForgotPassword = () => {
                   Forgot password?
                 </Title>
                 <div className="w-full">
-                  <Text
-                    className="font-normal text-base text-[#637381] block text-center sm:text-left"
-                  >
+                  <Text className="font-normal text-base text-primaryTextColor block text-center sm:text-left">
                     Don't worry! Enter your email below to recover your password
                   </Text>
                 </div>
@@ -88,7 +82,7 @@ const ForgotPassword = () => {
                     type="primary"
                     htmlType="submit"
                     size="large"
-                    className="w-full max-w-[250px] h-[50px] rounded-full px-7 py-3 bg-[#003087] mx-auto flex items-center justify-center"
+                    className="w-full max-w-[250px] h-[50px] rounded-full px-7 py-3 bg-primaryColor mx-auto flex items-center justify-center"
                     loading={isPending}
                   >
                     Reset password

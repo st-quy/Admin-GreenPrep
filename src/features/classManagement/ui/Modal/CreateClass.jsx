@@ -61,7 +61,7 @@ const CreateClassModal = ({ isOpen, onClose }) => {
               type="primary"
               htmlType="submit"
               loading={isPending}
-              className="w-[100px] h-[50px] bg-[#003087] hover:bg-[#002A6B] rounded-full"
+              className="w-[100px] h-[50px] bg-primaryColor hover:bg-[#002A6B] rounded-full"
             >
               Create
             </Button>

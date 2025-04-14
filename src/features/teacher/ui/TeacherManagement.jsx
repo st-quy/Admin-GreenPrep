@@ -107,7 +107,7 @@ const TeacherManagement = () => {
             backgroundColor: "#E6F0FA",
             textAlign: "center",
           }}
-          className="text-[#637381] px-0 font-medium text-[10px] md:text-[14px] border-none"
+          className="text-primaryTextColor px-0 font-medium text-[10px] md:text-[14px] border-none"
         />
       ),
     },
@@ -120,7 +120,7 @@ const TeacherManagement = () => {
             borderRightStyle: "none",
             textAlign: "center",
           }}
-          className="text-[#637381] px-0 font-medium text-[10px] md:text-[14px] border-none"
+          className="text-primaryTextColor px-0 font-medium text-[10px] md:text-[14px] border-none"
         />
       ),
       row: (props) => (
