@@ -1,36 +1,45 @@
-import "./index.scss"
-import { useState, useEffect } from "react"
-import { Tabs, Button, Form, InputNumber, message } from "antd"
-import { EditOutlined, AudioOutlined } from "@ant-design/icons"
-import { usePostGrade, useGetGrade } from "../hooks"
+import "./index.scss";
+import { useState, useEffect } from "react";
+import { Tabs, Button, Form, InputNumber, message } from "antd";
+import { EditOutlined, AudioOutlined } from "@ant-design/icons";
+import { usePostGrade, useGetGrade } from "../hooks";
 
-const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], writingComments = [], defaultTab }) => {
-  const [scores, setScores] = useState(0)
-  const [activeTab, setActiveTab] = useState("writing")
-  const { mutateAsync: postGrade } = usePostGrade()
+const AssessmentScores = ({
+  onTabChange,
+  currentUser,
+  speakingComments = [],
+  writingComments = [],
+  defaultTab,
+}) => {
+  const [scores, setScores] = useState(0);
+  const [activeTab, setActiveTab] = useState("writing");
+  const { mutateAsync: postGrade } = usePostGrade();
 
-  const { data: fetchedScore, isLoading, isError } = useGetGrade(currentUser, activeTab);
+  const {
+    data: fetchedScore,
+    isLoading,
+    isError,
+  } = useGetGrade(currentUser, activeTab);
 
   useEffect(() => {
     if (fetchedScore !== null && fetchedScore !== undefined) {
       setScores(fetchedScore);
-    }
-    else setScores(null)
+    } else setScores(null);
   }, [fetchedScore, currentUser, activeTab]);
 
   const handleTabClick = (key) => {
-    setActiveTab(key)
+    setActiveTab(key);
     if (key === "writing") {
-      onTabChange(false)
-    } else onTabChange(true)
-  }
+      onTabChange(false);
+    } else onTabChange(true);
+  };
   useEffect(() => {
     setActiveTab(defaultTab);
   }, [defaultTab]);
 
   useEffect(() => {
-    setActiveTab("writing")
-  }, [currentUser])
+    setActiveTab("writing");
+  }, [currentUser]);
 
   // Function to determine category based on total score
   // const getCategoryFromScore = (score, type) => {
@@ -53,8 +62,8 @@ const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], wri
 
   const handleSubmit = async () => {
     if (scores === null) {
-      message.error("Please enter a score")
-      return
+      message.error("Please enter a score");
+      return;
     }
 
     try {
@@ -63,14 +72,17 @@ const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], wri
         sessionParticipantID: currentUser,
         teacherGradedScore: scores,
         skillName: activeTab === "writing" ? "WRITING" : "SPEAKING",
-        studentAnswers: activeTab === "writing" ? writingComments : speakingComments,
-      })
-      message.success(`${activeTab === "writing" ? "Writing" : "Speaking"} assessment submitted successfully`)
+        studentAnswers:
+          activeTab === "writing" ? writingComments : speakingComments,
+      });
+      message.success(
+        `${activeTab === "writing" ? "Writing" : "Speaking"} assessment submitted successfully`
+      );
     } catch (error) {
-      message.error("Failed to submit assessment")
-      console.error("Error submitting assessment:", error)
+      message.error("Failed to submit assessment");
+      console.error("Error submitting assessment:", error);
     }
-  }
+  };
 
   return (
     <>
@@ -108,7 +120,8 @@ const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], wri
             {activeTab === "writing" ? "Writing" : "Speaking"} Assessment Parts
           </h2>
           <p className="font-medium text-[18px] leading-[26px] text-[#637381]">
-            Detailed breakdown of each part in the {activeTab === "writing" ? "writing" : "speaking"} assessment.
+            Detailed breakdown of each part in the{" "}
+            {activeTab === "writing" ? "writing" : "speaking"} assessment.
           </p>
         </div>
         {/* Score Input */}
@@ -119,7 +132,7 @@ const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], wri
                 <InputNumber
                   min={0}
                   max={50}
-                    value={scores}
+                  value={scores}
                   changeOnWheel={true}
                   onChange={(value) => setScores(value)}
                   className="w-[170px] h-auto border border-[#637381] rounded-[10px]"
@@ -139,7 +152,7 @@ const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], wri
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default AssessmentScores
+export default AssessmentScores;

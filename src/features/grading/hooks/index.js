@@ -34,9 +34,11 @@ export const useGetGrade = (participantId, skillName) => {
 };
 
 export const usePostGrade = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (params) => {
       const { data } = await GradeApi.postGrade(params);
+      queryClient.invalidateQueries({ queryKey: ["participants"] });
       return data.data;
     },
     onError({ response }) {
