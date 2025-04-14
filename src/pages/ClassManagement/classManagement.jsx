@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from "react";
-import CreateClass from "../../features/auth/classManagement/createClass";
-import UpdateClass from "../../features/auth/classManagement/updateClass";
-import ConfirmationDialog from "../../features/auth/classManagement/components/ConfirmationDialog";
-import useConfirmDelete from "../../features/auth/classManagement/hooks/useConfirmDelete";
+import CreateClass from "../../features/classManagement/createClass";
+import UpdateClass from "../../features/classManagement/updateClass";
+import ConfirmationDialog from "../../features/classManagement/components/ConfirmationDialog";
+import useConfirmDelete from "../../features/classManagement/hooks/useConfirmDelete";
 import SearchBar from "../../shared/components/SearchBar";
 // import Notification from "../../shared/components/Notification/Notification";
 import {
   fetchClasses,
   deleteClass,
   fetchSessionsByClassId,
-} from "../../features/auth/classManagement/services/classAPI";
+} from "../../features/classManagement/services/classAPI";
 import { Link } from "react-router-dom";
 
 const ClassManagement = () => {

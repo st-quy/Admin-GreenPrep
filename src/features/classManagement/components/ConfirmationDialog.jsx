@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Modal, Button, notification } from "antd";
 import { CloseCircleOutlined } from "@ant-design/icons";
-import WarningIcon from "../../../../assets/images/Warning.png";
+import WarningIcon from "../../../assets/images/Warning.png";
 
 const ConfirmationDialog = ({ isOpen, onClose, onConfirm }) => {
   const [isDeleting, setIsDeleting] = useState(false);
