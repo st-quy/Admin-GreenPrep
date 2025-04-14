@@ -5,6 +5,7 @@ import Assessment from "@features/grading/ui/Assessment";
 import AssessmentScores from "@features/grading/ui/AssessmentScores";
 import StudentInfoCard from "@features/grading/ui/StudentInfoCard";
 import StudentListModal from "@features/grading/ui/StudentListModal";
+import ScrollToTop from "@features/grading/utils/ScrollToTop";
 import {
   useGetParticipants,
   useGetSpeakingQuestionsAnswers,
@@ -249,6 +250,7 @@ const GradingPage = () => {
 
   return (
     <div className="p-8">
+      <ScrollToTop />
       {/* Student Information Card */}
       <StudentInfoCard
         student={userData}

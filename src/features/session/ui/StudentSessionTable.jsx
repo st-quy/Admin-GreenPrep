@@ -137,11 +137,7 @@ const StudentSessionTable = ({
       render: (text, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
-            onClick={() =>
-              navigate(
-                `/class/session/student/${record.Session.ID}/grade?skill=speaking`
-              )
-            }
+            onClick={() => navigate(`participant/${record.ID}?skill=speaking`)}
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
             {text ? text + " | " + getSkillLevel(text, "Speaking") : "Ungraded"}
@@ -160,9 +156,7 @@ const StudentSessionTable = ({
       render: (text, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
-            onClick={() =>
-              navigate(`student/${record.User.ID}/grade?skill=writing`)
-            }
+            onClick={() => navigate(`participant/${record.ID}?skill=writing`)}
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
             {text ? text + " | " + getSkillLevel(text, "Writing") : "Ungraded"}

@@ -84,6 +84,21 @@ const PrivateRoute = [
                           },
                         ],
                       },
+                      {
+                        path: "participant",
+                        children: [
+                          {
+                            path: ":participantId",
+                            breadcrumb: "Participant Detail",
+                            children: [
+                              {
+                                index: true,
+                                element: <GradingPage />,
+                              },
+                            ],
+                          },
+                        ],
+                      },
                     ],
                   },
                 ],
