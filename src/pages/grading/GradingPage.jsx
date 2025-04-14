@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Spin } from "antd";
 import Assessment from "@features/grading/ui/Assessment";
@@ -16,21 +16,43 @@ const GradingPage = () => {
   const location = useLocation();
   const { sessionId, participantId } = useParams();
 
+  const currentParticipantIdRef = useRef(participantId);
+
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [speakingComments, setSpeakingComments] = useState([]);
   const [writingComments, setWritingComments] = useState([]);
 
-  const { isPending: isWritingPending, data: writingData } =
-    useGetWritingQuestionsAnswers(participantId);
-  const { isPending: isSpeakingPending, data: speakingData } =
-    useGetSpeakingQuestionsAnswers(participantId);
+  const [isChangingParticipant, setIsChangingParticipant] = useState(false);
+
+  const {
+    isPending: isWritingPending,
+    data: writingData,
+    refetch: refetchWriting,
+  } = useGetWritingQuestionsAnswers(participantId);
+  const {
+    isPending: isSpeakingPending,
+    data: speakingData,
+    refetch: refetchSpeaking,
+  } = useGetSpeakingQuestionsAnswers(participantId);
   const { isPending: isParticipantsPending, data: participantsData } =
     useGetParticipants(sessionId);
 
   const onTabChange = (key) => {
     setIsSpeaking(key);
   };
+
+  // Handle participant change
+  useEffect(() => {
+    if (currentParticipantIdRef.current !== participantId) {
+      setIsChangingParticipant(true);
+      refetchWriting();
+      refetchSpeaking();
+      setSpeakingComments([]);
+      setWritingComments([]);
+      currentParticipantIdRef.current = participantId;
+    }
+  }, [participantId]);
 
   // Extract comments from database data
   const extractCommentsFromData = (data, part) => {
@@ -75,34 +97,47 @@ const GradingPage = () => {
     return comments;
   };
 
-  // Initialize comments from database when data is loaded
+  // Initialize writing comments from database when data is loaded
   useEffect(() => {
     if (!isWritingPending && writingData) {
-      // Extract comments for each part (1-4)
-      const allWritingComments = [];
-      for (let part = 1; part <= 4; part++) {
-        const partComments = extractCommentsFromData(
-          writingData,
-          part.toString()
-        );
-        allWritingComments.push(...partComments);
+      // Only proceed if this data is for the current participant
+      if (currentParticipantIdRef.current === participantId) {
+        // Extract comments for each part (1-4)
+        const allWritingComments = [];
+        for (let part = 1; part <= 4; part++) {
+          const partComments = extractCommentsFromData(
+            writingData,
+            part.toString()
+          );
+          allWritingComments.push(...partComments);
+        }
+
+        // Set the comments and mark participant change as complete
+        setWritingComments(allWritingComments);
+        setIsChangingParticipant(false);
       }
-      setWritingComments(allWritingComments);
     }
   }, [isWritingPending, writingData, participantId]);
 
+  // Initialize speaking comments from database when data is loaded
   useEffect(() => {
     if (!isSpeakingPending && speakingData) {
-      // Extract comments for each part (1-4)
-      const allSpeakingComments = [];
-      for (let part = 1; part <= 4; part++) {
-        const partComments = extractCommentsFromData(
-          speakingData,
-          part.toString()
-        );
-        allSpeakingComments.push(...partComments);
+      // Only proceed if this data is for the current participant
+      if (currentParticipantIdRef.current === participantId) {
+        // Extract comments for each part (1-4)
+        const allSpeakingComments = [];
+        for (let part = 1; part <= 4; part++) {
+          const partComments = extractCommentsFromData(
+            speakingData,
+            part.toString()
+          );
+          allSpeakingComments.push(...partComments);
+        }
+
+        // Set the comments and mark participant change as complete
+        setSpeakingComments(allSpeakingComments);
+        setIsChangingParticipant(false);
       }
-      setSpeakingComments(allSpeakingComments);
     }
   }, [isSpeakingPending, speakingData, participantId]);
 
@@ -116,6 +151,9 @@ const GradingPage = () => {
       isPartFour,
       allStudentAnswerIds,
     } = commentData;
+
+    // Don't update comments if we're in the middle of changing participants
+    if (isChangingParticipant) return;
 
     if (isSpeaking) {
       // Special handling for speaking part 4
@@ -263,7 +301,7 @@ const GradingPage = () => {
         writingComments={prepareCommentsForSubmission(writingComments)}
       />
       <Assessment
-        key={`assessment-${isSpeaking ? "speaking" : "writing"}`} // Add key to force re-render when skill changes
+        key={`assessment-${isSpeaking ? "speaking" : "writing"}`}
         isSpeaking={isSpeaking}
         currentUser={participantId}
         data={isSpeaking ? speakingData : writingData}
