@@ -73,17 +73,21 @@ const SessionManager = ({ data, isLoading }) => {
       render: (_, record) => (
         <div className="flex justify-center items-center gap-4">
           <ActionModal initialData={record} />
-          <span className="text-xl">
-            <DeleteOutlined
-              onClick={handleOpenModal}
-              className="hover:opacity-50"
-            />
-          </span>
-          <DeleteModal
-            sessionID={record.ID}
-            isOpen={isModalOpen}
-            onClose={handleCloseModal}
-          />
+          {record.SessionParticipants.length === 0 && (
+            <>
+              <span className="text-xl">
+                <DeleteOutlined
+                  onClick={handleOpenModal}
+                  className="hover:opacity-50"
+                />
+              </span>
+              <DeleteModal
+                sessionID={record.ID}
+                isOpen={isModalOpen}
+                onClose={handleCloseModal}
+              />
+            </>
+          )}
         </div>
       ),
     },
