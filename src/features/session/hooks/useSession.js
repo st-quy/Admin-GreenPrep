@@ -5,6 +5,8 @@ import {
   fetchStudentParticipants,
   approveRequest,
   rejectRequest,
+  publishScoresAndSendEmails,
+  sendEmail,
 } from "../api/session_api";
 import { message } from "antd";
 
@@ -110,6 +112,19 @@ export const useRejectSelectedRequest = (sessionId) => {
     },
     onError: (error) => {
       message.error("Error rejecting request: " + error.message);
+    },
+  });
+};
+
+export const usePublishScoresAndSendEmails = (sessionId, onSuccessCallback) => {
+  return useMutation({
+    mutationFn: () => publishScoresAndSendEmails(sessionId),
+    onSuccess: () => {
+      if (onSuccessCallback) onSuccessCallback();
+    },
+    onError: (error) => {
+      console.error("Error publishing scores:", error);
+      message.error("Some emails failed to send. Please try again.");
     },
   });
 };

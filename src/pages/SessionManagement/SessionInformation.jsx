@@ -7,13 +7,20 @@ import SearchInput from "@/app/components/SearchInput.jsx";
 import Details from "@features/session/ui/Details.jsx";
 import { useParams } from "react-router-dom";
 import { TableType } from "@features/session/constant/TableEnum";
-import { sendEmail } from "@/features/email/session/emailServices.js";
+import { usePublishScoresAndSendEmails } from "@features/session/hooks/useSession";
 
 const SessionInformation = ({ type }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const { sessionId, studentId } = useParams();
   const [pendingCount, setPendingCount] = useState(0);
   const [buttonState, setButtonState] = useState("readyToPublish");
+  const { mutate: publishScores, isPending } = usePublishScoresAndSendEmails(
+    sessionId,
+    () => {
+      setButtonState("publishedScore");
+      message.success("Email send successfuly!");
+    }
+  );
 
   const handlePendingCountChange = (count) => {
     setPendingCount(count);
@@ -56,38 +63,9 @@ const SessionInformation = ({ type }) => {
     },
   ];
 
-  const handlePublishScore = async () => {
-    try {
-      setButtonState("publishScore");
-
-      const response = await fetch(
-        `https://dev-api-greenprep.onrender.com/api/session-participants/${sessionId}?page=1&limit=100`
-      );
-      const data = await response.json();
-      const participants = data.data || [];
-
-      for (const participant of participants) {
-        const user = participant.User;
-        const totalScore = participant.Total;
-
-        const emailPayload = {
-          sessionName: "Math Test Session",
-          testDetails: `You scored ${totalScore ?? "N/A"} in the test.`,
-          nextSteps: "Please wait for the final results.",
-          contactInfo: "support@example.com",
-        };
-
-        await sendEmail(user.ID, emailPayload);
-      }
-
-      message.success("✅ Emails sent successfully!");
-    } catch (err) {
-      console.error("Failed to send emails:", err);
-      message.error("❌ Failed to send emails.");
-    } finally {
-      setButtonState("publishedScore");
-    }
-  };
+  const handlePublishScore = () => {
+    publishScores();
+  };  
 
   return (
     <div className="session-container flex flex-col p-2 md:p-8">
@@ -124,8 +102,9 @@ const SessionInformation = ({ type }) => {
                 <button
                   className="bg-secondaryColor text-white font-bold rounded-full md:px-[28px] px-[18px] md:py-[13px] py-[7px] md:text-base text-xs border-none"
                   onClick={handlePublishScore}
+                  disabled={isPending}
                 >
-                  Ready to Publish
+                  {isPending ? "Sending..." : "Ready to Publish"}
                 </button>
               )}
               {buttonState === "publishedScore" && (
