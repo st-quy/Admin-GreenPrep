@@ -1,6 +1,5 @@
 import axiosInstance from "@shared/config/axios";
 
-
 export const ParticipantApi = {
   getParticipant: (sessionId, participantId) => {
     return axiosInstance.get(``);
@@ -17,9 +16,18 @@ export const GradeApi = {
     );
   },
   postGrade: (params) => {
-    return axiosInstance.post(
-      `/grades/teacher-grade`,
-      params
-    );
+    return axiosInstance.post(`/grades/teacher-grade`, params);
   },
+};
+
+export const getAudioFileName = async (classId, sessionId) => {
+  const [classRes, sessionRes] = await Promise.all([
+    axiosInstance.get(`/classes/${classId}`),
+    axiosInstance.get(`/sessions/${sessionId}`),
+  ]);
+
+  return {
+    className: classRes.data.data.className,
+    sessionName: sessionRes.data.data.sessionName,
+  };
 };

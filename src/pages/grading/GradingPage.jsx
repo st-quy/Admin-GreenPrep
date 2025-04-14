@@ -6,16 +6,21 @@ import AssessmentScores from "@features/grading/ui/AssessmentScores";
 import StudentInfoCard from "@features/grading/ui/StudentInfoCard";
 import StudentListModal from "@features/grading/ui/StudentListModal";
 import ScrollToTop from "@features/grading/utils/ScrollToTop";
+
 import {
   useGetParticipants,
   useGetSpeakingQuestionsAnswers,
   useGetWritingQuestionsAnswers,
+  useAudioFileName,
 } from "@features/grading/hooks";
 
 const GradingPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { sessionId, participantId } = useParams();
+  const { sessionId, participantId, classId } = useParams();
+
+  // const { data: audioFileName } = useAudioFileName(classId, sessionId);
+  // console.log(audioFileName);
 
   const currentParticipantIdRef = useRef(participantId);
 
@@ -81,7 +86,6 @@ const GradingPage = () => {
 
     const comments = [];
     try {
-      // Find the part that matches the current part number
       const partData = data.data.data.topic.Parts.find(
         (p) =>
           p.Content &&
@@ -113,9 +117,7 @@ const GradingPage = () => {
   // Initialize writing comments from database when data is loaded
   useEffect(() => {
     if (!isWritingPending && writingData) {
-      // Only proceed if this data is for the current participant
       if (currentParticipantIdRef.current === participantId) {
-        // Extract comments for each part (1-4)
         const allWritingComments = [];
         for (let part = 1; part <= 4; part++) {
           const partComments = extractCommentsFromData(
@@ -124,8 +126,6 @@ const GradingPage = () => {
           );
           allWritingComments.push(...partComments);
         }
-
-        // Set the comments and mark participant change as complete
         setWritingComments(allWritingComments);
         setIsChangingParticipant(false);
       }
@@ -135,9 +135,7 @@ const GradingPage = () => {
   // Initialize speaking comments from database when data is loaded
   useEffect(() => {
     if (!isSpeakingPending && speakingData) {
-      // Only proceed if this data is for the current participant
       if (currentParticipantIdRef.current === participantId) {
-        // Extract comments for each part (1-4)
         const allSpeakingComments = [];
         for (let part = 1; part <= 4; part++) {
           const partComments = extractCommentsFromData(
@@ -146,8 +144,6 @@ const GradingPage = () => {
           );
           allSpeakingComments.push(...partComments);
         }
-
-        // Set the comments and mark participant change as complete
         setSpeakingComments(allSpeakingComments);
         setIsChangingParticipant(false);
       }
@@ -289,6 +285,7 @@ const GradingPage = () => {
     changeParticipant(previousParticipantId);
   };
 
+  //Current User
   const userData = participantsData?.data.data.find(
     (item) => item.ID === participantId
   );
