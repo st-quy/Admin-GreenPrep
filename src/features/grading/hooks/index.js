@@ -2,19 +2,6 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { GradeApi, ParticipantApi, getAudioFileName } from "../api";
 import { message } from "antd";
 
-export const useScoreMutation = (mutationFn) => {
-  const querryClient = useQueryClient();
-  return useMutation({
-    mutationFn,
-    onSuccess: () => {
-      querryClient.invalidateQueries();
-    },
-    onError: () => {
-      console.log("Error!");
-    },
-  });
-};
-
 export const useGetParticipants = (sessionId) => {
   return useQuery({
     queryKey: ["participants"],

@@ -50,7 +50,7 @@ const GradingPage = () => {
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
     const skillParam = searchParams.get("skill");
-  
+
     if (skillParam === "speaking") {
       setIsSpeaking(true);
     } else {
@@ -182,7 +182,6 @@ const GradingPage = () => {
           return [...filteredComments, ...newComments];
         });
       } else {
-        // Normal handling for other parts
         setSpeakingComments((prevComments) => {
           const existingIndex = prevComments.findIndex(
             (comment) =>
