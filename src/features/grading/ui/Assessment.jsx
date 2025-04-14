@@ -163,7 +163,7 @@ const Assessment = ({
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full min-h-screen">
       <div className="py-[2.3125rem]">
         <div className="w-full">
           <div className="flex flex-col">

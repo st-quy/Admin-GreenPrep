@@ -36,6 +36,17 @@ export const useGetSpeakingQuestionsAnswers = (participantId) => {
   });
 };
 
+export const useGetGrade = (participantId, skillName) => {
+  return useQuery({
+    queryKey: ["grade", participantId, skillName],
+    queryFn: async () => {
+      const response =  await GradeApi.getGrade(participantId, skillName);
+      console.log(response);
+      return response.data.data.scoreBySkill;
+    },
+  });
+};
+
 export const usePostGrade = () => {
   return useMutation({
     mutationFn: async (params) => {
