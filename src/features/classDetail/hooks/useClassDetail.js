@@ -54,16 +54,15 @@ export const useCreateSession = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data) => {
-      const response = await ClassDetailApi.createSession(
-        // @ts-ignore
-        data.ClassId,
-        // @ts-ignore
-        data
-      );
+      const response = await ClassDetailApi.createSession(data);
       return response.data;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["classDetail"] });
+      message.success(`Created successfully!`)
+    },
+    onError: (error) => {
+      message.error(`Failed to create session.`);
     },
   });
 };
@@ -82,6 +81,10 @@ export const useUpdateSession = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["classDetail"] });
+      message.success(`Update successfully!`)
+    },
+    onError: (error) => {
+      message.error(`Failed to update session.`);
     },
   });
 };

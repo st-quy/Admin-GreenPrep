@@ -8,6 +8,6 @@ export const updateTeachers = async (data) => {
   return await axiosInstance.put(`/users/${data.ID}`, data);
 };
 export const getTeachers = async (data) => {
-  const res = await axiosInstance.post(`/users/teachers`, data);
+  const res = await axiosInstance.get(`/users/teachers`, data);
   return res.data;
 };

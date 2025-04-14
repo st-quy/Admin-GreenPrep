@@ -81,12 +81,12 @@ export const ProtectedRoute = () => {
     {
       value: "1",
       label: "Dashboard",
-      roles: ["admin"], // Ai cũng được truy cập
+      roles: ["admin"],
     },
     {
       value: "2",
       label: "Class Management",
-      roles: ["admin"], // Ai cũng được truy cập
+      roles: ["teacher"],
     },
     {
       value: "3",
