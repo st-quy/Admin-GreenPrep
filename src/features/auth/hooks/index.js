@@ -107,6 +107,8 @@ export const useGetProfile = () => {
             class: data.data.class,
             studentCode: data.data.studentCode,
             teacherCode: data.data.teacherCode,
+            address: data.data.address,
+            bod: data.data.bod,
           })
         );
 
@@ -131,7 +133,6 @@ export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: async (params) => {
       const { data } = await AuthApi.updateProfile(userId, params);
-      message.success(data.message);
       dispatch(
         updateUser({
           userId: data.data.ID,
@@ -141,11 +142,14 @@ export const useUpdateProfile = () => {
           email: data.data.email,
           phone: data.data.phone,
           class: data.data.class,
+          address: data.data.address,
           studentCode: data.data.studentCode,
           teacherCode: data.data.teacherCode,
+          bod: data.data.bod,
         })
       );
       queryClient.invalidateQueries({ queryKey: ["profile"] });
+      message.success(data.message);
       return data.data;
     },
     onError({ response }) {

@@ -5,7 +5,7 @@ import { UpdateProfileSchema } from "@features/profile/schema";
 import { yupSync } from "@shared/lib/utils";
 import { useSelector } from 'react-redux';
 
-const ProfileUpdate = ({ isOpen, onClose, userData }) => {
+const ProfileUpdate = ({ isOpen, onClose}) => {
   const { mutate: updateProfile, isPending } = useUpdateProfile();
   const { user } = useSelector((state) => state.auth);
 
@@ -24,7 +24,7 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
     code: user?.teacherCode,
     bod: user?.bod,
     email: user?.email,
-    phoneNumber: user?.phone,
+    phone: user?.phone,
     address: user?.address,
   };
 
@@ -94,7 +94,7 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
               rules={[yupSync(UpdateProfileSchema)]}
               className="w-full"
             >
-              <Input className="h-[46px] w-full max-w-[458px] rounded-lg" placeholder="dd/mm/yyyy" />
+              <Input className="h-[46px] w-full max-w-[458px] rounded-lg" placeholder="dd/mm/yyyy" disabled/>
             </Form.Item>
           </div>
 
@@ -120,7 +120,7 @@ const ProfileUpdate = ({ isOpen, onClose, userData }) => {
                   <span>Phone number</span>
                 </div>
               }
-              name="phoneNumber"
+              name="phone"
               rules={[yupSync(UpdateProfileSchema)]}
               className="w-full md:max-w-[458px]"
             >
