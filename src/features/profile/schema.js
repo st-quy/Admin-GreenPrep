@@ -32,7 +32,7 @@ export const UpdateProfileSchema = Yup.object().shape({
   email: Yup.string()
     .email("Enter a valid email")
     .required("Email is required"),
-  phoneNumber: Yup.string()
+  phone: Yup.string()
     .matches(/^\d{9,10}$/, "Phone number must be 9-10 digits")
     .nullable(),
   address: Yup.string().nullable(),
