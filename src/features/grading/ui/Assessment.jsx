@@ -104,7 +104,6 @@ const Assessment = ({
     return comment ? comment.messageContent : "";
   };
 
-  const handleSubmitScore = () => {};
   const handleDisplayPart = () => {
     if (!partData || !partData.Questions) return "";
 
@@ -121,16 +120,18 @@ const Assessment = ({
               speakingPartFour={partFourQuestions}
             />
           </div>
-          <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
-            <CommentForm
-              key={`speaking-part4-${partFourQuestions[0]?.studentAnswer?.ID}-${currentUser}`} // Add currentUser to force re-render
-              data={partFourQuestions[0]}
-              onCommentChange={handleCommentChange}
-              isSpeaking={isSpeaking}
-              activeTab={activeTab}
-              existingComment={findExistingComment(partFourQuestions[0])}
-            />
-          </div>
+          {partFourQuestions[0].studentAnswer?.ID && (
+            <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
+              <CommentForm
+                key={`speaking-part4-${partFourQuestions[0]?.studentAnswer?.ID}-${currentUser}`} // Add currentUser to force re-render
+                data={partFourQuestions[0]}
+                onCommentChange={handleCommentChange}
+                isSpeaking={isSpeaking}
+                activeTab={activeTab}
+                existingComment={findExistingComment(partFourQuestions[0])}
+              />
+            </div>
+          )}
         </div>
       );
     }
@@ -144,16 +145,18 @@ const Assessment = ({
             quesntionsAnswerData={question}
           />
         </div>
-        <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
-          <CommentForm
-            key={`${isSpeaking ? "speaking" : "writing"}-part${activeTab}-${question?.studentAnswer?.ID}-${currentUser}`} // Add currentUser to force re-render
-            data={question}
-            onCommentChange={handleCommentChange}
-            isSpeaking={isSpeaking}
-            activeTab={activeTab}
-            existingComment={findExistingComment(question)}
-          />
-        </div>
+        {question.studentAnswer?.ID && (
+          <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
+            <CommentForm
+              key={`${isSpeaking ? "speaking" : "writing"}-part${activeTab}-${question?.studentAnswer?.ID}-${currentUser}`} // Add currentUser to force re-render
+              data={question}
+              onCommentChange={handleCommentChange}
+              isSpeaking={isSpeaking}
+              activeTab={activeTab}
+              existingComment={findExistingComment(question)}
+            />
+          </div>
+        )}
       </div>
     ));
   };
