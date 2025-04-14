@@ -53,7 +53,7 @@ const ClassManagement = () => {
       render: (_, record) => (
         <div className="flex gap-4 justify-center">
           <Button
-            className="text-xl !text-[#003087]"
+            className="text-xl !text-primaryColor"
             type="link"
             icon={<EditOutlined />}
             onClick={handleUpdateClass(record)}
@@ -76,14 +76,14 @@ const ClassManagement = () => {
           <Typography.Title level={3} className="m-0 font-bold text-black ">
             Class Management
           </Typography.Title>
-          <Typography.Text className="text-[#637381] text-[18px]">
+          <Typography.Text className="text-primaryTextColor text-[18px]">
             Manage and organize both classes and individual sessions.
           </Typography.Text>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:space-x-0">
           <Button
             type="primary"
-            className="min-w-[140px] md:min-w-[160px] h-[50px] rounded-full bg-[#003087] hover:!bg-[#002A6B] border-none font-medium"
+            className="min-w-[140px] md:min-w-[160px] h-[50px] rounded-full bg-primaryColor hover:!bg-[#002A6B] border-none font-medium"
             onClick={() => setIsOpen("Create")}
           >
             Create new class

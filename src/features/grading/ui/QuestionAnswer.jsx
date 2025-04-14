@@ -26,7 +26,7 @@ export const QuestionAnswer = ({
       className="rounded-lg overflow-hidden"
       styles={{ body: { padding: 0 } }}
     >
-      <div className="bg-[#E6F0FA] px-[4.375rem] py-[2.125rem] leading-6 text-base">
+      <div className="bg-tableHeadColor px-[4.375rem] py-[2.125rem] leading-6 text-base">
         <div className="flex">
           <div className="font-bold">Question:</div>
           <div>&nbsp;{quesntionsAnswerData?.Content || ""}</div>

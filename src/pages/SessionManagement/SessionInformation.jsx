@@ -74,7 +74,7 @@ const SessionInformation = ({ type }) => {
                 ? "Student Monitoring"
                 : "Assessment History"}
             </p>
-            <p className="text-[18px] text-[#637381] font-medium mt-[10px]">
+            <p className="text-[18px] text-primaryTextColor font-medium mt-[10px]">
               {type == TableType.SESSION
                 ? "Track student request and participation."
                 : "Overview of Past Performance."}

@@ -121,21 +121,21 @@ export const Assessment = ({ isSpeaking, data }) => {
                 <div className="flex items-center leading-6">
                   <div className="flex text-base items-center">
                     Total Score:{" "}
-                    <span className="text-2xl font-semibold text-[#003087] pl-[30px] pr-[50px]">
+                    <span className="text-2xl font-semibold text-primaryColor pl-[30px] pr-[50px]">
                       {totalScore}
                     </span>
                   </div>
                   <div className="flex">
                     <Button
                       onClick={handleSaveAsDraft}
-                      className="h-auto px-[28px] py-[13px]  text-base text-[#003087] border border-[#003087] rounded-[50px] mr-[12px]"
+                      className="h-auto px-[28px] py-[13px]  text-base text-primaryColor border border-primaryColor rounded-[50px] mr-[12px]"
                     >
                       Save as draft
                     </Button>
                     <Button
                       onClick={handleSubmitScore}
                       type="primary"
-                      className="h-auto px-[28px] py-[13px] text-base bg-[#003087] rounded-[50px]"
+                      className="h-auto px-[28px] py-[13px] text-base bg-primaryColor rounded-[50px]"
                     >
                       Submit score
                     </Button>

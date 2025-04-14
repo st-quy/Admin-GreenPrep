@@ -95,16 +95,16 @@ const AssessmentScores = ({ data, onTabChange }) => {
         </div>
       ),
       part1: (
-        <span className="text-[#003087] font-medium">{data[type][0]}</span>
+        <span className="text-primaryColor font-medium">{data[type][0]}</span>
       ),
       part2: (
-        <span className="text-[#003087] font-medium">{data[type][1]}</span>
+        <span className="text-primaryColor font-medium">{data[type][1]}</span>
       ),
       part3: (
-        <span className="text-[#003087] font-medium">{data[type][2]}</span>
+        <span className="text-primaryColor font-medium">{data[type][2]}</span>
       ),
       part4: (
-        <span className="text-[#003087] font-medium">{data[type][3]}</span>
+        <span className="text-primaryColor font-medium">{data[type][3]}</span>
       ),
       total: `${data[type].reduce((a, b) => a + b, 0)} | B2`,
     },
@@ -117,7 +117,7 @@ const AssessmentScores = ({ data, onTabChange }) => {
           {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)} Assessment
           Parts
         </h2>
-        <p className="absolute font-medium text-[18px] leading-[26px] text-[#637381] mt-[11px]">
+        <p className="absolute font-medium text-[18px] leading-[26px] text-primaryTextColor mt-[11px]">
           Detailed breakdown of each part in the writing assessment.
         </p>
 
@@ -139,7 +139,7 @@ const AssessmentScores = ({ data, onTabChange }) => {
                   }}
                   className={`${
                     activeTab === "writing"
-                      ? "text-[#003087] bg-[#E6F0FA] border-b-2 border-[#003087]"
+                      ? "text-primaryColor bg-[#E6F0FA] border-b-2 border-primaryColor"
                       : "text-gray-500"
                   }`}
                 >
@@ -160,7 +160,7 @@ const AssessmentScores = ({ data, onTabChange }) => {
                   }}
                   className={`${
                     activeTab === "speaking"
-                      ? "text-[#003087] bg-[#E6F0FA] border-b-2 border-[#003087]"
+                      ? "text-primaryColor bg-[#E6F0FA] border-b-2 border-primaryColor"
                       : "text-gray-500"
                   }`}
                 >

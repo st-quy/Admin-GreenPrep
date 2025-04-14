@@ -20,7 +20,9 @@ const StudentInfoCard = ({
         <Title level={2} className="!mb-3 !font-bold">
           Student information: {student.name}
         </Title>
-        <div className="text-[18px] text-[#637381]">View student details.</div>
+        <div className="text-[18px] text-primaryTextColor">
+          View student details.
+        </div>
       </div>
 
       <Row>
@@ -64,7 +66,7 @@ const StudentInfoCard = ({
             icon={<UnorderedListOutlined />}
             shape="round"
             size="large"
-            className="flex items-center border-[#003087] text-[#003087] w-[200px] h-[50px]"
+            className="flex items-center border-primaryColor text-primaryColor w-[200px] h-[50px]"
             onClick={onViewList}
           >
             Student List
@@ -74,7 +76,7 @@ const StudentInfoCard = ({
             icon={<LeftOutlined />}
             shape="round"
             size="large"
-            className="flex items-center border-[#003087] text-[#003087] w-[200px] h-[50px]"
+            className="flex items-center border-primaryColor text-primaryColor w-[200px] h-[50px]"
             onClick={onPrevious}
           >
             Previous Student
@@ -85,7 +87,7 @@ const StudentInfoCard = ({
             shape="round"
             size="large"
             icon={<RightOutlined />}
-            className="flex items-center bg-[#003087] hover:!bg-blue-800 border-[#003087] w-[200px] h-[50px]"
+            className="flex items-center bg-primaryColor hover:!bg-blue-800 border-primaryColor w-[200px] h-[50px]"
             onClick={onNext}
           >
             Next Student
