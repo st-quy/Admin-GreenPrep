@@ -24,7 +24,7 @@ const GradingPage = () => {
 
   const currentParticipantIdRef = useRef(participantId);
 
-  const [isSpeaking, setIsSpeaking] = useState(null);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [speakingComments, setSpeakingComments] = useState([]);
   const [writingComments, setWritingComments] = useState([]);
