@@ -1,15 +1,18 @@
-import { classInfo, sessionsData } from "@features/classDetail/exampleData";
 import { useClassDetailQuery } from "@features/classDetail/hooks/useClassDetail";
 import ClassInfo from "@features/classDetail/ui/ClassInfo/ClassInfo";
 
 import SessionManager from "@features/classDetail/ui/SessionManager/SessionManager";
-import { Spin } from "antd";
+import { Divider, Spin } from "antd";
 import React from "react";
 import { useParams } from "react-router-dom";
 
 const ClassDetail = () => {
-  const { id } = useParams();
-  const { data: classDetail, isLoading, isError } = useClassDetailQuery(id);
+  const { classId } = useParams();
+  const {
+    data: classDetail,
+    isLoading,
+    isError,
+  } = useClassDetailQuery(classId);
 
   if (isLoading)
     return (
@@ -25,8 +28,9 @@ const ClassDetail = () => {
     );
 
   return (
-    <div className="pb-12 p-8">
+    <div className="p-8">
       <ClassInfo data={classDetail} />
+      <Divider />
       <SessionManager data={classDetail} />
     </div>
   );

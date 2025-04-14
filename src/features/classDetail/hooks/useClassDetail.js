@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ClassDetailApi } from "../classAPI";
+import { ClassDetailApi } from "../api/classAPI";
+import { message } from "antd";
 
 export const useClassDetailQuery = (classID) => {
   return useQuery({
@@ -41,10 +42,46 @@ export const useDeleteSessionMutation = () => {
       return response.data.data;
     },
     onSuccess: () => {
+      message.success("Session deleted successfully!");
       queryClient.invalidateQueries({ queryKey: ["classDetail"] });
     },
     onError: (error) => {
-      console.error("Lỗi khi xóa session:", error);
+      message.error("Failed to delete the session. Please try again.");
+    },
+  });
+};
+export const useCreateSession = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data) => {
+      const response = await ClassDetailApi.createSession(
+        // @ts-ignore
+        data.ClassId,
+        // @ts-ignore
+        data
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["classDetail"] });
+    },
+  });
+};
+
+export const useUpdateSession = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data) => {
+      const response = await ClassDetailApi.updateSession(
+        // @ts-ignore
+        data.sessionId,
+        // @ts-ignore
+        data
+      );
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["classDetail"] });
     },
   });
 };
