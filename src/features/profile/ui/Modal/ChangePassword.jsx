@@ -98,7 +98,17 @@ const ChangePassword = ({ isOpen, onClose }) => {
               required={false}
               dependencies={["newPassword"]}
               className="w-full md:max-w-[458px]"
-              rules={[yupSync(ChangePasswordSchema)]}
+              rules={[
+                { required: true, message: "Please confirm your new password" },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue('newPassword') === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('The two passwords do not match'));
+                  },
+                }),
+              ]}
             >
               <Input.Password
                 className="h-[46px] w-full max-w-[458px] rounded-lg"

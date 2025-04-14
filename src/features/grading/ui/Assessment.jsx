@@ -1,89 +1,169 @@
 import "antd/dist/reset.css";
-import { QuestionAnswer } from "./QuestionAnswer";
-import ScoreCommentForm from "./ScoreCommentForm";
-import { Card, Tabs, Button } from "antd";
 import "./index.scss";
+import { QuestionAnswer } from "./QuestionAnswer";
+import CommentForm from "./CommentForm";
+import { Card, Tabs } from "antd";
 import { useState, useEffect } from "react";
 
-export const Assessment = ({ isSpeaking, data }) => {
+const Assessment = ({
+  isSpeaking,
+  currentUser,
+  data,
+  onCommentChange,
+  speakingComments,
+  writingComments,
+  fileNameInfo = "",
+}) => {
   const [activeTab, setActiveTab] = useState("1");
-  const [totalScore, setTotalScore] = useState(100);
+  // Track part totals for each skill
   const [partData, setPartData] = useState({});
 
   const handleTabChange = (key) => {
     setActiveTab(key);
   };
 
+  // Reset to part 1 when isSpeaking changes or currentUser changes
   useEffect(() => {
     setActiveTab("1");
-    handleDataChange();
-  }, [isSpeaking]);
+  }, [isSpeaking, currentUser]);
+
   useEffect(() => {
     handleDataChange();
-  }, [activeTab]);
+  }, [activeTab, isSpeaking, data]);
 
   const handleDataChange = () => {
     try {
-      const parts = data.data.Parts;
+      const parts = data?.data?.data?.topic?.Parts;
       if (parts && parts.length > 0) {
         const currentPart = `PART ${activeTab}`;
         const currentPartIndex = parts.findIndex((p) =>
-          p.Content.toLowerCase().includes(currentPart.toLowerCase())
+          p.Content?.toLowerCase().includes(currentPart.toLowerCase())
         );
-        setPartData(parts[currentPartIndex]);
+        if (currentPartIndex >= 0) {
+          setPartData(parts[currentPartIndex]);
+        } else {
+          setPartData({});
+        }
+      } else {
+        setPartData({});
       }
     } catch (error) {
-      console.error("Error parsing speaking data:", error);
+      console.error("Error parsing data:", error);
+      setPartData({});
     }
   };
 
-  const handleSaveAsDraft = () => {
-    // Future functionality: Save score as draft to database
-    console.log("Saving score as draft:", totalScore);
+  const handleCommentChange = (commentData) => {
+    if (onCommentChange) {
+      // Special handling for speaking part 4
+      if (isSpeaking && activeTab === "4") {
+        // Get all student answer IDs from part 4
+        const allStudentAnswerIds = [];
+        try {
+          if (partData && partData.Questions) {
+            partData.Questions.forEach((question) => {
+              if (question.studentAnswer && question.studentAnswer.ID) {
+                allStudentAnswerIds.push(question.studentAnswer.ID);
+              }
+            });
+          }
+        } catch (error) {
+          console.error("Error getting student answer IDs:", error);
+        }
+
+        // Pass all student answer IDs for part 4
+        onCommentChange({
+          ...commentData,
+          isSpeaking,
+          part: activeTab,
+          isPartFour: true,
+          allStudentAnswerIds,
+        });
+      } else {
+        // Normal handling for other parts
+        onCommentChange({
+          ...commentData,
+          isSpeaking,
+          part: activeTab,
+        });
+      }
+    }
   };
 
-  const handleSubmitScore = () => {
-    // Future functionality: Submit final score to database
-    console.log("Submitting final score:", totalScore);
+  // Find existing comment for a question
+  const findExistingComment = (questionData) => {
+    const comments = isSpeaking ? speakingComments : writingComments;
+    const studentAnswerId = questionData?.studentAnswer?.ID;
+
+    if (!comments || !studentAnswerId) return "";
+
+    // Find comment that matches both studentAnswerId and current part
+    const comment = comments.find(
+      (c) => c.studentAnswerId === studentAnswerId && c.part === activeTab
+    );
+
+    return comment ? comment.messageContent : "";
   };
 
   const handleDisplayPart = () => {
-    if (!partData) return "";
-    if (isSpeaking && activeTab == "4") {
+    if (!partData || !partData.Questions) return "";
+
+    if (isSpeaking && activeTab === "4") {
       const partFourQuestions = partData.Questions || [];
+      if (partFourQuestions.length === 0) return "";
+
       return (
         <div className="flex gap-10 relative">
           <div className="w-[80%] h-fit shadow-md rounded-lg">
             <QuestionAnswer
               isSpeaking={isSpeaking}
-              fileName={`${isSpeaking ? "speaking" : "writing"}_part_${activeTab}`}
+              fileName={fileNameInfo + `-part${activeTab}`}
               speakingPartFour={partFourQuestions}
             />
           </div>
-          <div className="w-[20%] h-[15.9375rem] shadow-md sticky top-0 rounded-lg">
-            <ScoreCommentForm />
-          </div>
+          {partFourQuestions[0].studentAnswer?.ID && (
+            <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
+              <CommentForm
+                key={`speaking-part4-${partFourQuestions[0]?.studentAnswer?.ID}-${currentUser}`}
+                data={partFourQuestions[0]}
+                onCommentChange={handleCommentChange}
+                isSpeaking={isSpeaking}
+                activeTab={activeTab}
+                existingComment={findExistingComment(partFourQuestions[0])}
+              />
+            </div>
+          )}
         </div>
       );
     }
-    return partData?.Questions?.map((question, index) => (
+
+    return partData.Questions?.map((question, index) => (
       <div className="flex gap-10 relative" key={index}>
         <div className="w-[80%] h-fit shadow-md rounded-lg">
           <QuestionAnswer
             isSpeaking={isSpeaking}
-            fileName={`${isSpeaking ? "speaking" : "writing"}_part_${activeTab}`}
+            fileName={fileNameInfo + `-part${activeTab}-question${index + 1}`}
             quesntionsAnswerData={question}
           />
         </div>
-        <div className="w-[20%] h-[15.9375rem] shadow-md sticky top-0 rounded-lg">
-          <ScoreCommentForm />
-        </div>
+        {question.studentAnswer?.ID && (
+          <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
+            <CommentForm
+              key={`${isSpeaking ? "speaking" : "writing"}-part${activeTab}-${question?.studentAnswer?.ID}-${currentUser}`}
+              data={question}
+              onCommentChange={handleCommentChange}
+              isSpeaking={isSpeaking}
+              activeTab={activeTab}
+              existingComment={findExistingComment(question)}
+            />
+          </div>
+        )}
       </div>
     ));
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full min-h-screen">
       <div className="py-[2.3125rem]">
         <div className="w-full">
           <div className="flex flex-col">
@@ -118,29 +198,6 @@ export const Assessment = ({ isSpeaking, data }) => {
                     boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.1)",
                   }}
                 />
-                <div className="flex items-center leading-6">
-                  <div className="flex text-base items-center">
-                    Total Score:{" "}
-                    <span className="text-2xl font-semibold text-primaryColor pl-[30px] pr-[50px]">
-                      {totalScore}
-                    </span>
-                  </div>
-                  <div className="flex">
-                    <Button
-                      onClick={handleSaveAsDraft}
-                      className="h-auto px-[28px] py-[13px]  text-base text-primaryColor border border-primaryColor rounded-[50px] mr-[12px]"
-                    >
-                      Save as draft
-                    </Button>
-                    <Button
-                      onClick={handleSubmitScore}
-                      type="primary"
-                      className="h-auto px-[28px] py-[13px] text-base bg-primaryColor rounded-[50px]"
-                    >
-                      Submit score
-                    </Button>
-                  </div>
-                </div>
               </div>
             </div>
           </div>
@@ -164,3 +221,5 @@ export const Assessment = ({ isSpeaking, data }) => {
     </div>
   );
 };
+
+export default Assessment;

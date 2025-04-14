@@ -1,22 +1,34 @@
+import "./index.scss";
 import { Modal, Table, Button } from "antd";
 import { EditOutlined, AudioOutlined } from "@ant-design/icons";
-import "./index.scss";
 
 const StudentListModal = ({
+  currentUser,
   data,
   visible,
   onClose,
-  handleSelect = () => {},
+  handleSelect,
 }) => {
-  // Define and customize the columns
+  //Filter Data
+  const filterData = [];
+  data.map((item) => {
+    filterData.push({
+      ID: item.ID,
+      Speaking: item.Speaking ? item.Speaking : "Ungraded",
+      Writing: item.Writing ? item.Writing : "Ungraded",
+      Name: item.User.fullName,
+    });
+  });
+
   const columns = [
     {
       title: "Name",
-      dataIndex: "name",
-      key: "name",
+      dataIndex: "Name",
+      key: "Name",
       onHeaderCell: () => ({
         style: { backgroundColor: "transparent", color: "#637381" },
       }),
+      render: (text) => <span className="text-primaryColor">{text}</span>,
       render: (text) => <span className="text-primaryColor">{text}</span>,
     },
     {
@@ -26,8 +38,8 @@ const StudentListModal = ({
           <span>Writing</span>
         </div>
       ),
-      dataIndex: "writing",
-      key: "writing",
+      dataIndex: "Writing",
+      key: "Writing",
       align: "center",
       onHeaderCell: () => ({
         style: { backgroundColor: "transparent" },
@@ -43,8 +55,8 @@ const StudentListModal = ({
       onHeaderCell: () => ({
         style: { backgroundColor: "transparent" },
       }),
-      dataIndex: "speaking",
-      key: "speaking",
+      dataIndex: "Speaking",
+      key: "Speaking",
       align: "center",
     },
     {
@@ -61,10 +73,10 @@ const StudentListModal = ({
           shape="round"
           className="!border-primaryColor !text-primaryColor hover:bg-blue-50 !px-7"
           onClick={() => {
-            handleSelect(record.id);
+            handleSelect(record.ID);
           }}
         >
-          Select
+          {record.ID === currentUser.ID ? "Selected" : "Select"}
         </Button>
       ),
     },
@@ -75,11 +87,11 @@ const StudentListModal = ({
       <div className="px-12 pb-14 pt-8">
         <h2 className="text-3xl font-bold mb-4">Student List</h2>
         <Table
-          dataSource={data}
+          dataSource={filterData}
           // @ts-ignore
           columns={columns}
           pagination={false}
-          rowKey="id"
+          rowKey="ID"
           scroll={{ y: 500 }}
         />
       </div>
