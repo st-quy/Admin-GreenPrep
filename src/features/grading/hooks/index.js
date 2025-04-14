@@ -2,19 +2,6 @@ import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { GradeApi, ParticipantApi, getAudioFileName } from "../api";
 import { message } from "antd";
 
-export const useScoreMutation = (mutationFn) => {
-  const querryClient = useQueryClient();
-  return useMutation({
-    mutationFn,
-    onSuccess: () => {
-      querryClient.invalidateQueries();
-    },
-    onError: () => {
-      console.log("Error!");
-    },
-  });
-};
-
 export const useGetParticipants = (sessionId) => {
   return useQuery({
     queryKey: ["participants"],
@@ -40,17 +27,18 @@ export const useGetGrade = (participantId, skillName) => {
   return useQuery({
     queryKey: ["grade", participantId, skillName],
     queryFn: async () => {
-      const response =  await GradeApi.getGrade(participantId, skillName);
-      console.log(response);
+      const response = await GradeApi.getGrade(participantId, skillName);
       return response.data.data.scoreBySkill;
     },
   });
 };
 
 export const usePostGrade = () => {
+  const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (params) => {
       const { data } = await GradeApi.postGrade(params);
+      queryClient.invalidateQueries({ queryKey: ["participants"] });
       return data.data;
     },
     onError({ response }) {

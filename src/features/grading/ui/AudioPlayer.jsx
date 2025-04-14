@@ -11,7 +11,6 @@ export default function AudioPlayer({ audioUrl, audioFileName = "audio-file" }) 
   const audioRef = useRef(null)
   const sliderRef = useRef(null)
   const [playbackRate, setPlaybackRate] = useState(1)
-
   useEffect(() => {
     setIsPlaying(false)
     setCurrentTime(0)
@@ -115,23 +114,6 @@ export default function AudioPlayer({ audioUrl, audioFileName = "audio-file" }) 
     } catch (error) {
       console.error("Error downloading the audio file:", error);
     }
-    // Not safe use if the the url does not have CORS enabled
-    // const proxyUrl = "https://cors-anywhere.herokuapp.com/";
-    // try {
-    //   const response = await fetch(proxyUrl + audioUrl); // Use proxy to fetch the file
-    //   const blob = await response.blob();
-
-    //   const blobUrl = URL.createObjectURL(blob);
-    //   const a = document.createElement("a");
-    //   a.href = blobUrl;
-    //   a.download = `${audioFileName}.mp3`;
-    //   document.body.appendChild(a);
-    //   a.click();
-    //   document.body.removeChild(a);
-    //   URL.revokeObjectURL(blobUrl);
-    // } catch (error) {
-    //   console.error("Failed to download audio:", error);
-    // }
   }
 
   const speedOptions = [

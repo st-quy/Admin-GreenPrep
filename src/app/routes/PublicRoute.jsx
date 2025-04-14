@@ -5,7 +5,6 @@ import LoginPage from "@pages/Login/index";
 import ResetPassword from "@pages/ResetPassword/index";
 import ResetPasswordSuccess from "@pages/ResetPassword/ResetSuccess";
 import Unauthorized from "@pages/Unauthorized";
-import GradingPage from "@pages/Grading/GradingPage";
 
 const PublicRoute = [
   {
@@ -27,10 +26,6 @@ const PublicRoute = [
       {
         path: "reset-success",
         element: <ResetPasswordSuccess />,
-      },
-      {
-        path: "session/:sessionId/participant/:participantId",
-        element: <GradingPage />,
       },
     ],
   },

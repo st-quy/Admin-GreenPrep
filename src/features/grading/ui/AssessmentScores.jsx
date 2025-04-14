@@ -4,12 +4,11 @@ import { Tabs, Button, Form, InputNumber, message } from "antd"
 import { EditOutlined, AudioOutlined } from "@ant-design/icons"
 import { usePostGrade, useGetGrade } from "../hooks"
 
-const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], writingComments = [], defaultTab }) => {
+const AssessmentScores = ({ onTabChange, isUserChange, currentUser, speakingComments = [], writingComments = [], isSpeaking }) => {
   const [scores, setScores] = useState(0)
-  const [activeTab, setActiveTab] = useState(defaultTab)
+  const [activeTab, setActiveTab] = useState(isSpeaking? "speaking" : "writing")
   const { mutateAsync: postGrade } = usePostGrade()
-  const isFirstRender = useRef(true);
-
+  // const isFirstRender = useRef(true);
 
   const { data: fetchedScore, isLoading, isError } = useGetGrade(currentUser, activeTab);
   useEffect(() => {
@@ -27,12 +26,13 @@ const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], wri
   }
 
   useEffect(() => {
-    if (isFirstRender.current) {
-      isFirstRender.current = false;  
-      return; 
-    }
+    if (isUserChange)
     setActiveTab("writing");
   }, [currentUser]);
+
+  useEffect(() => {
+    setActiveTab(isSpeaking ? "speaking" : "writing");
+  }, [isSpeaking]);
 
   // Function to determine category based on total score
   // const getCategoryFromScore = (score, type) => {
