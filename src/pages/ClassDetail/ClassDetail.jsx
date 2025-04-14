@@ -35,7 +35,7 @@ const ClassDetail = () => {
   return (
     <div className="pb-12 p-8">
       <ClassInfo data={classDetail} />
-      <SessionManager data={classDetail} />
+      <SessionManager data={classDetail} isLoading={isLoading} />
     </div>
   );
 };

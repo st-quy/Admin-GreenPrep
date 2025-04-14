@@ -4,8 +4,19 @@ import TableSearch from "@shared/ui/TableSearch";
 import { Link } from "react-router-dom";
 import { formatDateTime } from "@shared/lib/utils/formatString";
 import DeleteModal from "../SessionModal/DeleteModal/DeleteModal";
+import { Button } from "antd";
+import { DeleteOutlined } from "@ant-design/icons";
 
-const SessionManager = ({ data }) => {
+const SessionManager = ({ data, isLoading }) => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const handleOpenModal = () => {
+    setIsModalOpen(true); // Mở modal
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false); // Đóng modal
+  };
+
   const sessionColumns = [
     {
       title: "SESSION NAME",
@@ -62,7 +73,17 @@ const SessionManager = ({ data }) => {
       render: (_, record) => (
         <div className="flex justify-center items-center gap-4">
           <ActionModal initialData={record} />
-          <DeleteModal sessionID={record.ID} />
+          <span className="text-xl">
+            <DeleteOutlined
+              onClick={handleOpenModal}
+              className="hover:opacity-50"
+            />
+          </span>
+          <DeleteModal
+            sessionID={record.ID}
+            isOpen={isModalOpen}
+            onClose={handleCloseModal}
+          />
         </div>
       ),
     },
@@ -82,7 +103,11 @@ const SessionManager = ({ data }) => {
         <ActionModal classId={data.ID} />
       </div>
       <div className="mt-8">
-        <TableSearch data={data.Sessions} columns={sessionColumns} />
+        <TableSearch
+          data={data.Sessions}
+          columns={sessionColumns}
+          isLoading={isLoading}
+        />
       </div>
     </>
   );
