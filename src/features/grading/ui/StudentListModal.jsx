@@ -28,7 +28,7 @@ const StudentListModal = ({
       onHeaderCell: () => ({
         style: { backgroundColor: "transparent", color: "#637381" },
       }),
-      render: (text) => <span className="text-[#003087]">{text}</span>,
+      render: (text) => <span className="text-primaryColor">{text}</span>,
     },
     {
       title: () => (
@@ -73,7 +73,7 @@ const StudentListModal = ({
           className={
             (record.ID === currentUser.ID
               ? "!border-[#DF6B2E] !text-[#DF6B2E]"
-              : "!border-[#003087] !text-[#003087]") + " w-24"
+              : "!border-primaryColor !text-primaryColor") + " w-24"
           }
           onClick={() => {
             handleSelect(record.ID);

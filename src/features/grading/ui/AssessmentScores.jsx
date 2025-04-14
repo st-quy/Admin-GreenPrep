@@ -1,33 +1,44 @@
-import "./index.scss"
-import { useState, useEffect, useRef } from "react"
-import { Tabs, Button, Form, InputNumber, message } from "antd"
-import { EditOutlined, AudioOutlined } from "@ant-design/icons"
-import { usePostGrade, useGetGrade } from "../hooks"
+import "./index.scss";
+import { useState, useEffect, useRef } from "react";
+import { Tabs, Button, Form, InputNumber, message } from "antd";
+import { EditOutlined, AudioOutlined } from "@ant-design/icons";
+import { usePostGrade, useGetGrade } from "../hooks";
 
-const AssessmentScores = ({ onTabChange, isUserChange, currentUser, speakingComments = [], writingComments = [], isSpeaking }) => {
-  const [scores, setScores] = useState(0)
-  const [activeTab, setActiveTab] = useState(isSpeaking? "speaking" : "writing")
-  const { mutateAsync: postGrade } = usePostGrade()
+const AssessmentScores = ({
+  onTabChange,
+  isUserChange,
+  currentUser,
+  speakingComments = [],
+  writingComments = [],
+  isSpeaking,
+}) => {
+  const [scores, setScores] = useState(0);
+  const [activeTab, setActiveTab] = useState(
+    isSpeaking ? "speaking" : "writing"
+  );
+  const { mutateAsync: postGrade } = usePostGrade();
   // const isFirstRender = useRef(true);
 
-  const { data: fetchedScore, isLoading, isError } = useGetGrade(currentUser, activeTab);
+  const {
+    data: fetchedScore,
+    isLoading,
+    isError,
+  } = useGetGrade(currentUser, activeTab);
   useEffect(() => {
     if (fetchedScore !== null && fetchedScore !== undefined) {
       setScores(fetchedScore);
-    }
-    else setScores(null)
+    } else setScores(null);
   }, [fetchedScore, currentUser, activeTab]);
 
   const handleTabClick = (key) => {
-    setActiveTab(key)
+    setActiveTab(key);
     if (key === "writing") {
-      onTabChange(false)
-    } else onTabChange(true)
-  }
+      onTabChange(false);
+    } else onTabChange(true);
+  };
 
   useEffect(() => {
-    if (isUserChange)
-    setActiveTab("writing");
+    if (isUserChange) setActiveTab("writing");
   }, [currentUser]);
 
   useEffect(() => {
@@ -55,8 +66,8 @@ const AssessmentScores = ({ onTabChange, isUserChange, currentUser, speakingComm
 
   const handleSubmit = async () => {
     if (scores === null) {
-      message.error("Please enter a score")
-      return
+      message.error("Please enter a score");
+      return;
     }
 
     try {
@@ -65,14 +76,17 @@ const AssessmentScores = ({ onTabChange, isUserChange, currentUser, speakingComm
         sessionParticipantID: currentUser,
         teacherGradedScore: scores,
         skillName: activeTab === "writing" ? "WRITING" : "SPEAKING",
-        studentAnswers: activeTab === "writing" ? writingComments : speakingComments,
-      })
-      message.success(`${activeTab === "writing" ? "Writing" : "Speaking"} assessment submitted successfully`)
+        studentAnswers:
+          activeTab === "writing" ? writingComments : speakingComments,
+      });
+      message.success(
+        `${activeTab === "writing" ? "Writing" : "Speaking"} assessment submitted successfully`
+      );
     } catch (error) {
-      message.error("Failed to submit assessment")
-      console.error("Error submitting assessment:", error)
+      message.error("Failed to submit assessment");
+      console.error("Error submitting assessment:", error);
     }
-  }
+  };
 
   return (
     <>
@@ -110,7 +124,8 @@ const AssessmentScores = ({ onTabChange, isUserChange, currentUser, speakingComm
             {activeTab === "writing" ? "Writing" : "Speaking"} Assessment Parts
           </h2>
           <p className="font-medium text-[18px] leading-[26px] text-[#637381]">
-            Detailed breakdown of each part in the {activeTab === "writing" ? "writing" : "speaking"} assessment.
+            Detailed breakdown of each part in the{" "}
+            {activeTab === "writing" ? "writing" : "speaking"} assessment.
           </p>
         </div>
         {/* Score Input */}
@@ -121,7 +136,7 @@ const AssessmentScores = ({ onTabChange, isUserChange, currentUser, speakingComm
                 <InputNumber
                   min={0}
                   max={50}
-                    value={scores}
+                  value={scores}
                   changeOnWheel={true}
                   onChange={(value) => setScores(value)}
                   className="w-[170px] h-auto border border-[#637381] rounded-[10px]"
@@ -133,7 +148,7 @@ const AssessmentScores = ({ onTabChange, isUserChange, currentUser, speakingComm
             <Button
               onClick={handleSubmit}
               type="primary"
-              className="h-auto px-[41.5px] py-[13px] text-base bg-[#003087] rounded-[50px]"
+              className="h-auto px-[41.5px] py-[13px] text-base bg-primaryColor rounded-[50px]"
             >
               Submit
             </Button>
@@ -141,7 +156,7 @@ const AssessmentScores = ({ onTabChange, isUserChange, currentUser, speakingComm
         </div>
       </div>
     </>
-  )
-}
+  );
+};
 
-export default AssessmentScores
+export default AssessmentScores;
