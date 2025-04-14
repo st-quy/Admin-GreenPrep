@@ -116,9 +116,9 @@ export const useRejectSelectedRequest = (sessionId) => {
   });
 };
 
-export const usePublishScoresAndSendEmails = (sessionId, onSuccessCallback) => {
+export const usePublishScoresAndSendEmails = (onSuccessCallback) => {
   return useMutation({
-    mutationFn: () => publishScoresAndSendEmails(sessionId),
+    mutationFn: (participants) => publishScoresAndSendEmails(participants),
     onSuccess: () => {
       if (onSuccessCallback) onSuccessCallback();
     },
