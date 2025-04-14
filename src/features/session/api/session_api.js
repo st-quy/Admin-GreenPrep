@@ -48,3 +48,49 @@ export const rejectRequest = (sessionId, requestId) => {
     requestId,
   });
 };
+
+export const sendEmail = async (userId, payload) => {
+  try {
+    const res = await axiosInstance.post(`/send-email/${userId}`, payload);
+    return res.data;
+  } catch (error) {
+    console.error(`Failed to send email to ${userId}:`, error);
+    return null;
+  }
+};
+
+export const publishScoresAndSendEmails = async (participants) => {
+  const emailPromises = participants.map(async (participant) => {
+    const user = participant.User;
+    const totalScore = participant.Total;
+    const safeScore = typeof totalScore === "number" ? totalScore : "N/A";
+
+    if (!user?.ID) {
+      console.warn("Missing user ID:", participant);
+      return { success: false, error: "Missing user ID" };
+    }
+
+    const emailPayload = {
+      sessionName: "Your Test Session",
+      testDetails: `You scored ${safeScore} in the test.`,
+      nextSteps: "Please wait for the final results.",
+      contactInfo: "support@example.com",
+    };
+
+    const result = await sendEmail(user.ID, emailPayload);
+    return {
+      success: !!result,
+      error: result ? null : `Failed to send to ${user.ID}`,
+    };
+  });
+
+  const results = await Promise.all(emailPromises);
+  const failed = results.filter((r) => !r.success);
+
+  if (failed.length > 0) {
+    console.error("Some emails failed to send:", failed);
+    throw new Error(`${failed.length} email(s) failed to send.`);
+  }
+
+  return true;
+};

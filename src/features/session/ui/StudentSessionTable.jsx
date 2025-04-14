@@ -32,6 +32,7 @@ const StudentSessionTable = ({
   type,
   status = "draft",
   onAllQuestionGraded = () => {},
+  onDataReady,
 }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -53,6 +54,12 @@ const StudentSessionTable = ({
         (record.Writing || 0),
     }));
   }, [data]);
+
+  useEffect(() => {
+    if (onDataReady) {
+      onDataReady(processedData);
+    }
+  }, [processedData]);  
 
   useEffect(() => {
     setLevels(
