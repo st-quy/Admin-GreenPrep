@@ -19,7 +19,7 @@ const GradingPage = () => {
 
   const currentParticipantIdRef = useRef(participantId);
 
-  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [speakingComments, setSpeakingComments] = useState([]);
   const [writingComments, setWritingComments] = useState([]);
@@ -42,6 +42,18 @@ const GradingPage = () => {
   const onTabChange = (key) => {
     setIsSpeaking(key);
   };
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const skillParam = searchParams.get("skill");
+  
+    if (skillParam === "speaking") {
+      setIsSpeaking(true);
+    } else {
+      setIsSpeaking(false);
+    }
+    console.log(location.search);
+  }, [location.search]);
 
   // Handle participant change
   useEffect(() => {
@@ -301,6 +313,7 @@ const GradingPage = () => {
         currentUser={participantId}
         speakingComments={prepareCommentsForSubmission(speakingComments)}
         writingComments={prepareCommentsForSubmission(writingComments)}
+        defaultTab={isSpeaking ? "speaking" : "writing"}
       />
       <Assessment
         key={`assessment-${isSpeaking ? "speaking" : "writing"}`}

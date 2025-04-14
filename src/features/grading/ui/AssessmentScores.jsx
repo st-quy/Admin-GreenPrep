@@ -4,7 +4,7 @@ import { Tabs, Button, Form, InputNumber, message } from "antd"
 import { EditOutlined, AudioOutlined } from "@ant-design/icons"
 import { usePostGrade } from "../hooks"
 
-const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], writingComments = [] }) => {
+const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], writingComments = [], defaultTab }) => {
   const [scores, setScores] = useState(0)
   const [activeTab, setActiveTab] = useState("writing")
   const { mutateAsync: postGrade } = usePostGrade()
@@ -16,6 +16,9 @@ const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], wri
       onTabChange(false)
     } else onTabChange(true)
   }
+  useEffect(() => {
+    setActiveTab(defaultTab);
+  }, [defaultTab]);
 
   useEffect(() => {
     setActiveTab("writing")
