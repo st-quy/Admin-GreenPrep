@@ -2,16 +2,24 @@ import "./index.scss"
 import { useState, useEffect } from "react"
 import { Tabs, Button, Form, InputNumber, message } from "antd"
 import { EditOutlined, AudioOutlined } from "@ant-design/icons"
-import { usePostGrade } from "../hooks"
+import { usePostGrade, useGetGrade } from "../hooks"
 
 const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], writingComments = [], defaultTab }) => {
   const [scores, setScores] = useState(0)
   const [activeTab, setActiveTab] = useState("writing")
   const { mutateAsync: postGrade } = usePostGrade()
 
+  const { data: fetchedScore, isLoading, isError } = useGetGrade(currentUser, activeTab);
+
+  useEffect(() => {
+    if (fetchedScore !== null && fetchedScore !== undefined) {
+      setScores(fetchedScore);
+    }
+    else setScores(null)
+  }, [fetchedScore, currentUser, activeTab]);
+
   const handleTabClick = (key) => {
     setActiveTab(key)
-    setScores(null)
     if (key === "writing") {
       onTabChange(false)
     } else onTabChange(true)
@@ -22,7 +30,6 @@ const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], wri
 
   useEffect(() => {
     setActiveTab("writing")
-    setScores(null)
   }, [currentUser])
 
   // Function to determine category based on total score
@@ -112,7 +119,7 @@ const AssessmentScores = ({ onTabChange, currentUser, speakingComments = [], wri
                 <InputNumber
                   min={0}
                   max={50}
-                  value={scores}
+                    value={scores}
                   changeOnWheel={true}
                   onChange={(value) => setScores(value)}
                   className="w-[170px] h-auto border border-[#637381] rounded-[10px]"

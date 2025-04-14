@@ -57,7 +57,6 @@ const GradingPage = () => {
     } else {
       setIsSpeaking(false);
     }
-    console.log(location.search);
   }, [location.search]);
 
   // Handle participant change
