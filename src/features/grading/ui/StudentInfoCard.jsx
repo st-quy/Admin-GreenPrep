@@ -20,7 +20,9 @@ const StudentInfoCard = ({
         <Title level={2} className="!mb-3 !font-bold">
           Student information: {student.User?.fullName}
         </Title>
-        <div className="text-[18px] text-[#637381]">View student details.</div>
+        <div className="text-[18px] text-primaryTextColor">
+          View student details.
+        </div>
       </div>
 
       <Row>
