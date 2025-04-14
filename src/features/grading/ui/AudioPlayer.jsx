@@ -11,7 +11,6 @@ export default function AudioPlayer({ audioUrl, audioFileName = "audio-file" }) 
   const audioRef = useRef(null)
   const sliderRef = useRef(null)
   const [playbackRate, setPlaybackRate] = useState(1)
-
   useEffect(() => {
     setIsPlaying(false)
     setCurrentTime(0)

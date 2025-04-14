@@ -12,6 +12,7 @@ const Assessment = ({
   onCommentChange,
   speakingComments,
   writingComments,
+  fileNameInfo = ""
 }) => {
   const [activeTab, setActiveTab] = useState("1");
   // Track part totals for each skill
@@ -116,14 +117,14 @@ const Assessment = ({
           <div className="w-[80%] h-fit shadow-md rounded-lg">
             <QuestionAnswer
               isSpeaking={isSpeaking}
-              fileName="LoL"
+              fileName={fileNameInfo + `-part${activeTab}`}
               speakingPartFour={partFourQuestions}
             />
           </div>
           {partFourQuestions[0].studentAnswer?.ID && (
             <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
               <CommentForm
-                key={`speaking-part4-${partFourQuestions[0]?.studentAnswer?.ID}-${currentUser}`} // Add currentUser to force re-render
+                key={`speaking-part4-${partFourQuestions[0]?.studentAnswer?.ID}-${currentUser}`}
                 data={partFourQuestions[0]}
                 onCommentChange={handleCommentChange}
                 isSpeaking={isSpeaking}
@@ -141,14 +142,14 @@ const Assessment = ({
         <div className="w-[80%] h-fit shadow-md rounded-lg">
           <QuestionAnswer
             isSpeaking={isSpeaking}
-            fileName="haha"
+            fileName={fileNameInfo + `-part${activeTab}-question${index + 1}`}
             quesntionsAnswerData={question}
           />
         </div>
         {question.studentAnswer?.ID && (
           <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
             <CommentForm
-              key={`${isSpeaking ? "speaking" : "writing"}-part${activeTab}-${question?.studentAnswer?.ID}-${currentUser}`} // Add currentUser to force re-render
+              key={`${isSpeaking ? "speaking" : "writing"}-part${activeTab}-${question?.studentAnswer?.ID}-${currentUser}`}
               data={question}
               onCommentChange={handleCommentChange}
               isSpeaking={isSpeaking}

@@ -19,8 +19,7 @@ const GradingPage = () => {
   const location = useLocation();
   const { sessionId, participantId, classId } = useParams();
 
-  // const { data: audioFileName } = useAudioFileName(classId, sessionId);
-  // console.log(audioFileName);
+  const { data: audioFileName } = useAudioFileName(classId, sessionId);
 
   const currentParticipantIdRef = useRef(participantId);
 
@@ -148,16 +147,12 @@ const GradingPage = () => {
       isPartFour,
       allStudentAnswerIds,
     } = commentData;
-
-    // Don't update comments if we're in the middle of changing participants
     if (isChangingParticipant) return;
-
     if (isSpeaking) {
       // Special handling for speaking part 4
       if (isPartFour && allStudentAnswerIds && allStudentAnswerIds.length > 0) {
         setSpeakingComments((prevComments) => {
           const updatedComments = [...prevComments];
-
           // Remove any existing comments for part 4
           const filteredComments = updatedComments.filter(
             (comment) =>
@@ -166,7 +161,6 @@ const GradingPage = () => {
                 allStudentAnswerIds.includes(comment.studentAnswerId)
               )
           );
-
           // Add new comments for all student answers in part 4
           const newComments = allStudentAnswerIds.map((id) => ({
             studentAnswerId: id,
@@ -179,7 +173,6 @@ const GradingPage = () => {
       } else {
         // Normal handling for other parts
         setSpeakingComments((prevComments) => {
-          // Check if this studentAnswerId and part already exists in the array
           const existingIndex = prevComments.findIndex(
             (comment) =>
               comment.studentAnswerId === studentAnswerId &&
@@ -187,7 +180,6 @@ const GradingPage = () => {
           );
 
           if (existingIndex >= 0) {
-            // Update existing comment
             const updatedComments = [...prevComments];
             updatedComments[existingIndex] = {
               studentAnswerId,
@@ -196,7 +188,6 @@ const GradingPage = () => {
             };
             return updatedComments;
           } else {
-            // Add new comment
             return [...prevComments, { studentAnswerId, messageContent, part }];
           }
         });
@@ -204,14 +195,11 @@ const GradingPage = () => {
     } else {
       // Update writing comments
       setWritingComments((prevComments) => {
-        // Check if this studentAnswerId and part already exists in the array
         const existingIndex = prevComments.findIndex(
           (comment) =>
             comment.studentAnswerId === studentAnswerId && comment.part === part
         );
-
         if (existingIndex >= 0) {
-          // Update existing comment
           const updatedComments = [...prevComments];
           updatedComments[existingIndex] = {
             studentAnswerId,
@@ -220,7 +208,6 @@ const GradingPage = () => {
           };
           return updatedComments;
         } else {
-          // Add new comment
           return [...prevComments, { studentAnswerId, messageContent, part }];
         }
       });
@@ -277,12 +264,10 @@ const GradingPage = () => {
   const userData = participantsData?.data.data.find(
     (item) => item.ID === participantId
   );
-
   if (isWritingPending || isSpeakingPending || isParticipantsPending)
     return (
       <Spin size="large" className="flex justify-center items-center h-60" />
     );
-
   return (
     <div className="p-8">
       <ScrollToTop />
@@ -301,6 +286,7 @@ const GradingPage = () => {
       />
       <Assessment
         key={`assessment-${isSpeaking ? "speaking" : "writing"}`}
+        fileNameInfo={`${audioFileName?.className}-${audioFileName?.sessionName}-${userData?.User?.studentCode}-${userData?.User?.fullName}`}
         isSpeaking={isSpeaking}
         currentUser={participantId}
         data={isSpeaking ? speakingData : writingData}
