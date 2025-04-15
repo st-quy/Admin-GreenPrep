@@ -60,7 +60,7 @@ const StudentInfoCard = ({
 
         <Col
           flex={1}
-          className="flex md:flex-col mt-4 md:mt-0 items-center justify-between"
+          className="flex mt-4 lg:mt-0 lg:flex-col items-center justify-between"
         >
           <Button
             icon={<UnorderedListOutlined />}
