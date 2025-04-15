@@ -13,8 +13,7 @@ const StudentSessionTable = ({
   searchKeyword,
   type,
   status = "draft",
-  onAllQuestionGraded = () => {},
-  onDataReady,
+  onAllQuestionGraded,
 }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -25,28 +24,16 @@ const StudentSessionTable = ({
     type === TableType.SESSION
       ? useSessionParticipants(id, { page: currentPage, limit: pageSize })
       : useStudentParticipants(id, { page: currentPage, limit: pageSize });
-
-  const processedData = useMemo(() => {
-    return (data?.data || []).map((record) => ({
-      ...record,
-      Total:
-        (record.Listening || 0) +
-        (record.Reading || 0) +
-        (record.Speaking || 0) +
-        (record.Writing || 0),
-    }));
-  }, [data]);
+  const processedData = data?.data || [];
 
   useEffect(() => {
-    if (onDataReady) {
-      onDataReady(processedData);
-    }
-  }, [processedData]);
-
-  useEffect(() => {
-    setLevels(
-      processedData.reduce((acc, cur) => ({ ...acc, [cur.ID]: cur.Level }), {})
-    );
+    if (processedData)
+      setLevels(
+        processedData.reduce(
+          (acc, cur) => ({ ...acc, [cur.ID]: cur.Level }),
+          {}
+        )
+      );
   }, [processedData]);
 
   const filteredData = useMemo(() => {
@@ -73,8 +60,8 @@ const StudentSessionTable = ({
     );
     const allLevelsSelected = Object.values(levels).every((level) => level);
 
-    if (allGraded && allLevelsSelected) {
-      onAllQuestionGraded?.();
+    if (allGraded && allLevelsSelected && Object.values(levels).length > 0) {
+      onAllQuestionGraded?.(processedData);
     }
   }, [processedData, levels]);
 
@@ -148,7 +135,13 @@ const StudentSessionTable = ({
           <span>{text ? text + " | " + record.WritingLevel : "Ungraded"}</span>
         ),
     },
-    { title: "TOTAL", width: "90px", dataIndex: "Total", key: "Total" },
+    {
+      title: "TOTAL",
+      width: "90px",
+      dataIndex: "Total",
+      key: "Total",
+      render: (text) => <span>{text ? text : "No Data"}</span>,
+    },
     {
       title: "LEVEL",
       dataIndex: "Level",
@@ -215,6 +208,7 @@ const StudentSessionTable = ({
           title: "SESSION NAME",
           dataIndex: ["Session", "sessionName"],
           key: "SessionID",
+          width: "260px",
           render: (text) => (
             <span className="cursor-pointer hover:opacity-80">
               {text || "Unknown"}
@@ -238,7 +232,7 @@ const StudentSessionTable = ({
           pagination={{
             current: currentPage,
             pageSize: pageSize,
-            total: data?.pagination?.totalItems || 0,
+            total: processedData?.pagination?.totalItems || 0,
             showSizeChanger: true,
             pageSizeOptions: ["5", "10", "15", "20"],
             showTotal: (total, range) =>

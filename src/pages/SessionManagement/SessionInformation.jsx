@@ -21,7 +21,8 @@ const SessionInformation = ({ type }) => {
     }
   );
 
-  const handleAllGraded = () => {
+  const handleAllGraded = (data) => {
+    setParticipants(data);
     setIsReadyToPublish(true);
   };
 
@@ -50,7 +51,6 @@ const SessionInformation = ({ type }) => {
           type={type}
           searchKeyword={searchKeyword}
           onAllQuestionGraded={handleAllGraded}
-          onDataReady={setParticipants}
         />
       ),
     },
@@ -99,22 +99,24 @@ const SessionInformation = ({ type }) => {
           {type === TableType.SESSION && (
             <div>
               <button
-                className={`font-bold rounded-full 
-                  md:px-[28px] px-[18px] md:py-[13px] py-[7px] 
-                  md:text-base text-xs border-none 
-                  ${
-                    isReadyToPublish
-                      ? "bg-secondaryColor text-white"
-                      : "bg-[#E5E7EB] text-[#6B7280]"
-                  }`}
+                className={`font-bold rounded-full transition-all duration-150 ease-in-out
+    md:px-[28px] px-[18px] md:py-[13px] py-[7px] 
+    md:text-base text-xs border-none transform 
+    ${
+      isReadyToPublish
+        ? "bg-secondaryColor text-white hover:bg-[#3b82f6] active:scale-95"
+        : "bg-[#E5E7EB] text-[#6B7280] "
+    } 
+    ${isPending ? "cursor-not-allowed opacity-60" : "hover:scale-105"}
+  `}
                 onClick={handlePublishScore}
                 disabled={!isReadyToPublish || isPending}
               >
                 {isPending
                   ? "Sending..."
                   : isReadyToPublish
-                  ? "Ready to Publish"
-                  : "Publish Score"}
+                    ? "Ready to Publish"
+                    : "Publish Score"}
               </button>
             </div>
           )}
@@ -131,11 +133,10 @@ const SessionInformation = ({ type }) => {
             <Tabs defaultActiveKey="item-1" items={items} />
           ) : (
             <StudentSessionTable
-              id={sessionId}
+              id={studentId}
               type={type}
               searchKeyword={searchKeyword}
               onAllQuestionGraded={handleAllGraded}
-              onDataReady={setParticipants}
             />
           )}
         </div>

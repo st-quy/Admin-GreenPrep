@@ -1,4 +1,4 @@
-$scrollbar-width: 10px;
+$scrollbar-width: 14px;
 $scrollbar-track-bg: #f1f1f1;
 $scrollbar-thumb-bg: #888;
 $scrollbar-thumb-hover-bg: #555;
@@ -51,15 +51,15 @@ $scrollbar-border-radius: 5px;
   }
 
   .ant-tabs-tab {
-    @apply md:px-[40px] px-[20px] md:py-[18px] py-[9px] bg-[#f9fafb] text-primaryTextColor md:text-[16px] text-[10px];
+    @apply md:px-[40px] px-[20px] md:py-[18px] py-[9px] bg-[#f9fafb] text-primaryTextColor md:text-[16px] text-[14px];
   }
 
   .ant-tabs-tab:hover {
-    @apply md:px-[40px] px-[20px] md:py-[18px] py-[9px] text-primaryColor bg-tableHeadColor md:text-[16px] text-[10px];
+    @apply md:px-[40px] px-[20px] md:py-[18px] py-[9px] text-primaryColor bg-tableHeadColor md:text-[16px] text-[14px];
   }
 
   .ant-tabs-tab-active .ant-tabs-tab-btn {
-    @apply flex justify-center items-center text-primaryColor bg-tableHeadColor md:text-[16px] text-[10px];
+    @apply flex justify-center items-center text-primaryColor bg-tableHeadColor md:text-[16px] text-[14px];
   }
 
   .ant-tabs-tab + .ant-tabs-tab {
@@ -67,11 +67,11 @@ $scrollbar-border-radius: 5px;
   }
 
   .ant-tabs-tab.ant-tabs-tab-active {
-    @apply md:px-[40px] px-[20px] md:py-[18px] py-[9px] text-primaryColor bg-tableHeadColor md:text-[16px] text-[10px];
+    @apply md:px-[40px] px-[20px] md:py-[18px] py-[9px] text-primaryColor bg-tableHeadColor md:text-[16px] text-[14px];
   }
 
   .ant-tabs .ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-    @apply text-primaryColor md:text-[16px] text-[10px];
+    @apply text-primaryColor md:text-[16px] text-[14px];
   }
 
   .ant-tabs .ant-tabs-ink-bar {

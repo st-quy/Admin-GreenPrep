@@ -1,7 +1,10 @@
 import React from "react";
 import { Card, Spin, Tag, Typography, Descriptions, Divider } from "antd";
 import { TableType } from "@features/session/constant/TableEnum";
-import { useSessionDetails, useStudentDetails } from "@features/session/hooks/useSession"; // Đường dẫn tùy cấu trúc của bạn
+import {
+  useSessionDetails,
+  useStudentDetails,
+} from "@features/session/hooks/useSession";
 
 const { Title, Text } = Typography;
 
@@ -19,20 +22,10 @@ const statusTag = (status) => {
 };
 
 const Details = ({ type, id }) => {
-  const {
-    data: sessionData,
-    isLoading: isLoadingSession,
-  } = useSessionDetails(type === TableType.SESSION ? id : null);
+  const { data, isLoading: isLoading } =
+    type === TableType.SESSION ? useSessionDetails(id) : useStudentDetails(id);
 
-  const {
-    data: studentData,
-    isLoading: isLoadingStudent,
-  } = useStudentDetails(type === "student" ? id : null);
-
-  const loading = isLoadingSession || isLoadingStudent;
-  const data = type === TableType.SESSION ? sessionData : studentData;
-
-  if (loading) {
+  if (isLoading) {
     return <Spin className="flex justify-center mt-4" />;
   }
 
