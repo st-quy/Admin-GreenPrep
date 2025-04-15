@@ -1,12 +1,11 @@
 import React, { useState } from "react";
 import ActionModal from "../SessionModal/ActionModal/ActionModal";
-import TableSearch from "@shared/ui/TableSearch";
 import { Link } from "react-router-dom";
 import { formatDateTime } from "@shared/lib/utils/formatString";
 import DeleteModal from "../SessionModal/DeleteModal/DeleteModal";
-import { Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
 import { statusOptions } from "@features/classDetail/validate";
+import SessionTable from "./SessionTable/SessionTable";
 
 const SessionManager = ({ data, isLoading }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -118,7 +117,7 @@ const SessionManager = ({ data, isLoading }) => {
         <ActionModal classId={data?.ID} />
       </div>
       <div className="mt-8">
-        <TableSearch
+        <SessionTable
           data={data.Sessions}
           columns={sessionColumns}
           isLoading={isLoading}
