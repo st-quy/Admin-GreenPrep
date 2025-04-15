@@ -8,24 +8,6 @@ import {
 import "../css/index.scss";
 import { useNavigate } from "react-router-dom";
 
-function getSkillLevel(score, skill) {
-  const thresholds = {
-    Listening: [8, 16, 24, 34, 42],
-    Reading: [8, 16, 26, 38, 46],
-    Writing: [6, 18, 26, 40, 48],
-    Speaking: [4, 16, 26, 41, 48],
-  };
-
-  if (!thresholds[skill]) {
-    throw new Error("Invalid skill");
-  }
-
-  let levelIndex = thresholds[skill].findIndex(
-    (threshold) => score < threshold
-  );
-  return levelIndex === -1 ? "C" : LevelEnum[levelIndex];
-}
-
 const StudentSessionTable = ({
   id,
   searchKeyword,
@@ -59,7 +41,7 @@ const StudentSessionTable = ({
     if (onDataReady) {
       onDataReady(processedData);
     }
-  }, [processedData]);  
+  }, [processedData]);
 
   useEffect(() => {
     setLevels(
@@ -120,9 +102,7 @@ const StudentSessionTable = ({
       key: "Listening",
       width: "120px",
       render: (text, record) => (
-        <span>
-          {text ? text + " | " + getSkillLevel(text, "Listening") : "No Data"}
-        </span>
+        <span>{text ? text + " | " + record.Listening : "No Data"}</span>
       ),
     },
     {
@@ -131,9 +111,7 @@ const StudentSessionTable = ({
       key: "Reading",
       width: "120px",
       render: (text, record) => (
-        <span>
-          {text ? text + " | " + getSkillLevel(text, "Reading") : "No Data"}
-        </span>
+        <span>{text ? text + " | " + record.Reading : "No Data"}</span>
       ),
     },
     {
@@ -147,12 +125,10 @@ const StudentSessionTable = ({
             onClick={() => navigate(`participant/${record.ID}?skill=speaking`)}
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
-            {text ? text + " | " + getSkillLevel(text, "Speaking") : "Ungraded"}
+            {text ? text + " | " + record.SpeakingLevel : "Ungraded"}
           </a>
         ) : (
-          <span>
-            {text ? text + " | " + getSkillLevel(text, "Speaking") : "Ungraded"}
-          </span>
+          <span>{text ? text + " | " + record.SpeakingLevel : "Ungraded"}</span>
         ),
     },
     {
@@ -166,12 +142,10 @@ const StudentSessionTable = ({
             onClick={() => navigate(`participant/${record.ID}?skill=writing`)}
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
-            {text ? text + " | " + getSkillLevel(text, "Writing") : "Ungraded"}
+            {text ? text + " | " + record.WritingLevel : "Ungraded"}
           </a>
         ) : (
-          <span>
-            {text ? text + " | " + getSkillLevel(text, "Writing") : "Ungraded"}
-          </span>
+          <span>{text ? text + " | " + record.WritingLevel : "Ungraded"}</span>
         ),
     },
     { title: "TOTAL", width: "90px", dataIndex: "Total", key: "Total" },
