@@ -86,7 +86,7 @@ export const ProtectedRoute = () => {
     {
       value: "2",
       label: "Class Management",
-      roles: ["teacher"],
+      roles: ["superadmin"],
     },
     {
       value: "3",

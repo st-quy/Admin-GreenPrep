@@ -61,8 +61,8 @@ export const useCreateSession = () => {
       queryClient.invalidateQueries({ queryKey: ["classDetail"] });
       message.success(`Created successfully!`)
     },
-    onError: (error) => {
-      message.error(`Failed to create session.`);
+    onError: ({response}) => {
+      message.error(response.data.message || `Failed to create session.`);
     },
   });
 };
