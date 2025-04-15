@@ -5,7 +5,7 @@ import {
   UnorderedListOutlined,
 } from "@ant-design/icons";
 
-const { Title, Text } = Typography;
+const { Title } = Typography;
 
 const StudentInfoCard = ({
   student,
@@ -18,9 +18,11 @@ const StudentInfoCard = ({
       {/* Header */}
       <div className="mb-8">
         <Title level={2} className="!mb-3 !font-bold">
-          Student information: {student.name}
+          Student information: {student.User?.fullName}
         </Title>
-        <div className="text-[18px] text-[#637381]">View student details.</div>
+        <div className="text-[18px] text-primaryTextColor">
+          View student details.
+        </div>
       </div>
 
       <Row>
@@ -32,13 +34,13 @@ const StudentInfoCard = ({
               <Col xs={24} sm={12}>
                 <div className="grid grid-cols-[120px_1fr] gap-y-6 gap-x-6 text-base text-[#374151]">
                   <div>Student name</div>
-                  <div className="font-bold">{student.name}</div>
+                  <div className="font-bold">{student.User?.fullName}</div>
 
                   <div>Student ID</div>
-                  <div className="font-bold">{student.studentId}</div>
+                  <div className="font-bold">{student.User?.studentCode}</div>
 
                   <div>Class ID</div>
-                  <div className="font-bold">{student.classId}</div>
+                  <div className="font-bold">{student.User?.class}</div>
                 </div>
               </Col>
 
@@ -46,10 +48,10 @@ const StudentInfoCard = ({
               <Col xs={24} sm={12}>
                 <div className="grid grid-cols-[120px_1fr] gap-y-6 gap-x-6 text-base text-[#374151]">
                   <div>Email</div>
-                  <div className="font-bold">{student.email}</div>
+                  <div className="font-bold">{student.User?.email}</div>
 
                   <div>Phone</div>
-                  <div className="font-bold">{student.phone}</div>
+                  <div className="font-bold">{student.User?.phone}</div>
                 </div>
               </Col>
             </Row>
@@ -58,13 +60,13 @@ const StudentInfoCard = ({
 
         <Col
           flex={1}
-          className="flex md:flex-col mt-4 md:mt-0 items-center justify-between"
+          className="flex mt-4 lg:mt-0 lg:flex-col items-center justify-between"
         >
           <Button
             icon={<UnorderedListOutlined />}
             shape="round"
             size="large"
-            className="flex items-center border-[#003087] text-[#003087] w-[200px] h-[50px]"
+            className="flex items-center border-primaryColor text-primaryColor w-[200px] h-[50px]"
             onClick={onViewList}
           >
             Student List
@@ -74,7 +76,7 @@ const StudentInfoCard = ({
             icon={<LeftOutlined />}
             shape="round"
             size="large"
-            className="flex items-center border-[#003087] text-[#003087] w-[200px] h-[50px]"
+            className="flex items-center border-primaryColor text-primaryColor w-[200px] h-[50px]"
             onClick={onPrevious}
           >
             Previous Student
@@ -85,7 +87,7 @@ const StudentInfoCard = ({
             shape="round"
             size="large"
             icon={<RightOutlined />}
-            className="flex items-center bg-[#003087] hover:!bg-blue-800 border-[#003087] w-[200px] h-[50px]"
+            className="flex items-center bg-primaryColor hover:!bg-blue-800 border-primaryColor w-[200px] h-[50px]"
             onClick={onNext}
           >
             Next Student

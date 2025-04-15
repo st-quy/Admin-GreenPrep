@@ -53,7 +53,7 @@ const LoginPage = () => {
                 <Title level={1} className="text-xl font-bold text-black m-0">
                   Welcome back!
                 </Title>
-                <Text className="text-[#637381] text-[16px] font-normal">
+                <Text className="text-primaryTextColor text-[16px] font-normal">
                   Welcome back! Please enter your details.
                 </Text>
               </div>
@@ -144,7 +144,7 @@ const LoginPage = () => {
                 <div className="text-right">
                   <Link
                     to="/forgot-password"
-                    className="text-[#003087] text-sm font-medium no-underline"
+                    className="text-primaryColor text-sm font-medium no-underline"
                   >
                     Forgot password?
                   </Link>
@@ -158,7 +158,7 @@ const LoginPage = () => {
                   type="primary"
                   htmlType="submit"
                   onClick={() => form.submit()}
-                  className="w-[250px] h-[50px] bg-[#003087] hover:bg-blue-800 rounded-full"
+                  className="w-[250px] h-[50px] bg-primaryColor hover:bg-blue-800 rounded-full"
                   loading={isPending}
                 >
                   Login

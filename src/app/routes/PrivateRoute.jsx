@@ -1,5 +1,6 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
+import GradingPage from "@pages/grading/GradingPage.jsx";
 import SessionLayout from "../../pages/SessionManagement/SessionLayout.jsx";
 import SessionInformation from "@pages/SessionManagement/SessionInformation.jsx";
 import { TableType } from "@features/session/constant/TableEnum.js";
@@ -78,6 +79,21 @@ const PrivateRoute = [
                                     type={TableType.STUDENT}
                                   />
                                 ),
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        path: "participant",
+                        children: [
+                          {
+                            path: ":participantId",
+                            breadcrumb: "Participant Detail",
+                            children: [
+                              {
+                                index: true,
+                                element: <GradingPage />,
                               },
                             ],
                           },

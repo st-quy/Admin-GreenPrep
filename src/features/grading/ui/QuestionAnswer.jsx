@@ -9,16 +9,28 @@ export const QuestionAnswer = ({
 }) => {
   const studentAnswers = () => {
     if (isSpeaking) {
+      if (!quesntionsAnswerData?.studentAnswer?.AnswerAudio) {
+        return (
+          <div className="whitespace-pre-line">{"No answer available"}</div>
+        );
+      }
+
       return (
         <div className="place-self-center self-center">
           <AudioPlayers
-            audioUrl={""} // Replace with the actual audio URL variable
+            audioUrl={quesntionsAnswerData?.studentAnswer?.AnswerAudio || ""}
             audioFileName={fileName}
           />
         </div>
       );
     }
-    return <p>{/* put the writing answer variable here */}</p>;
+
+    return (
+      <div className="whitespace-pre-line">
+        {quesntionsAnswerData?.studentAnswer?.AnswerText ||
+          "No answer available"}
+      </div>
+    );
   };
   return (
     <Card
@@ -65,7 +77,7 @@ export const QuestionAnswer = ({
       </div>
 
       <div className="py-[1.875rem] px-[4.375rem] leading-6 text-base">
-        <div className="font-bold mb-2">Student answer</div>
+        <div className="font-bold mb-2">Student answer:</div>
         {studentAnswers()}
       </div>
     </Card>

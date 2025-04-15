@@ -72,7 +72,7 @@ const SessionTable = ({ dataSource, searchKeyword, statusFilter }) => {
       render: (text, record) => (
         <a
           onClick={() => handleNavigate(record.ID)}
-          className="text-[#003087] hover:underline cursor-pointer"
+          className="text-primaryColor underline cursor-pointer"
         >
           {text}
         </a>
@@ -143,7 +143,7 @@ const SessionTable = ({ dataSource, searchKeyword, statusFilter }) => {
   const components = {
     header: {
       wrapper: (props) => (
-        <thead {...props} className="bg-[#E6F0FA]  text-center" />
+        <thead {...props} className="bg-tableHeadColor  text-center" />
       ),
       cell: (props) => (
         <th
@@ -156,7 +156,7 @@ const SessionTable = ({ dataSource, searchKeyword, statusFilter }) => {
       cell: (props) => (
         <td
           {...props}
-          className={`whitespace-nowrap font-[500]  text-[#637381] text-[10px] md:text-[14px]   ${props.className || ""} text-center items-center`}
+          className={`whitespace-nowrap font-[500]  text-primaryTextColor text-[10px] md:text-[14px]   ${props.className || ""} text-center items-center`}
         />
       ),
     },

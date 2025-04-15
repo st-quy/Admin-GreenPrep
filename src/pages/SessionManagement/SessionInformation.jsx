@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Tabs, Input } from "antd";
+import React, { useState } from "react";
+import { Tabs, message } from "antd";
 import "@features/session/css/index.scss";
 import StudentMonitoring from "@features/session/ui/StudentModering";
 import StudentSessionTable from "@/features/session/ui/StudentSessionTable.jsx";
@@ -7,17 +7,37 @@ import SearchInput from "@/app/components/SearchInput.jsx";
 import Details from "@features/session/ui/Details.jsx";
 import { useParams } from "react-router-dom";
 import { TableType } from "@features/session/constant/TableEnum";
+import { usePublishScoresAndSendEmails } from "@features/session/hooks/useSession";
 
 const SessionInformation = ({ type }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const { sessionId, studentId } = useParams();
   const [pendingCount, setPendingCount] = useState(0);
+  const [isReadyToPublish, setIsReadyToPublish] = useState(false);
+  const [participants, setParticipants] = useState([]);
+  const { mutate: publishScores, isPending } = usePublishScoresAndSendEmails(
+    () => {
+      message.success("Email sent successfully!");
+    }
+  );
+
+  const handleAllGraded = () => {
+    setIsReadyToPublish(true);
+  };
 
   const handlePendingCountChange = (count) => {
     setPendingCount(count);
   };
+
   const onSearchChange = (event) => {
     setSearchKeyword(event.target.value);
+  };
+
+  const handlePublishScore = () => {
+    console.log("Sending emails to participants:", participants);
+    // @ts-ignore
+    publishScores(participants);
+    setIsReadyToPublish(false);
   };
 
   const items = [
@@ -26,9 +46,11 @@ const SessionInformation = ({ type }) => {
       key: "item-1",
       children: (
         <StudentSessionTable
-          searchKeyword={searchKeyword}
+          id={sessionId}
           type={type}
-          id={type == TableType.SESSION ? sessionId : studentId}
+          searchKeyword={searchKeyword}
+          onAllQuestionGraded={handleAllGraded}
+          onDataReady={setParticipants}
         />
       ),
     },
@@ -53,12 +75,6 @@ const SessionInformation = ({ type }) => {
     },
   ];
 
-  const [buttonState, setButtonState] = useState("readyToPublish");
-
-  const handlePublishScore = () => {
-    setButtonState("publishedScore");
-  };
-
   return (
     <div className="session-container flex flex-col p-2 md:p-8">
       <Details
@@ -74,7 +90,7 @@ const SessionInformation = ({ type }) => {
                 ? "Student Monitoring"
                 : "Assessment History"}
             </p>
-            <p className="text-[18px] text-[#637381] font-medium mt-[10px]">
+            <p className="text-[18px] text-primaryTextColor font-medium mt-[10px]">
               {type == TableType.SESSION
                 ? "Track student request and participation."
                 : "Overview of Past Performance."}
@@ -82,30 +98,24 @@ const SessionInformation = ({ type }) => {
           </div>
           {type === TableType.SESSION && (
             <div>
-              {buttonState === "publishScore" && (
-                <button
-                  className="bg-[#E5E7EB] text-[#6B7280] font-bold rounded-full md:px-[28px] px-[18px] md:py-[13px] py-[7px] md:text-base text-xs border-none"
-                  disabled
-                >
-                  Publish Score
-                </button>
-              )}
-              {buttonState === "readyToPublish" && (
-                <button
-                  className="bg-secondaryColor text-white font-bold rounded-full md:px-[28px] px-[18px] md:py-[13px] py-[7px] md:text-base text-xs border-none"
-                  onClick={handlePublishScore}
-                >
-                  Ready to Publish
-                </button>
-              )}
-              {buttonState === "publishedScore" && (
-                <button
-                  className="bg-[#E5E7EB] text-[#6B7280] font-bold rounded-full md:px-[28px] px-[18px] md:py-[13px] py-[7px] md:text-base text-xs border-none"
-                  disabled
-                >
-                  Published
-                </button>
-              )}
+              <button
+                className={`font-bold rounded-full 
+                  md:px-[28px] px-[18px] md:py-[13px] py-[7px] 
+                  md:text-base text-xs border-none 
+                  ${
+                    isReadyToPublish
+                      ? "bg-secondaryColor text-white"
+                      : "bg-[#E5E7EB] text-[#6B7280]"
+                  }`}
+                onClick={handlePublishScore}
+                disabled={!isReadyToPublish || isPending}
+              >
+                {isPending
+                  ? "Sending..."
+                  : isReadyToPublish
+                  ? "Ready to Publish"
+                  : "Publish Score"}
+              </button>
             </div>
           )}
         </div>
@@ -121,9 +131,11 @@ const SessionInformation = ({ type }) => {
             <Tabs defaultActiveKey="item-1" items={items} />
           ) : (
             <StudentSessionTable
-              searchKeyword={searchKeyword}
+              id={sessionId}
               type={type}
-              id={studentId}
+              searchKeyword={searchKeyword}
+              onAllQuestionGraded={handleAllGraded}
+              onDataReady={setParticipants}
             />
           )}
         </div>

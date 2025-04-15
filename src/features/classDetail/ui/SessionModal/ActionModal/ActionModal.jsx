@@ -8,9 +8,7 @@ import {
   Form,
   Spin,
 } from "antd";
-import React, { useState, useEffect } from "react";
-import EditIcon from "@assets/icons/class-detail/edit.png";
-import GenerateIcon from "@assets/icons/class-detail/generate.png";
+import React, { useState } from "react";
 const { RangePicker } = DatePicker;
 import { yupSync } from "@shared/lib/utils";
 import { sessionSchema } from "@features/classDetail/validate";
@@ -20,23 +18,27 @@ import {
   useUpdateSession,
 } from "@features/classDetail/hooks/useClassDetail";
 import dayjs from "dayjs";
-import { useQueryClient } from "@tanstack/react-query";
 import {
-  EditFilled,
   EditOutlined,
   LoadingOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
+import { useGetTopics } from "@features/topic/hooks";
 
 const ActionModal = ({ initialData = null, classId = null }) => {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const isEdit = initialData !== null;
+
+  const { data: topics } = useGetTopics();
+
   const { mutateAsync: generateKey, isPending: isGenerating } =
     useGenerateSessionKeyMutation();
-  const { mutate: sessionAction, isPending: isLoading } = isEdit
-    ? useUpdateSession()
-    : useCreateSession();
+  const { mutate: sessionActionUpdate, isPending: isLoadingUpdate } =
+    useUpdateSession();
+  const { mutate: sessionActionCreate, isPending: isLoadingCreate } =
+    useCreateSession();
+
   const showModal = () => {
     setOpen(true);
   };
@@ -51,11 +53,8 @@ const ActionModal = ({ initialData = null, classId = null }) => {
     form.setFieldsValue({ sessionKey: data.key });
   };
 
-  const onAction = async () => {
+  const onAction = async (values) => {
     try {
-      // Validate form fields
-      const values = await form.validateFields();
-
       // Prepare session data
       const sessionData = {
         sessionId: initialData?.ID || null,
@@ -64,30 +63,24 @@ const ActionModal = ({ initialData = null, classId = null }) => {
         startTime: values.dateRange ? values.dateRange[0].toISOString() : null,
         endTime: values.dateRange ? values.dateRange[1].toISOString() : null,
         examSet: values.examSet,
-        ClassId: classId,
+        ClassID: classId,
       };
-      sessionAction(
-        // @ts-ignore
-        sessionData,
-        {
-          onSuccess: (data) => {
-            message
-              .success(
-                data.data.message || `${isEdit ? "Update" : "Create"} success!`
-              )
-              .then(() => {
-                handleCancel();
-              });
+
+      if (isEdit) {
+        sessionActionUpdate(sessionData, {
+          onSuccess: () => {
+            form.resetFields();
+            setOpen(false);
           },
-          onError: (error) => {
-            message.error(
-              // @ts-ignore
-              error?.response?.data?.message ||
-                `Failed to ${isEdit ? "update" : "create"} account.`
-            );
+        });
+      } else {
+        sessionActionCreate(sessionData, {
+          onSuccess: () => {
+            form.resetFields();
+            setOpen(false);
           },
-        }
-      );
+        });
+      }
     } catch (error) {
       message.error(
         error?.response?.data?.message ||
@@ -105,7 +98,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
       ) : (
         <Button
           onClick={showModal}
-          className="!rounded-[50px] !bg-[#003087] !p-6 !text-white font-[500] lg:text-[16px] md:text-[14px]"
+          className="!rounded-[50px] !bg-primaryColor !p-6 !text-white font-[500] lg:text-[16px] md:text-[14px]"
         >
           Create Session
         </Button>
@@ -114,7 +107,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
         open={open}
         okText={isEdit ? "Update" : "Create"}
         closable={false}
-        confirmLoading={isLoading}
+        confirmLoading={isLoadingUpdate || isLoadingCreate}
         width={{
           xs: "90%",
           sm: "80%",
@@ -129,14 +122,14 @@ const ActionModal = ({ initialData = null, classId = null }) => {
           <h4 className="font-[700] lg:text-[30px] md:text-[28px]">
             {isEdit ? "Update session" : "Create Session"}
           </h4>
-          <p className="mb-6 font-[500] text-[#637381] lg:text-[18px] md:text-[16px]">
+          <p className="mb-6 font-[500] text-primaryTextColor lg:text-[18px] md:text-[16px]">
             {isEdit
               ? "Modify and extend the current session."
               : "Set up a new session quickly and easily."}
           </p>
           <Form
             form={form}
-            className=""
+            onFinish={onAction}
             layout="vertical"
             initialValues={{
               sessionName: isEdit ? initialData?.sessionName : "",
@@ -150,13 +143,14 @@ const ActionModal = ({ initialData = null, classId = null }) => {
           >
             <Form.Item
               label="Session Name"
-              // @ts-ignore
+              required
               rules={[yupSync(sessionSchema)]}
               name="sessionName"
             >
               <Input className="!h-[46px] " placeholder="Session Name" />
             </Form.Item>
             <Form.Item
+              required
               label="Session Key"
               // @ts-ignore
               rules={[yupSync(sessionSchema)]}
@@ -180,6 +174,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
               />
             </Form.Item>
             <Form.Item
+              required
               layout="vertical"
               label="Exam Set"
               // @ts-ignore
@@ -189,17 +184,16 @@ const ActionModal = ({ initialData = null, classId = null }) => {
               <Select
                 className="!h-[46px] !w-full"
                 placeholder="Exam Set"
-                options={[
-                  { label: "Exam 1", value: "english" },
-                  { label: "Exam 2", value: "math" },
-                  { label: "Exam 3", value: "history" },
-                  { label: "Exam 4", value: "museum" },
-                ]}
+                options={topics?.map((topic) => ({
+                  label: topic.Name,
+                  value: topic.ID,
+                }))}
               />
             </Form.Item>
             <Form.Item
               label="Date Range"
               // @ts-ignore
+              required
               rules={[yupSync(sessionSchema)]}
               name="dateRange"
             >
@@ -209,23 +203,22 @@ const ActionModal = ({ initialData = null, classId = null }) => {
                 format="DD-MM-YYYY HH:mm:ss"
               />
             </Form.Item>
+            <div className="flex justify-end gap-4">
+              <Button
+                onClick={handleCancel}
+                className="h-[52px] w-[124px] rounded-[50px] border-[1px] border-primaryColor text-primaryColor lg:text-[16px] md:text-[14px]"
+              >
+                Cancel
+              </Button>
+              <Button
+                loading={isLoadingUpdate || isLoadingCreate}
+                htmlType="submit"
+                className="h-[52px] w-[124px] rounded-[50px] bg-primaryColor text-white lg:text-[16px] md:text-[14px]"
+              >
+                {isEdit ? "Update" : "Create"}
+              </Button>
+            </div>
           </Form>
-        </div>
-        <div className="flex justify-end gap-4">
-          <Button
-            onClick={handleCancel}
-            className="h-[52px] w-[124px] rounded-[50px] border-[1px] border-[#003087] text-[#003087] lg:text-[16px] md:text-[14px]"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={onAction}
-            loading={isLoading}
-            htmlType="submit"
-            className="h-[52px] w-[124px] rounded-[50px] bg-[#003087] text-white lg:text-[16px] md:text-[14px]"
-          >
-            {isEdit ? "Update" : "Create"}
-          </Button>
         </div>
       </Modal>
     </>

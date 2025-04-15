@@ -65,7 +65,10 @@ const ChangePassword = ({ isOpen, onClose }) => {
               rules={[yupSync(ChangePasswordSchema)]}
               className="w-full md:max-w-[458px]"
             >
-              <Input.Password className="h-[46px] w-full max-w-[458px] rounded-lg" placeholder="Current password" />
+              <Input.Password
+                className="h-[46px] w-full max-w-[458px] rounded-lg"
+                placeholder="Current password"
+              />
             </Form.Item>
             <Form.Item
               label={
@@ -79,7 +82,10 @@ const ChangePassword = ({ isOpen, onClose }) => {
               rules={[yupSync(ChangePasswordSchema)]}
               className="w-full md:max-w-[458px]"
             >
-              <Input.Password className="h-[46px] w-full max-w-[458px] rounded-lg" placeholder="New password" />
+              <Input.Password
+                className="h-[46px] w-full max-w-[458px] rounded-lg"
+                placeholder="New password"
+              />
             </Form.Item>
             <Form.Item
               label={
@@ -92,9 +98,22 @@ const ChangePassword = ({ isOpen, onClose }) => {
               required={false}
               dependencies={["newPassword"]}
               className="w-full md:max-w-[458px]"
-              rules={[yupSync(ChangePasswordSchema)]}
+              rules={[
+                { required: true, message: "Please confirm your new password" },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue('newPassword') === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(new Error('The two passwords do not match'));
+                  },
+                }),
+              ]}
             >
-              <Input.Password className="h-[46px] w-full max-w-[458px] rounded-lg" placeholder="Confirm new password" />
+              <Input.Password
+                className="h-[46px] w-full max-w-[458px] rounded-lg"
+                placeholder="Confirm new password"
+              />
             </Form.Item>
           </div>
 
@@ -110,11 +129,11 @@ const ChangePassword = ({ isOpen, onClose }) => {
             >
               Cancel
             </Button>
-            <Button 
-              type="primary" 
-              htmlType="submit" 
+            <Button
+              type="primary"
+              htmlType="submit"
               loading={isPending}
-              className="w-[100px] h-[50px] bg-[#003087] hover:bg-[#002A6B] rounded-full"
+              className="w-[100px] h-[50px] bg-primaryColor hover:bg-[#002A6B] rounded-full"
             >
               Update
             </Button>

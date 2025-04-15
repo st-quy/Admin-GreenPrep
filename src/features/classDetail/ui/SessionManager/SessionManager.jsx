@@ -14,7 +14,7 @@ const SessionManager = ({ data }) => {
           <h4 className="font-[700] md:text-[28px] lg:text-[30px]">
             Sessions list
           </h4>
-          <p className="text-[#637381] md:text-[16px] lg:text-[18px] font-[500]">
+          <p className="text-primaryTextColor md:text-[16px] lg:text-[18px] font-[500]">
             Overview of Active and Past Sessions
           </p>
         </div>
