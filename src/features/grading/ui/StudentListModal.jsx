@@ -70,11 +70,11 @@ const StudentListModal = ({
           type="primary"
           ghost
           shape="round"
-          className={
-            (record.ID === currentUser.ID
+          className={`w-24 ${
+            record.ID === currentUser.ID
               ? "!border-[#DF6B2E] !text-[#DF6B2E]"
-              : "!border-primaryColor !text-primaryColor") + " w-24"
-          }
+              : "!border-primaryColor !text-primaryColor"
+          }`}
           onClick={() => {
             handleSelect(record.ID);
           }}
