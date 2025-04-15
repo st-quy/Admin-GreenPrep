@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
+// import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
 import GradingPage from "@pages/grading/GradingPage.jsx";
 import SessionLayout from "../../pages/SessionManagement/SessionLayout.jsx";
 import SessionInformation from "@pages/SessionManagement/SessionInformation.jsx";
@@ -14,7 +14,7 @@ import RedirectByRole from "./RedirectByRole/index.jsx";
 const PrivateRoute = [
   {
     path: "/",
-    element: <ProtectedRoute />,
+    // element: <ProtectedRoute />,
     breadcrumb: "Home",
     children: [
       {

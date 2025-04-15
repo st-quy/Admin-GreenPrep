@@ -1,20 +1,30 @@
 import React, { useState } from "react";
 import ActionModal from "../SessionModal/ActionModal/ActionModal";
+import DeleteModal from "../SessionModal/DeleteModal/DeleteModal";
 import { Link } from "react-router-dom";
 import { formatDateTime } from "@shared/lib/utils/formatString";
-import DeleteModal from "../SessionModal/DeleteModal/DeleteModal";
-import { DeleteOutlined } from "@ant-design/icons";
+import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
 import { statusOptions } from "@features/classDetail/validate";
 import SessionTable from "./SessionTable/SessionTable";
+import { Button } from "antd";
 
 const SessionManager = ({ data, isLoading }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const handleOpenModal = () => {
-    setIsModalOpen(true); // Mở modal
+  const [modalState, setModalState] = useState({
+    create: false,
+    edit: false,
+    delete: false,
+  });
+
+  const [selectedSession, setSelectedSession] = useState(null);
+
+  const openModal = (type, session = null) => {
+    setSelectedSession(session);
+    setModalState((prev) => ({ ...prev, [type]: true }));
   };
 
-  const handleCloseModal = () => {
-    setIsModalOpen(false); // Đóng modal
+  const closeModal = (type) => {
+    setModalState((prev) => ({ ...prev, [type]: false }));
+    setSelectedSession(null);
   };
 
   const sessionColumns = [
@@ -54,10 +64,7 @@ const SessionManager = ({ data, isLoading }) => {
       dataIndex: "SessionParticipants",
       key: "SessionParticipants",
       className: "!text-center",
-      render: (text) => {
-        const numberOfParticipants = text.length;
-        return <span>{numberOfParticipants}</span>;
-      },
+      render: (participants) => <span>{participants.length}</span>,
     },
     {
       title: "STATUS",
@@ -82,21 +89,19 @@ const SessionManager = ({ data, isLoading }) => {
       className: "!text-center",
       render: (_, record) => (
         <div className="flex justify-center items-center gap-4">
-          <ActionModal initialData={record} />
+          <span className="text-xl">
+            <EditOutlined
+              onClick={() => openModal("edit", record)}
+              className="hover:opacity-50"
+            />
+          </span>
           {record.SessionParticipants.length === 0 && (
-            <>
-              <span className="text-xl">
-                <DeleteOutlined
-                  onClick={handleOpenModal}
-                  className="hover:opacity-50"
-                />
-              </span>
-              <DeleteModal
-                sessionID={record.ID}
-                isOpen={isModalOpen}
-                onClose={handleCloseModal}
+            <span className="text-xl">
+              <DeleteOutlined
+                onClick={() => openModal("delete", record)}
+                className="hover:opacity-50"
               />
-            </>
+            </span>
           )}
         </div>
       ),
@@ -114,8 +119,14 @@ const SessionManager = ({ data, isLoading }) => {
             Overview of Active and Past Sessions
           </p>
         </div>
-        <ActionModal classId={data?.ID} />
+        <Button
+          onClick={() => openModal("create")}
+          className="!rounded-full !bg-primaryColor !p-6 !text-white font-medium lg:text-base md:text-sm"
+        >
+          Create session
+        </Button>
       </div>
+
       <div className="mt-8">
         <SessionTable
           data={data.Sessions}
@@ -123,6 +134,25 @@ const SessionManager = ({ data, isLoading }) => {
           isLoading={isLoading}
         />
       </div>
+
+      {/* Create & Edit Modal */}
+      {(modalState.create || modalState.edit) && (
+        <ActionModal
+          classId={data?.ID}
+          isOpen
+          initialData={modalState.edit ? selectedSession : null}
+          onClose={() => closeModal(modalState.edit ? "edit" : "create")}
+        />
+      )}
+
+      {/* Delete Modal */}
+      {modalState.delete && selectedSession && (
+        <DeleteModal
+          sessionID={selectedSession.ID}
+          isOpen
+          onClose={() => closeModal("delete")}
+        />
+      )}
     </>
   );
 };

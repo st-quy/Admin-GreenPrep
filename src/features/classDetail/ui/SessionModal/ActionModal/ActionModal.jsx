@@ -27,9 +27,13 @@ import {
 
 const { RangePicker } = DatePicker;
 
-const ActionModal = ({ initialData = null, classId = null }) => {
+const ActionModal = ({
+  initialData = null,
+  classId = null,
+  isOpen,
+  onClose,
+}) => {
   const [form] = Form.useForm();
-  const [open, setOpen] = useState(false);
 
   const isEdit = !!initialData;
   const { data: topics, isLoading: isLoadingTopics } = useGetTopics();
@@ -42,15 +46,19 @@ const ActionModal = ({ initialData = null, classId = null }) => {
   const modalTitle = isEdit ? "Update Session" : "Create Session";
   const actionLabel = isEdit ? "Update session" : "Create session";
 
-  const showModal = () => setOpen(true);
   const handleCancel = () => {
-    setOpen(false);
+    onClose();
     form.resetFields();
   };
 
   const handleGenerateSessionKey = async () => {
-    const data = await generateKey();
-    form.setFieldsValue({ sessionKey: data.key });
+    try {
+      const data = await generateKey();
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      form.setFieldsValue({ sessionKey: data.key });
+    } catch (error) {
+      message.error("Failed to generate session key");
+    }
   };
 
   const onAction = async () => {
@@ -88,21 +96,8 @@ const ActionModal = ({ initialData = null, classId = null }) => {
 
   return (
     <>
-      {isEdit ? (
-        <span className="text-xl">
-          <EditOutlined onClick={showModal} className="hover:opacity-50" />
-        </span>
-      ) : (
-        <Button
-          onClick={showModal}
-          className="!rounded-full !bg-primaryColor !p-6 !text-white font-medium lg:text-base md:text-sm"
-        >
-          {actionLabel}
-        </Button>
-      )}
-
       <Modal
-        open={open}
+        open={isOpen}
         closable={false}
         confirmLoading={isLoading}
         footer={null}
