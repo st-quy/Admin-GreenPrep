@@ -13,7 +13,6 @@ export const useGetWritingQuestionsAnswers = (participantId) => {
   return useQuery({
     queryKey: ["writing"],
     queryFn: async () => await GradeApi.getGrade(participantId, "writing"),
-    refetchOnWindowFocus: false,
   });
 };
 
@@ -21,7 +20,6 @@ export const useGetSpeakingQuestionsAnswers = (participantId) => {
   return useQuery({
     queryKey: ["speaking"],
     queryFn: async () => await GradeApi.getGrade(participantId, "speaking"),
-    refetchOnWindowFocus: false,
   });
 };
 
