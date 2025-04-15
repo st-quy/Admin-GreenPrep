@@ -6,7 +6,8 @@ import {
   approveRequest,
   rejectRequest,
   publishScoresAndSendEmails,
-  sendEmail,
+  getSessionById,
+  getStudentById,
 } from "../api/session_api";
 import { message } from "antd";
 
@@ -126,5 +127,23 @@ export const usePublishScoresAndSendEmails = (onSuccessCallback) => {
       console.error("Error publishing scores:", error);
       message.error("Some emails failed to send. Please try again.");
     },
+  });
+};
+
+// Get session by ID
+export const useSessionDetails = (sessionId) => {
+  return useQuery({
+    queryKey: ["sessionDetails", sessionId],
+    queryFn: () => getSessionById(sessionId),
+    enabled: !!sessionId,
+  });
+};
+
+//Get Student by ID
+export const useStudentDetails = (studentId) => {
+  return useQuery({
+    queryKey: ["studentDetails", studentId],
+    queryFn: () => getStudentById(studentId),
+    enabled: !!studentId,
   });
 };
