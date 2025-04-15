@@ -29,7 +29,6 @@ const StudentListModal = ({
         style: { backgroundColor: "transparent", color: "#637381" },
       }),
       render: (text) => <span className="text-primaryColor">{text}</span>,
-      render: (text) => <span className="text-primaryColor">{text}</span>,
     },
     {
       title: () => (
@@ -71,7 +70,11 @@ const StudentListModal = ({
           type="primary"
           ghost
           shape="round"
-          className="!border-primaryColor !text-primaryColor hover:bg-blue-50 !px-7"
+          className={
+            (record.ID === currentUser.ID
+              ? "!border-[#DF6B2E] !text-[#DF6B2E]"
+              : "!border-primaryColor !text-primaryColor") + " w-24"
+          }
           onClick={() => {
             handleSelect(record.ID);
           }}
