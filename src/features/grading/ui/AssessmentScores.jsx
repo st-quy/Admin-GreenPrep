@@ -44,25 +44,6 @@ const AssessmentScores = ({
     setActiveTab(isSpeaking ? "speaking" : "writing");
   }, [isSpeaking]);
 
-  // Function to determine category based on total score
-  // const getCategoryFromScore = (score, type) => {
-  //   if (type === "speaking") {
-  //     if (score < 4) return "X"
-  //     if (score < 16) return "A1"
-  //     if (score < 26) return "A2"
-  //     if (score < 41) return "B1"
-  //     if (score < 48) return "B2"
-  //     return "C"
-  //   } else {
-  //     if (score < 6) return "X"
-  //     if (score < 18) return "A1"
-  //     if (score < 26) return "A2"
-  //     if (score < 40) return "B1"
-  //     if (score < 48) return "B2"
-  //     return "C"
-  //   }
-  // }
-
   const handleSubmit = async () => {
     if (scores === null) {
       message.error("Please enter a score");
