@@ -5,6 +5,7 @@ import defaultAvatar from "@assets/images/avatar.png";
 import ProfileUpdate from "@features/profile/ui/Modal/ProfileUpdate";
 import ChangePassword from "@features/profile/ui/Modal/ChangePassword";
 import { useSelector } from "react-redux";
+import dayjs from "dayjs";
 const { Title, Text } = Typography;
 
 const ProfilePage = () => {
@@ -149,7 +150,10 @@ const ProfilePage = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 p-6 sm:p-8 border-t border-gray-100">
           <div className="space-y-1">
-            <InfoField label="DOB" value={user?.dob || "No information"} />
+            <InfoField
+              label="DoB"
+              value={dayjs(user?.dob).format("DD-MM-YYYY") || "No information"}
+            />
           </div>
           <div className="space-y-1">
             <InfoField
