@@ -17,7 +17,6 @@ const AssessmentScores = ({
     isSpeaking ? "speaking" : "writing"
   );
   const { mutateAsync: postGrade } = usePostGrade();
-  // const isFirstRender = useRef(true);
 
   const {
     data: fetchedScore,
