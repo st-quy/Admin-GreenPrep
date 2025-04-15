@@ -3,19 +3,18 @@ import * as Yup from "yup";
 export const ChangePasswordSchema = Yup.object().shape({
   currentPassword: Yup.string()
     .required("Current password is required")
-    .min(8, "Current password must be at least 8 characters"),
+    .min(6, "Current password must be at least 6 characters"),
   newPassword: Yup.string()
     .required("New password is required")
-    .min(8, "New password must be at least 8 characters"),
+    .min(6, "New password must be at least 6 characters"),
 });
 
 
 export const UpdateProfileSchema = Yup.object().shape({
-  fullName: Yup.string().required("Full name is required"),
-  code: Yup.string().required("Code is required"),
-  bod: Yup.string()
-    .matches(/^\d{2}\/\d{2}\/\d{4}$/, "BOD must be in the format dd/mm/yyyy")
-    .nullable(),
+  firstName: Yup.string().required("First name is required"),
+  lastName: Yup.string().required("Last name is required"),
+  teacherCode: Yup.string().required("Code is required"),
+  dob: Yup.string().nullable(),
   email: Yup.string()
     .email("Enter a valid email")
     .required("Email is required"),

@@ -113,8 +113,8 @@ const SessionInformation = ({ type }) => {
                 {isPending
                   ? "Sending..."
                   : isReadyToPublish
-                  ? "Ready to Publish"
-                  : "Publish Score"}
+                    ? "Ready to Publish"
+                    : "Publish Score"}
               </button>
             </div>
           )}
@@ -132,6 +132,7 @@ const SessionInformation = ({ type }) => {
           ) : (
             <StudentSessionTable
               id={sessionId}
+              studentId={studentId}
               type={type}
               searchKeyword={searchKeyword}
               onAllQuestionGraded={handleAllGraded}
