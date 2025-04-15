@@ -81,10 +81,10 @@ const ColumnChart = ({ data, title }) => {
         </Text>
       }
       className="shadow-sm hover:shadow-md transition-shadow duration-300"
-      bodyStyle={{ padding: "1.5rem" }}
+      bodyStyle={{ padding: "1.5rem", overflow: "auto" }}
       bordered={false}
     >
-      <div className="space-y-4  overflow-auto h-[200px]">
+      <div className="space-y-4 h-[200px]">
         {data.length === 0 ? (
           <div className="text-center py-8">
             <Text type="secondary">No session data available</Text>
@@ -167,7 +167,9 @@ const StatusChart = ({ data, title }) => {
                   </Text>
                 </div>
                 <div className="space-y-1">
-                  <Text className="text-2xl font-semibold">{item.value}</Text>
+                  <Text className="text-2xl font-semibold pr-4">
+                    {item.value}
+                  </Text>
                   <Text className="text-xs text-gray-500">
                     {Math.round((item.value / total) * 100)}% of total
                   </Text>
@@ -448,7 +450,7 @@ const Dashboard = () => {
   }
 
   return (
-    <div className="p-2 min-h-screen">
+    <div className="p-8 min-h-screen">
       <div className="mb-4 md:mb-6">
         <Title level={3} className="text-xl md:text-2xl lg:text-3xl">
           Dashboard

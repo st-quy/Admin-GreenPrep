@@ -8,9 +8,7 @@ import {
   Form,
   Spin,
 } from "antd";
-import React, { useState, useEffect } from "react";
-import EditIcon from "@assets/icons/class-detail/edit.png";
-import GenerateIcon from "@assets/icons/class-detail/generate.png";
+import React, { useState } from "react";
 const { RangePicker } = DatePicker;
 import { yupSync } from "@shared/lib/utils";
 import { sessionSchema } from "@features/classDetail/validate";
@@ -22,22 +20,23 @@ import {
 } from "@features/classDetail/hooks/useClassDetail";
 import dayjs from "dayjs";
 import {
-  EditFilled,
   EditOutlined,
   LoadingOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
+import { useGetTopics } from "@features/topic/hooks";
 
 const ActionModal = ({ initialData = null, classId = null }) => {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
   const isEdit = initialData !== null;
-  const { data: topics, isLoading: isLoadingTopics } = useGetTopics();
   const { mutateAsync: generateKey, isPending: isGenerating } =
     useGenerateSessionKeyMutation();
-  const { mutate: sessionAction, isPending: isLoading } = isEdit
-    ? useUpdateSession()
-    : useCreateSession();
+  const { mutate: sessionActionUpdate, isPending: isLoadingUpdate } =
+    useUpdateSession();
+  const { mutate: sessionActionCreate, isPending: isLoadingCreate } =
+    useCreateSession();
+
   const showModal = () => {
     setOpen(true);
   };
@@ -52,11 +51,8 @@ const ActionModal = ({ initialData = null, classId = null }) => {
     form.setFieldsValue({ sessionKey: data.key });
   };
 
-  const onAction = async () => {
+  const onAction = async (values) => {
     try {
-      // Validate form fields
-      const values = await form.validateFields();
-
       // Prepare session data
       const sessionData = {
         sessionId: initialData?.ID || null,
@@ -84,11 +80,11 @@ const ActionModal = ({ initialData = null, classId = null }) => {
             message.error(
               // @ts-ignore
               error?.response?.data?.message ||
-                `Failed to ${isEdit ? "update" : "create"} session.`
+                `Failed to ${isEdit ? "update" : "create"} account.`
             );
           },
-        }
-      );
+        });
+      }
     } catch (error) {
       message.error(
         error?.response?.data?.message ||
@@ -115,7 +111,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
         open={open}
         okText={isEdit ? "Update" : "Create"}
         closable={false}
-        confirmLoading={isLoading}
+        confirmLoading={isLoadingUpdate || isLoadingCreate}
         width={{
           xs: "90%",
           sm: "80%",
@@ -137,6 +133,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
           </p>
           <Form
             form={form}
+            onFinish={onAction}
             layout="vertical"
             initialValues={{
               sessionName: isEdit ? initialData?.sessionName : "",
@@ -191,14 +188,13 @@ const ActionModal = ({ initialData = null, classId = null }) => {
             >
               <Select
                 className="!h-[46px] !w-full"
-                placeholder="Select Exam Set"
-                loading={isLoadingTopics}
-                options={
-                  topics?.map((topic) => ({
-                    label: topic.Name,
-                    value: topic.ID,
-                  })) || []
-                }
+                placeholder="Exam Set"
+                options={[
+                  { label: "Exam 1", value: "english" },
+                  { label: "Exam 2", value: "math" },
+                  { label: "Exam 3", value: "history" },
+                  { label: "Exam 4", value: "museum" },
+                ]}
               />
             </Form.Item>
             <Form.Item
@@ -215,23 +211,22 @@ const ActionModal = ({ initialData = null, classId = null }) => {
                 format="DD-MM-YYYY HH:mm:ss"
               />
             </Form.Item>
+            <div className="flex justify-end gap-4">
+              <Button
+                onClick={handleCancel}
+                className="h-[52px] w-[124px] rounded-[50px] border-[1px] border-primaryColor text-primaryColor lg:text-[16px] md:text-[14px]"
+              >
+                Cancel
+              </Button>
+              <Button
+                loading={isLoadingUpdate || isLoadingCreate}
+                htmlType="submit"
+                className="h-[52px] w-[124px] rounded-[50px] bg-primaryColor text-white lg:text-[16px] md:text-[14px]"
+              >
+                {isEdit ? "Update" : "Create"}
+              </Button>
+            </div>
           </Form>
-        </div>
-        <div className="flex justify-end gap-4">
-          <Button
-            onClick={handleCancel}
-            className="h-[52px] w-[124px] rounded-[50px] border-[1px] border-primaryColor text-primaryColor lg:text-[16px] md:text-[14px]"
-          >
-            Cancel
-          </Button>
-          <Button
-            onClick={onAction}
-            loading={isLoading}
-            htmlType="submit"
-            className="h-[52px] w-[124px] rounded-[50px] bg-primaryColor text-white lg:text-[16px] md:text-[14px]"
-          >
-            {isEdit ? "Update" : "Create"}
-          </Button>
         </div>
       </Modal>
     </>
