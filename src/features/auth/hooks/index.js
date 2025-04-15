@@ -95,7 +95,6 @@ export const useResetPassword = () => {
 export const useGetProfile = () => {
   const { userId } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
-
   return useQuery({
     queryKey: ["profile", userId],
     queryFn: async () => {
@@ -116,6 +115,11 @@ export const useGetProfile = () => {
             bod: data.data.bod,
           })
         );
+        if (!data.data.status) {
+          message.error("Your account has been blocked");
+          localStorage.clear();
+          window.location.href = `${window.location.origin}/unauthorized`;
+        }
 
         return data.data;
       } catch (error) {
