@@ -99,7 +99,7 @@ export const useGetProfile = () => {
     queryKey: ["profile", userId],
     queryFn: async () => {
       try {
-        const data = await AuthApi.getProfile(userId);
+        const data = await AuthApi.getProfile(userId);        
         dispatch(
           updateUser({
             userId: data.data.ID,
@@ -112,7 +112,7 @@ export const useGetProfile = () => {
             studentCode: data.data.studentCode,
             teacherCode: data.data.teacherCode,
             address: data.data.address,
-            bod: data.data.bod,
+            dob: data.data.dob,
           })
         );
         if (!data.data.status) {
