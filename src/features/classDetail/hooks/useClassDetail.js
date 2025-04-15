@@ -80,7 +80,6 @@ export const useUpdateSession = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["classDetail"] });
-      message.success(`Update successfully!`);
     },
     onError: (error) => {
       message.error(`Failed to update session.`);
