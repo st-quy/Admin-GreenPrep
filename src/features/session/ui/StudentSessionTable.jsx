@@ -81,7 +81,11 @@ const StudentSessionTable = ({
       dataIndex: "GrammarVocab",
       key: "GrammarVocab",
       width: "240px",
-      render: (text,record) =>  <span>{text ? text + " | " + record.GrammarVocabLevel : "No Data"}</span>,
+      render: (text, record) => (
+        <span>
+          {text ? text + " | " + record.GrammarVocabLevel : "No Data"}
+        </span>
+      ),
     },
     {
       title: "LISTENING",
@@ -251,7 +255,21 @@ const StudentSessionTable = ({
               wrapper: (props) => (
                 <thead
                   {...props}
-                  className="bg-tableHeadColor text-primaryTextColor"
+                  className={`bg-tableHeadColor text-primaryTextColor`}
+                />
+              ),
+              cell: (props) => (
+                <th
+                  {...props}
+                  className={` bg-[#E6F0FA] text-[10px] font-[700] md:text-[16px] text-[#637381] tracking-wider text-center !py-4 px-0 whitespace-nowrap `}
+                />
+              ),
+            },
+            body: {
+              cell: (props) => (
+                <td
+                  {...props}
+                  className={`font-[500] tracking-wider text-center py-4 px-0 whitespace-nowrap text-[10px] md:text-[14px] text-[#637381] ${props.className || ""}`}
                 />
               ),
             },

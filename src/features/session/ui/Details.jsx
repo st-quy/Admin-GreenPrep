@@ -64,7 +64,7 @@ const Details = ({ type, id }) => {
           {
             key: "3",
             label: "Participants",
-            children: data.SessionParticipants?.length || "Not Available",
+            children: data.SessionParticipants?.length || "0",
           },
           { key: "4", label: "Status", children: statusTag(data.status) },
           {
