@@ -21,7 +21,6 @@ import {
   useUpdateSession,
 } from "@features/classDetail/hooks/useClassDetail";
 import dayjs from "dayjs";
-import { useQueryClient } from "@tanstack/react-query";
 import {
   EditFilled,
   EditOutlined,
@@ -152,6 +151,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
             <Form.Item
               label="Session Name"
               required
+              // @ts-ignore
               rules={[yupSync(sessionSchema)]}
               name="sessionName"
             >
@@ -205,6 +205,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
               label="Date Range"
               // @ts-ignore
               required
+              // @ts-ignore
               rules={[yupSync(sessionSchema)]}
               name="dateRange"
             >

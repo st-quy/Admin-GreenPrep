@@ -6,6 +6,7 @@ import { formatDateTime } from "@shared/lib/utils/formatString";
 import DeleteModal from "../SessionModal/DeleteModal/DeleteModal";
 import { Button } from "antd";
 import { DeleteOutlined } from "@ant-design/icons";
+import { statusOptions } from "@features/classDetail/validate";
 
 const SessionManager = ({ data, isLoading }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -51,19 +52,29 @@ const SessionManager = ({ data, isLoading }) => {
     },
     {
       title: "NUMBER OF PARTICIPANTS",
-      dataIndex: "numberOfParticipants",
-      key: "numberOfParticipants",
+      dataIndex: "SessionParticipants",
+      key: "SessionParticipants",
       className: "!text-center",
+      render: (text) => {
+        const numberOfParticipants = text.length;
+        return <span>{numberOfParticipants}</span>;
+      },
     },
     {
       title: "STATUS",
       dataIndex: "status",
       key: "status",
       className: "!text-center",
-      render: (text) => {
-        const statusClass =
-          text === "active" ? "text-green-500" : "text-red-500";
-        return <span className={statusClass}>{text}</span>;
+      render: (status) => {
+        const info = statusOptions[status];
+        return (
+          <span
+            className="px-3 py-1 rounded-full text-sm font-medium inline-block text-center"
+            style={{ backgroundColor: info?.bg, color: info?.text }}
+          >
+            {info?.label || status}
+          </span>
+        );
       },
     },
     {
@@ -104,7 +115,7 @@ const SessionManager = ({ data, isLoading }) => {
             Overview of Active and Past Sessions
           </p>
         </div>
-        <ActionModal classId={data.ID} />
+        <ActionModal classId={data?.ID} />
       </div>
       <div className="mt-8">
         <TableSearch
