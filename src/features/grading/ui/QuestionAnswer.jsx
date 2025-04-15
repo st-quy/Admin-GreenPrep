@@ -9,6 +9,16 @@ export const QuestionAnswer = ({
 }) => {
   const studentAnswers = () => {
     if (isSpeaking) {
+      if (speakingPartFour?.length > 0) {
+        return (
+          <div className="place-self-center self-center">
+            <AudioPlayers
+              audioUrl={speakingPartFour[0]?.studentAnswer?.AnswerAudio || ""}
+              audioFileName={fileName}
+            />
+          </div>
+        );
+      }
       if (!quesntionsAnswerData?.studentAnswer?.AnswerAudio) {
         return (
           <div className="whitespace-pre-line">{"No answer available"}</div>
