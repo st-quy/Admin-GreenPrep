@@ -149,7 +149,7 @@ const ProfilePage = () => {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 sm:gap-4 p-6 sm:p-8 border-t border-gray-100">
           <div className="space-y-1">
-            <InfoField label="BOD" value={user?.bod || "No information"} />
+            <InfoField label="DOB" value={user?.dob || "No information"} />
           </div>
           <div className="space-y-1">
             <InfoField
