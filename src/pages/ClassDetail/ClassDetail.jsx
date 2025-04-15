@@ -1,5 +1,8 @@
 import { useClassDetailQuery } from "@features/classDetail/hooks/useClassDetail";
+import { studentScore } from "@features/classDetail/pdf-data";
 import ClassInfo from "@features/classDetail/ui/ClassInfo/ClassInfo";
+import CoverPage from "@features/classDetail/ui/PDF/CoverPage";
+import Publisher from "@features/classDetail/ui/PDF/Publisher";
 import SessionManager from "@features/classDetail/ui/SessionManager/SessionManager";
 import { Spin } from "antd";
 import React from "react";
