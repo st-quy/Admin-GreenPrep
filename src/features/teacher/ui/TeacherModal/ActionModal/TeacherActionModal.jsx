@@ -47,16 +47,15 @@ const TeacherActionModal = ({ initialData = null }) => {
   };
 
   // @ts-ignore
-  const onAction = async () => {
+  const onAction = async (values) => {
     try {
-      const values = await form.validateFields();
       const data = {
         ID: isEdit ? initialData?.ID : undefined,
         firstName: values.firstName,
         lastName: values.lastName,
         email: values.email,
         teacherCode: values.teacherCode,
-        password: values.password || `Greenwich@123`,
+        password: !isEdit ? values.password || `Greenwich@123` : undefined,
         roleIDs: ["teacher"],
         status: values.status,
         phone: values.phone || undefined,
@@ -128,6 +127,7 @@ const TeacherActionModal = ({ initialData = null }) => {
             {isEdit ? "Update a teacher account." : "Create a teacher account."}
           </p>
           <Form
+            onFinish={onAction}
             form={form}
             layout="vertical"
             initialValues={{
@@ -236,7 +236,6 @@ const TeacherActionModal = ({ initialData = null }) => {
                 </Button>
                 <Button
                   // @ts-ignore
-                  onClick={onAction}
                   loading={isOnAction}
                   htmlType="submit"
                   className="h-[50px] w-[100px] md:h-[52px] md:w-[124px] rounded-[50px] bg-primaryColor text-white text-[14px] md:text-[16px] "

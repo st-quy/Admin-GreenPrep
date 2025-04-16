@@ -28,6 +28,7 @@ function getSkillLevel(score, skill) {
 
 const StudentSessionTable = ({
   id,
+  studentId,
   searchKeyword,
   type,
   status = "draft",
@@ -42,7 +43,10 @@ const StudentSessionTable = ({
   const { data, isLoading } =
     type === TableType.SESSION
       ? useSessionParticipants(id, { page: currentPage, limit: pageSize })
-      : useStudentParticipants(id, { page: currentPage, limit: pageSize });
+      : useStudentParticipants(studentId, {
+          page: currentPage,
+          limit: pageSize,
+        });
 
   const processedData = useMemo(() => {
     return (data?.data || []).map((record) => ({
@@ -59,7 +63,7 @@ const StudentSessionTable = ({
     if (onDataReady) {
       onDataReady(processedData);
     }
-  }, [processedData]);  
+  }, [processedData]);
 
   useEffect(() => {
     setLevels(

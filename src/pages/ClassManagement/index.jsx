@@ -12,9 +12,11 @@ import { useSelector } from "react-redux";
 const ClassManagement = () => {
   const [isOpen, setIsOpen] = useState("");
   const [dataClass, setClassData] = useState(null);
-  const { userId } = useSelector((state) => state.auth);
+  const { userId, user } = useSelector((state) => state.auth);
 
-  const { data: classList, isLoading } = useGetAllClass(userId);
+  const { data: classList, isLoading } = useGetAllClass(
+    user?.role.includes("admin") ? null : userId
+  );
 
   const handleUpdateClass = (record) => () => {
     setIsOpen("Update");
