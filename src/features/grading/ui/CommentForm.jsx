@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Input, Form } from "antd";
 import { yupSync } from "@shared/lib/utils";
 import * as yup from "yup";
@@ -16,22 +16,28 @@ const CommentForm = ({
   );
   const [form] = Form.useForm();
 
+  const hasUserEdited = useRef(false);
+
   const schema = yup.object().shape({
     comment: yup.string().trim().nullable().optional(),
   });
 
-  // Reset form when skill or data changes
+  // Reset form when skill or data changes, but respect user edits
   useEffect(() => {
-    const initialComment =
-      existingComment || data?.studentAnswer?.Comment || "";
-    setComment(initialComment);
-    form.setFieldsValue({ comment: initialComment });
-  }, [data, existingComment, form, isSpeaking]);
+    if (!hasUserEdited.current || !data?.studentAnswer?.ID) {
+      const initialComment =
+        existingComment || data?.studentAnswer?.Comment || "";
+      setComment(initialComment);
+      form.setFieldsValue({ comment: initialComment });
+      // Reset the edit tracking when we change to a new question
+      hasUserEdited.current = false;
+    }
+  }, [data, existingComment, form, isSpeaking, activeTab]);
 
   const handleCommentChange = (e) => {
     const value = e.target.value;
     setComment(value);
-
+    hasUserEdited.current = true;
     // Pass the comment up to the parent component with the studentAnswerId and part
     if (onCommentChange) {
       onCommentChange({
