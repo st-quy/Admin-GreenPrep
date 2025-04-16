@@ -2,9 +2,9 @@ export const studentScore = [
   {
     name: "Le Nguyen Hoang Long",
     id: "GOD210011",
-    email: "123@gmail.com",
+    email: "earnpro7701@gmail.com",
     phone: "0123456789",
-    class: "GCD1111",
+    className: "GCD1111",
     session: {
       name: "FEB_2",
       key: "GREFEB1",
@@ -22,5 +22,4 @@ export const studentScore = [
       total: 40,
     },
   },
-  // thêm nhiều học sinh khác...
 ];

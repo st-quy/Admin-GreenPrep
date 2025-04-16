@@ -1,8 +1,10 @@
 import { useClassDetailQuery } from "@features/classDetail/hooks/useClassDetail";
 import { studentScore } from "@features/classDetail/pdf-data";
 import ClassInfo from "@features/classDetail/ui/ClassInfo/ClassInfo";
-import CoverPage from "@features/classDetail/ui/PDF/CoverPage";
+import CoverPDF from "@features/classDetail/ui/PDF/CoverPDF";
 import Publisher from "@features/classDetail/ui/PDF/Publisher";
+import SpeakingPDF from "@features/classDetail/ui/PDF/SpeakingPDF";
+import WritingPDF from "@features/classDetail/ui/PDF/WritingPDF";
 import SessionManager from "@features/classDetail/ui/SessionManager/SessionManager";
 import { Spin } from "antd";
 import React from "react";
@@ -37,8 +39,14 @@ const ClassDetail = () => {
   // Render class details and session table
   return (
     <div className="pb-12 p-8">
+      <Publisher students={studentScore} />
       <ClassInfo data={classDetail} />
       <SessionManager data={classDetail} isLoading={isLoading} />
+      {/* <CoverPDF student={studentScore[0]} />
+      <br></br>
+      <WritingPDF student={studentScore[0]} />
+      <br></br>
+      <SpeakingPDF /> */}
     </div>
   );
 };
