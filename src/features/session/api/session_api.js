@@ -94,3 +94,13 @@ export const publishScoresAndSendEmails = async (participants) => {
 
   return true;
 };
+
+export const getSessionById = async (id) => {
+  const response = await axiosInstance.get(`/sessions/${id}`);
+  return response.data.data || response.data;
+};
+
+export const getStudentById = async (id) => {
+  const response = await axiosInstance.get(`/users/${id}`);
+  return response.data.data || response.data;
+};
