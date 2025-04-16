@@ -59,7 +59,6 @@ export const useCreateSession = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["classDetail"] });
-      message.success(`Created successfully!`)
     },
     onError: ({response}) => {
       message.error(response.data.message || `Failed to create session.`);
@@ -81,10 +80,19 @@ export const useUpdateSession = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["classDetail"] });
-      message.success(`Update successfully!`)
     },
     onError: (error) => {
       message.error(`Failed to update session.`);
+    },
+  });
+};
+
+export const useGetTopics = () => {
+  return useQuery({
+    queryKey: ["topics"],
+    queryFn: async () => {
+      const response = await ClassDetailApi.getTopics();
+      return response.data.data;
     },
   });
 };

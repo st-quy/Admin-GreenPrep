@@ -8,32 +8,13 @@ import {
 import "../css/index.scss";
 import { useNavigate } from "react-router-dom";
 
-function getSkillLevel(score, skill) {
-  const thresholds = {
-    Listening: [8, 16, 24, 34, 42],
-    Reading: [8, 16, 26, 38, 46],
-    Writing: [6, 18, 26, 40, 48],
-    Speaking: [4, 16, 26, 41, 48],
-  };
-
-  if (!thresholds[skill]) {
-    throw new Error("Invalid skill");
-  }
-
-  let levelIndex = thresholds[skill].findIndex(
-    (threshold) => score < threshold
-  );
-  return levelIndex === -1 ? "C" : LevelEnum[levelIndex];
-}
-
 const StudentSessionTable = ({
   id,
   studentId,
   searchKeyword,
   type,
   status = "draft",
-  onAllQuestionGraded = () => {},
-  onDataReady,
+  onAllQuestionGraded,
 }) => {
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
@@ -47,28 +28,16 @@ const StudentSessionTable = ({
           page: currentPage,
           limit: pageSize,
         });
-
-  const processedData = useMemo(() => {
-    return (data?.data || []).map((record) => ({
-      ...record,
-      Total:
-        (record.Listening || 0) +
-        (record.Reading || 0) +
-        (record.Speaking || 0) +
-        (record.Writing || 0),
-    }));
-  }, [data]);
+  const processedData = data?.data || [];
 
   useEffect(() => {
-    if (onDataReady) {
-      onDataReady(processedData);
-    }
-  }, [processedData]);
-
-  useEffect(() => {
-    setLevels(
-      processedData.reduce((acc, cur) => ({ ...acc, [cur.ID]: cur.Level }), {})
-    );
+    if (processedData)
+      setLevels(
+        processedData.reduce(
+          (acc, cur) => ({ ...acc, [cur.ID]: cur.Level }),
+          {}
+        )
+      );
   }, [processedData]);
 
   const filteredData = useMemo(() => {
@@ -95,8 +64,8 @@ const StudentSessionTable = ({
     );
     const allLevelsSelected = Object.values(levels).every((level) => level);
 
-    if (allGraded && allLevelsSelected) {
-      onAllQuestionGraded?.();
+    if (allGraded && allLevelsSelected && Object.values(levels).length > 0) {
+      onAllQuestionGraded?.(processedData);
     }
   }, [processedData, levels]);
 
@@ -116,7 +85,11 @@ const StudentSessionTable = ({
       dataIndex: "GrammarVocab",
       key: "GrammarVocab",
       width: "240px",
-      render: (text) => <span>{text || "No Data"}</span>,
+      render: (text, record) => (
+        <span>
+          {text ? text + " | " + record.GrammarVocabLevel : "No Data"}
+        </span>
+      ),
     },
     {
       title: "LISTENING",
@@ -124,9 +97,7 @@ const StudentSessionTable = ({
       key: "Listening",
       width: "120px",
       render: (text, record) => (
-        <span>
-          {text ? text + " | " + getSkillLevel(text, "Listening") : "No Data"}
-        </span>
+        <span>{text ? text + " | " + record.ListeningLevel : "No Data"}</span>
       ),
     },
     {
@@ -135,9 +106,7 @@ const StudentSessionTable = ({
       key: "Reading",
       width: "120px",
       render: (text, record) => (
-        <span>
-          {text ? text + " | " + getSkillLevel(text, "Reading") : "No Data"}
-        </span>
+        <span>{text ? text + " | " + record.ReadingLevel : "No Data"}</span>
       ),
     },
     {
@@ -151,12 +120,10 @@ const StudentSessionTable = ({
             onClick={() => navigate(`participant/${record.ID}?skill=speaking`)}
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
-            {text ? text + " | " + getSkillLevel(text, "Speaking") : "Ungraded"}
+            {text ? text + " | " + record.SpeakingLevel : "Ungraded"}
           </a>
         ) : (
-          <span>
-            {text ? text + " | " + getSkillLevel(text, "Speaking") : "Ungraded"}
-          </span>
+          <span>{text ? text + " | " + record.SpeakingLevel : "Ungraded"}</span>
         ),
     },
     {
@@ -170,15 +137,19 @@ const StudentSessionTable = ({
             onClick={() => navigate(`participant/${record.ID}?skill=writing`)}
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
-            {text ? text + " | " + getSkillLevel(text, "Writing") : "Ungraded"}
+            {text ? text + " | " + record.WritingLevel : "Ungraded"}
           </a>
         ) : (
-          <span>
-            {text ? text + " | " + getSkillLevel(text, "Writing") : "Ungraded"}
-          </span>
+          <span>{text ? text + " | " + record.WritingLevel : "Ungraded"}</span>
         ),
     },
-    { title: "TOTAL", width: "90px", dataIndex: "Total", key: "Total" },
+    {
+      title: "TOTAL",
+      width: "90px",
+      dataIndex: "Total",
+      key: "Total",
+      render: (text) => <span>{text ? text : "No Data"}</span>,
+    },
     {
       title: "LEVEL",
       dataIndex: "Level",
@@ -245,6 +216,7 @@ const StudentSessionTable = ({
           title: "SESSION NAME",
           dataIndex: ["Session", "sessionName"],
           key: "SessionID",
+          width: "260px",
           render: (text) => (
             <span className="cursor-pointer hover:opacity-80">
               {text || "Unknown"}
@@ -268,7 +240,7 @@ const StudentSessionTable = ({
           pagination={{
             current: currentPage,
             pageSize: pageSize,
-            total: data?.pagination?.totalItems || 0,
+            total: processedData?.pagination?.totalItems || 0,
             showSizeChanger: true,
             pageSizeOptions: ["5", "10", "15", "20"],
             showTotal: (total, range) =>
@@ -287,7 +259,21 @@ const StudentSessionTable = ({
               wrapper: (props) => (
                 <thead
                   {...props}
-                  className="bg-tableHeadColor text-primaryTextColor"
+                  className={`bg-tableHeadColor text-primaryTextColor`}
+                />
+              ),
+              cell: (props) => (
+                <th
+                  {...props}
+                  className={` bg-[#E6F0FA] text-[10px] font-[700] md:text-[16px] text-[#637381] tracking-wider text-center !py-4 px-0 whitespace-nowrap `}
+                />
+              ),
+            },
+            body: {
+              cell: (props) => (
+                <td
+                  {...props}
+                  className={`font-[500] tracking-wider text-center py-4 px-0 whitespace-nowrap text-[10px] md:text-[14px] text-[#637381] ${props.className || ""}`}
                 />
               ),
             },
