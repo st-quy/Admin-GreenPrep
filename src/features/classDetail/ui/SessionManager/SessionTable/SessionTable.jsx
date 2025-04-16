@@ -1,18 +1,34 @@
 import React, { useState } from "react";
-import { Table, Input, Pagination } from "antd";
+import { Table, Input, Pagination, Select } from "antd";
+import { statusOptions } from "@features/classDetail/validate";
 
 const { Search } = Input;
 
 const SessionTable = ({ data, columns, isLoading }) => {
   const [searchText, setSearchText] = useState("");
+  const [statusFilter, setStatusFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 5;
 
+  // Convert statusOptions object to array for Select options
+  const statusFilterOptions = Object.entries(statusOptions).map(
+    ([value, info]) => ({
+      value,
+      label: info.label,
+    })
+  );
+
+  // Filter data based on both search text and status
   const filteredData = data.filter((item) => {
-    const searchValue = searchText.toLowerCase();
-    return Object.values(item).some((value) =>
-      String(value).toLowerCase().includes(searchValue)
-    );
+    const matchesSearch = searchText
+      ? Object.values(item).some((value) =>
+          String(value).toLowerCase().includes(searchText.toLowerCase())
+        )
+      : true;
+
+    const matchesStatus = statusFilter ? item.status === statusFilter : true;
+
+    return matchesSearch && matchesStatus;
   });
 
   const start = (currentPage - 1) * pageSize + 1;
@@ -20,23 +36,38 @@ const SessionTable = ({ data, columns, isLoading }) => {
   const total = filteredData.length;
   const paginatedData = filteredData.slice(start - 1, end);
 
+  // Handle status filter change
+  const handleStatusFilterChange = (value) => {
+    setStatusFilter(value);
+    setCurrentPage(1); // Reset to first page when filter changes
+  };
+
   return (
     <div className="mt-4">
-      <Search
-        placeholder={"Search anything..."}
-        onChange={(e) => {
-          setSearchText(e.target.value);
-          setCurrentPage(1);
-        }}
-        className="mb-4 w-full max-w-[300px]"
-        allowClear
-      />
+      <div className="flex items-center gap-4 mb-4">
+        <Search
+          placeholder="Search anything..."
+          onChange={(e) => {
+            setSearchText(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="w-full max-w-[300px]"
+          allowClear
+        />
+        <Select
+          className="w-[150px]"
+          placeholder="Filter by status"
+          onChange={handleStatusFilterChange}
+          allowClear
+          options={statusFilterOptions}
+        />
+      </div>
       <div className="w-full">
         <Table
           columns={columns}
           dataSource={paginatedData}
           rowKey="ID"
-          pagination={false} // Ẩn pagination mặc định
+          pagination={false}
           scroll={{ x: "max-content" }}
           className="w-full"
           loading={isLoading}
