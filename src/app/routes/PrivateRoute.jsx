@@ -36,7 +36,7 @@ const PrivateRoute = [
       },
       {
         path: "class",
-        role: ["teacher", "admin"],
+        role: ["teacher"],
         breadcrumb: "Class Management",
         children: [
           {

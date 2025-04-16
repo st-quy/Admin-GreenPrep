@@ -77,23 +77,23 @@
 //     return <Navigate to="/unauthorized" replace />;
 //   }
 
-//   const segmentedOptions = [
-//     {
-//       value: "1",
-//       label: "Dashboard",
-//       roles: ["admin"], // Ai cũng được truy cập
-//     },
-//     {
-//       value: "2",
-//       label: "Class Management",
-//       roles: ["admin"], // Ai cũng được truy cập
-//     },
-//     {
-//       value: "3",
-//       label: "Teacher Management",
-//       roles: ["admin"],
-//     },
-//   ];
+const segmentedOptions = [
+  {
+    value: "1",
+    label: "Dashboard",
+    roles: ["admin"],
+  },
+  {
+    value: "2",
+    label: "Class Management",
+    roles: ["superadmin"],
+  },
+  {
+    value: "3",
+    label: "Teacher Management",
+    roles: ["admin"],
+  },
+];
 
 //   const allowedSegmentedOptions = segmentedOptions.filter((option) =>
 //     option.roles.some((role) => user?.role.includes(role))
