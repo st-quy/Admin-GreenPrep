@@ -1,9 +1,13 @@
-import React, { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 import { Card, Spin, Tag, Typography, Descriptions, Divider } from "antd";
 import { TableType } from "@features/session/constant/TableEnum";
+import {
+  useSessionDetails,
+  useStudentDetails,
+} from "@features/session/hooks/useSession";
 
 const { Title, Text } = Typography;
+
 const statusTag = (status) => {
   const statusMap = {
     COMPLETED: { color: "green", text: "Completed" },
@@ -16,33 +20,12 @@ const statusTag = (status) => {
     </Tag>
   );
 };
+
 const Details = ({ type, id }) => {
-  const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { data, isLoading: isLoading } =
+    type === TableType.SESSION ? useSessionDetails(id) : useStudentDetails(id);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        let url = "";
-        if (type === TableType.SESSION) {
-          url = `https://dev-api-greenprep.onrender.com/api/sessions/${id}`;
-        } else if (type === "student") {
-          url = `https://dev-api-greenprep.onrender.com/api/users/${id}`;
-        }
-
-        const response = await axios.get(url);
-        setData(response.data.data || response.data);
-      } catch (error) {
-        console.error("Error when getting data:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchData();
-  }, [type, id]);
-
-  if (loading) {
+  if (isLoading) {
     return <Spin className="flex justify-center mt-4" />;
   }
 
@@ -64,8 +47,9 @@ const Details = ({ type, id }) => {
       minute: "2-digit",
     });
   };
+
   const items =
-    type === "session"
+    type === TableType.SESSION
       ? [
           {
             key: "1",
@@ -80,7 +64,7 @@ const Details = ({ type, id }) => {
           {
             key: "3",
             label: "Participants",
-            children: data.SessionParticipants?.length || "Not Available",
+            children: data.SessionParticipants?.length || "0",
           },
           { key: "4", label: "Status", children: statusTag(data.status) },
           {
