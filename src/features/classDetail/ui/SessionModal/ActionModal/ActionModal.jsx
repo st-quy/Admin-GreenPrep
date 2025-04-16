@@ -51,6 +51,11 @@ const ActionModal = ({
     form.resetFields();
   };
 
+  // Add disabledDate function to disable past dates
+  const disabledDate = (current) => {
+    return current && current < dayjs().startOf("day");
+  };
+
   const handleGenerateSessionKey = async () => {
     try {
       const data = await generateKey();
@@ -179,6 +184,14 @@ const ActionModal = ({
                 className="!w-full !h-[46px] py-[12px] pr-[16px] ps-[20px]"
                 showTime
                 format="DD-MM-YYYY HH:mm:ss"
+                disabledDate={disabledDate}
+                showNow={false}
+                onChange={(dates) => {
+                  if (dates && dates[0] && dates[0].isBefore(dayjs(), "day")) {
+                    message.warning("Start date cannot be in the past");
+                    form.setFieldsValue({ dateRange: null });
+                  }
+                }}
               />
             </Form.Item>
           </Form>
