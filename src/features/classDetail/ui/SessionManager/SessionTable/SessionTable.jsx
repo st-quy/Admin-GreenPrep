@@ -1,197 +1,89 @@
-import React, { useMemo, useState } from "react";
-import { Table, Tag } from "antd";
-import { useNavigate } from "react-router-dom";
-import { formatDateTime } from "@shared/lib/utils/formatString";
-import ActionModal from "../../SessionModal/ActionModal/ActionModal";
-import DeleteModal from "../../SessionModal/DeleteModal/DeleteModal";
-import { DeleteOutlined } from "@ant-design/icons";
+import React, { useState } from "react";
+import { Table, Input, Pagination, Select } from "antd";
+import { statusOptions } from "@features/classDetail/validate";
 
-const SessionTable = ({ dataSource, searchKeyword, statusFilter }) => {
-  const navigate = useNavigate();
+const { Search } = Input;
+
+const SessionTable = ({ data, columns, isLoading }) => {
+  const [searchText, setSearchText] = useState("");
+  const [statusFilter, setStatusFilter] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
-  const [isOpen, setIsOpen] = useState(false);
-  const [sessionData, setSessionData] = useState(null);
+  const pageSize = 5;
 
-  const handleNavigate = (id) => {
-    navigate(`session/${id}`);
-  };
+  // Convert statusOptions object to array for Select options
+  const statusFilterOptions = Object.entries(statusOptions).map(
+    ([value, info]) => ({
+      value,
+      label: info.label,
+    })
+  );
 
-  const statusTag = (status) => {
-    const statusMap = {
-      COMPLETED: { color: "green", text: "Completed" },
-      ON_GOING: { color: "blue", text: "On Going" },
-      NOT_STARTED: { color: "gray", text: "Not Started" },
-    };
-    return (
-      <div className="w-full flex items-center justify-center">
-        <Tag
-          color={statusMap[status]?.color}
-          className="rounded-2xl p-1 px-2  ml-3 text-center border-none"
-        >
-          {statusMap[status]?.text || "Unknown"}
-        </Tag>
-      </div>
-    );
-  };
+  // Filter data based on both search text and status
+  const filteredData = data.filter((item) => {
+    const matchesSearch = searchText
+      ? Object.values(item).some((value) =>
+          String(value).toLowerCase().includes(searchText.toLowerCase())
+        )
+      : true;
 
-  const sortedSessions = useMemo(() => {
-    return dataSource.sort((a, b) => {
-      return (
-        new Date(b.updatedAt || 0).getTime() -
-        new Date(a.updatedAt || 0).getTime()
-      );
-    });
-  }, [dataSource]);
+    const matchesStatus = statusFilter ? item.status === statusFilter : true;
 
-  const filteredData = useMemo(() => {
-    const keyword = searchKeyword?.toLowerCase().trim() || "";
-    if (!keyword && !statusFilter) return dataSource;
+    return matchesSearch && matchesStatus;
+  });
 
-    return sortedSessions.filter((item) => {
-      const sessionName = String(item.sessionName || "").toLowerCase();
+  const start = (currentPage - 1) * pageSize + 1;
+  const end = Math.min(start + pageSize - 1, filteredData.length);
+  const total = filteredData.length;
+  const paginatedData = filteredData.slice(start - 1, end);
 
-      // Kiểm tra cả keyword và statusFilter
-      return (
-        sessionName.includes(keyword) &&
-        (item.status === statusFilter || !statusFilter)
-      );
-    });
-  }, [dataSource, searchKeyword, statusFilter]);
-
-  const handleDelete = (record) => {
-    setSessionData(record);
-    setIsOpen(true);
-  };
-
-  const columns = [
-    {
-      title: "SESSION NAME",
-      dataIndex: "sessionName",
-      key: "sessionName",
-      render: (text, record) => (
-        <a
-          onClick={() => handleNavigate(record.ID)}
-          className="text-primaryColor underline cursor-pointer"
-        >
-          {text}
-        </a>
-      ),
-      ellipsis: true,
-    },
-    {
-      title: "SESSION KEY",
-      dataIndex: "sessionKey",
-      key: "sessionKey",
-      ellipsis: true,
-    },
-    {
-      title: "START TIME",
-      dataIndex: "startTime",
-      key: "startTime",
-      render: (time) => formatDateTime(time),
-      ellipsis: true,
-    },
-    {
-      title: "END TIME",
-      dataIndex: "endTime",
-      key: "endTime",
-      render: (time) => formatDateTime(time),
-      ellipsis: true,
-    },
-    {
-      title: "NUMBER OF PARTICIPANTS",
-      dataIndex: ["SessionParticipants"],
-      key: "SessionParticipants",
-      render: (participants) => participants?.length || 0,
-      ellipsis: true,
-    },
-    {
-      title: "STATUS",
-      dataIndex: "status",
-      key: "status",
-      render: (text) => statusTag(text),
-      ellipsis: true,
-    },
-    {
-      title: "ACTION",
-      key: "action",
-      fixed: "right",
-      width: "10%",
-      render: (_, record) => (
-        <div className="flex gap-4 w-full justify-center">
-          <ActionModal initialData={record} />
-          {record.SessionParticipants.length === 0 && (
-            <DeleteOutlined
-              className="hover:opacity-50 text-xl text-red-500 cursor-pointer"
-              onClick={() => handleDelete(record)}
-            />
-          )}
-        </div>
-      ),
-      onHeaderCell: () => {
-        return {
-          style: {
-            textAlign: "center",
-            backgroundColor: "#E6F0FA",
-          },
-        };
-      },
-      className: "shadow-[-4px_0px_0_rgba(0,0,0,0.1)] md:shadow-none",
-    },
-  ];
-  const components = {
-    header: {
-      wrapper: (props) => (
-        <thead {...props} className="bg-tableHeadColor  text-center" />
-      ),
-      cell: (props) => (
-        <th
-          {...props}
-          className={`py-4 font-[500] whitespace-nowrap text-center text-[12px] md:text-[16px] ${props.className || ""}`}
-        />
-      ),
-    },
-    body: {
-      cell: (props) => (
-        <td
-          {...props}
-          className={`whitespace-nowrap font-[500]  text-primaryTextColor text-[10px] md:text-[14px]   ${props.className || ""} text-center items-center`}
-        />
-      ),
-    },
+  // Handle status filter change
+  const handleStatusFilterChange = (value) => {
+    setStatusFilter(value);
+    setCurrentPage(1); // Reset to first page when filter changes
   };
 
   return (
-    <>
-      <Table
-        // @ts-ignore
-        columns={columns}
-        dataSource={filteredData}
-        scroll={{ x: "max-content" }}
-        rowKey={(record) => record.ID}
-        components={components}
-        bordered
-        pagination={{
-          current: currentPage,
-          pageSize: pageSize,
-          total: filteredData.length,
-          showSizeChanger: true,
-          pageSizeOptions: ["5", "10", "15", "20"],
-          showTotal: (total, range) =>
-            `Showing ${range[0]}-${range[1]} of ${total}`,
-          onChange: (page, size) => {
-            setCurrentPage(page);
-            setPageSize(size);
-          },
-        }}
-      />
-      <DeleteModal
-        sessionID={sessionData?.ID}
-        isOpen={isOpen}
-        onClose={() => setIsOpen(false)}
-      />
-    </>
+    <div className="mt-4">
+      <div className="flex items-center gap-4 mb-4">
+        <Search
+          placeholder="Search anything..."
+          onChange={(e) => {
+            setSearchText(e.target.value);
+            setCurrentPage(1);
+          }}
+          className="w-full max-w-[300px]"
+          allowClear
+        />
+        <Select
+          className="w-[150px]"
+          placeholder="Filter by status"
+          onChange={handleStatusFilterChange}
+          allowClear
+          options={statusFilterOptions}
+        />
+      </div>
+      <div className="w-full">
+        <Table
+          columns={columns}
+          dataSource={paginatedData}
+          rowKey="ID"
+          pagination={false}
+          scroll={{ x: "max-content" }}
+          className="w-full"
+          loading={isLoading}
+        />
+        <div className="flex justify-between items-center mt-2 px-4">
+          <span className="text-gray-500 text-sm">{`Showing ${start}-${end} of ${total}`}</span>
+          <Pagination
+            current={currentPage}
+            pageSize={pageSize}
+            total={total}
+            onChange={(page) => setCurrentPage(page)}
+            showSizeChanger={false}
+          />
+        </div>
+      </div>
+    </div>
   );
 };
 

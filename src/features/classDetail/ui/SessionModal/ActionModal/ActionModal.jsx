@@ -1,3 +1,4 @@
+// @ts-nocheck
 import {
   Modal,
   Button,
@@ -9,12 +10,12 @@ import {
   Spin,
 } from "antd";
 import React, { useState } from "react";
-const { RangePicker } = DatePicker;
 import { yupSync } from "@shared/lib/utils";
 import { sessionSchema } from "@features/classDetail/validate";
 import {
   useCreateSession,
   useGenerateSessionKeyMutation,
+  useGetTopics,
   useUpdateSession,
 } from "@features/classDetail/hooks/useClassDetail";
 import dayjs from "dayjs";
@@ -23,138 +24,123 @@ import {
   LoadingOutlined,
   ReloadOutlined,
 } from "@ant-design/icons";
-import { useGetTopics } from "@features/topic/hooks";
 
-const ActionModal = ({ initialData = null, classId = null }) => {
+const { RangePicker } = DatePicker;
+
+const ActionModal = ({
+  initialData = null,
+  classId = null,
+  isOpen,
+  onClose,
+}) => {
   const [form] = Form.useForm();
-  const [open, setOpen] = useState(false);
-  const isEdit = initialData !== null;
 
-  const { data: topics } = useGetTopics();
-
+  const isEdit = !!initialData;
+  const { data: topics, isLoading: isLoadingTopics } = useGetTopics();
   const { mutateAsync: generateKey, isPending: isGenerating } =
     useGenerateSessionKeyMutation();
-  const { mutate: sessionActionUpdate, isPending: isLoadingUpdate } =
-    useUpdateSession();
-  const { mutate: sessionActionCreate, isPending: isLoadingCreate } =
-    useCreateSession();
+  const { mutate: sessionAction, isPending: isLoading } = isEdit
+    ? useUpdateSession()
+    : useCreateSession();
 
-  const showModal = () => {
-    setOpen(true);
-  };
+  const modalTitle = isEdit ? "Update Session" : "Create Session";
+  const actionLabel = isEdit ? "Update session" : "Create session";
 
   const handleCancel = () => {
-    setOpen(false);
+    onClose();
     form.resetFields();
   };
 
-  const handleGenerateSessionKey = async () => {
-    const data = await generateKey();
-    form.setFieldsValue({ sessionKey: data.key });
+  // Add disabledDate function to disable past dates
+  const disabledDate = (current) => {
+    return current && current < dayjs().startOf("day");
   };
 
-  const onAction = async (values) => {
+  const handleGenerateSessionKey = async () => {
     try {
-      // Prepare session data
+      const data = await generateKey();
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      form.setFieldsValue({ sessionKey: data.key });
+    } catch (error) {
+      message.error("Failed to generate session key");
+    }
+  };
+
+  const onAction = async () => {
+    try {
+      const values = await form.validateFields();
       const sessionData = {
         sessionId: initialData?.ID || null,
         sessionName: values.sessionName,
         sessionKey: values.sessionKey,
-        startTime: values.dateRange ? values.dateRange[0].toISOString() : null,
-        endTime: values.dateRange ? values.dateRange[1].toISOString() : null,
+        startTime: values.dateRange?.[0]?.toISOString() || null,
+        endTime: values.dateRange?.[1]?.toISOString() || null,
         examSet: values.examSet,
         ClassID: classId,
       };
 
-      if (isEdit) {
-        sessionActionUpdate(sessionData, {
-          onSuccess: () => {
-            form.resetFields();
-            setOpen(false);
-          },
-        });
-      } else {
-        sessionActionCreate(sessionData, {
-          onSuccess: () => {
-            form.resetFields();
-            setOpen(false);
-          },
-        });
-      }
+      sessionAction(sessionData, {
+        onSuccess: (data) => {
+          const msg = data?.data?.message || `${actionLabel} success!`;
+          message.success(msg);
+          handleCancel();
+        },
+        onError: (error) => {
+          message.error(
+            error?.response?.data?.message ||
+              `Failed to ${actionLabel.toLowerCase()} session.`
+          );
+        },
+      });
     } catch (error) {
       message.error(
-        error?.response?.data?.message ||
-          "Please field all the fields correctly."
+        error?.response?.data?.message || "Please fill in all fields correctly."
       );
     }
   };
 
   return (
     <>
-      {isEdit ? (
-        <span className="text-xl">
-          <EditOutlined onClick={showModal} className="hover:opacity-50" />
-        </span>
-      ) : (
-        <Button
-          onClick={showModal}
-          className="!rounded-[50px] !bg-primaryColor !p-6 !text-white font-[500] lg:text-[16px] md:text-[14px]"
-        >
-          Create Session
-        </Button>
-      )}
       <Modal
-        open={open}
-        okText={isEdit ? "Update" : "Create"}
+        open={isOpen}
         closable={false}
-        confirmLoading={isLoadingUpdate || isLoadingCreate}
-        width={{
-          xs: "90%",
-          sm: "80%",
-          md: "70%",
-          lg: "60%",
-          xl: "50%",
-          xxl: "40%",
-        }}
+        confirmLoading={isLoading}
         footer={null}
+        width="50%"
       >
         <div className="px-6">
-          <h4 className="font-[700] lg:text-[30px] md:text-[28px]">
-            {isEdit ? "Update session" : "Create Session"}
-          </h4>
-          <p className="mb-6 font-[500] text-primaryTextColor lg:text-[18px] md:text-[16px]">
+          <h4 className="font-bold text-[28px] lg:text-[30px]">{modalTitle}</h4>
+          <p className="mb-6 font-medium text-primaryTextColor text-[16px] lg:text-[18px]">
             {isEdit
               ? "Modify and extend the current session."
               : "Set up a new session quickly and easily."}
           </p>
+
           <Form
             form={form}
-            onFinish={onAction}
             layout="vertical"
             initialValues={{
-              sessionName: isEdit ? initialData?.sessionName : "",
-              sessionKey: isEdit ? initialData?.sessionKey : "",
-              examSet: isEdit ? initialData?.examSet : "",
+              sessionName: initialData?.sessionName || "",
+              sessionKey: initialData?.sessionKey || "",
+              examSet: initialData?.examSet || "",
               dateRange:
-                isEdit && initialData?.startTime && initialData?.endTime
+                initialData?.startTime && initialData?.endTime
                   ? [dayjs(initialData.startTime), dayjs(initialData.endTime)]
                   : undefined,
             }}
           >
             <Form.Item
-              label="Session Name"
-              required
-              rules={[yupSync(sessionSchema)]}
               name="sessionName"
-            >
-              <Input className="!h-[46px] " placeholder="Session Name" />
-            </Form.Item>
-            <Form.Item
-              required
-              label="Session Key"
-              // @ts-ignore
+              label="Session Name"
               rules={[yupSync(sessionSchema)]}
+            >
+              <Input placeholder="Session Name" className="!h-[46px]" />
+            </Form.Item>
+
+            <Form.Item
               name="sessionKey"
+              label="Session Key"
+              rules={[yupSync(sessionSchema)]}
             >
               <Input
                 placeholder="Session Key"
@@ -162,10 +148,7 @@ const ActionModal = ({ initialData = null, classId = null }) => {
                 suffix={
                   <div onClick={handleGenerateSessionKey}>
                     {isGenerating ? (
-                      <Spin
-                        indicator={<LoadingOutlined spin />}
-                        size="default"
-                      />
+                      <Spin indicator={<LoadingOutlined spin />} />
                     ) : (
                       <ReloadOutlined />
                     )}
@@ -173,52 +156,61 @@ const ActionModal = ({ initialData = null, classId = null }) => {
                 }
               />
             </Form.Item>
+
             <Form.Item
-              required
-              layout="vertical"
-              label="Exam Set"
-              // @ts-ignore
-              rules={[yupSync(sessionSchema)]}
               name="examSet"
+              label="Exam Set"
+              rules={[yupSync(sessionSchema)]}
             >
               <Select
-                className="!h-[46px] !w-full"
-                placeholder="Exam Set"
-                options={topics?.map((topic) => ({
-                  label: topic.Name,
-                  value: topic.ID,
-                }))}
+                placeholder="Select Exam Set"
+                loading={isLoadingTopics}
+                className="!h-[46px]"
+                options={
+                  topics?.map((topic) => ({
+                    label: topic.Name,
+                    value: topic.ID,
+                  })) || []
+                }
               />
             </Form.Item>
+
             <Form.Item
-              label="Date Range"
-              // @ts-ignore
-              required
-              rules={[yupSync(sessionSchema)]}
               name="dateRange"
+              label="Date Range"
+              rules={[yupSync(sessionSchema)]}
             >
               <RangePicker
                 className="!w-full !h-[46px] py-[12px] pr-[16px] ps-[20px]"
                 showTime
                 format="DD-MM-YYYY HH:mm:ss"
+                disabledDate={disabledDate}
+                showNow={false}
+                onChange={(dates) => {
+                  if (dates && dates[0] && dates[0].isBefore(dayjs(), "day")) {
+                    message.warning("Start date cannot be in the past");
+                    form.setFieldsValue({ dateRange: null });
+                  }
+                }}
               />
             </Form.Item>
-            <div className="flex justify-end gap-4">
-              <Button
-                onClick={handleCancel}
-                className="h-[52px] w-[124px] rounded-[50px] border-[1px] border-primaryColor text-primaryColor lg:text-[16px] md:text-[14px]"
-              >
-                Cancel
-              </Button>
-              <Button
-                loading={isLoadingUpdate || isLoadingCreate}
-                htmlType="submit"
-                className="h-[52px] w-[124px] rounded-[50px] bg-primaryColor text-white lg:text-[16px] md:text-[14px]"
-              >
-                {isEdit ? "Update" : "Create"}
-              </Button>
-            </div>
           </Form>
+        </div>
+
+        <div className="flex justify-end gap-4 mt-6 px-6 pb-4">
+          <Button
+            onClick={handleCancel}
+            className="h-[52px] w-[124px] rounded-full border border-primaryColor text-primaryColor"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={onAction}
+            loading={isLoading}
+            className="h-[52px] w-[124px] rounded-full bg-primaryColor text-white"
+          >
+            {actionLabel}
+          </Button>
         </div>
       </Modal>
     </>
