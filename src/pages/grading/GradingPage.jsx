@@ -30,6 +30,8 @@ const GradingPage = () => {
 
   const [isChangingParticipant, setIsChangingParticipant] = useState(false);
 
+  const [editedCommentIds, setEditedCommentIds] = useState(new Set());
+
   const {
     isPending: isWritingPending,
     data: writingData,
@@ -64,8 +66,11 @@ const GradingPage = () => {
       setIsChangingParticipant(true);
       refetchWriting();
       refetchSpeaking();
+
       setSpeakingComments([]);
       setWritingComments([]);
+      setEditedCommentIds(new Set());
+
       currentParticipantIdRef.current = participantId;
     }
   }, [participantId]);
@@ -97,11 +102,14 @@ const GradingPage = () => {
             question.studentAnswer.ID &&
             question.studentAnswer.Comment
           ) {
-            comments.push({
-              studentAnswerId: question.studentAnswer.ID,
-              messageContent: question.studentAnswer.Comment,
-              part: part,
-            });
+            const commentId = `${question.studentAnswer.ID}-${part}`;
+            if (!editedCommentIds.has(commentId)) {
+              comments.push({
+                studentAnswerId: question.studentAnswer.ID,
+                messageContent: question.studentAnswer.Comment,
+                part: part,
+              });
+            }
           }
         });
       }
@@ -124,11 +132,29 @@ const GradingPage = () => {
           );
           allWritingComments.push(...partComments);
         }
-        setWritingComments(allWritingComments);
+        setWritingComments((prevComments) => {
+          // Keep comments that have been edited by the user
+          const userEditedComments = prevComments.filter((comment) =>
+            editedCommentIds.has(`${comment.studentAnswerId}-${comment.part}`)
+          );
+          // Filter out database comments that conflict with user edits
+          const newComments = allWritingComments.filter(
+            (newComment) =>
+              !userEditedComments.some(
+                (editedComment) =>
+                  editedComment.studentAnswerId ===
+                    newComment.studentAnswerId &&
+                  editedComment.part === newComment.part
+              )
+          );
+
+          return [...userEditedComments, ...newComments];
+        });
+
         setIsChangingParticipant(false);
       }
     }
-  }, [isWritingPending, writingData, participantId]);
+  }, [isWritingPending, writingData, participantId, editedCommentIds]);
 
   // Initialize speaking comments from database when data is loaded
   useEffect(() => {
@@ -142,11 +168,29 @@ const GradingPage = () => {
           );
           allSpeakingComments.push(...partComments);
         }
-        setSpeakingComments(allSpeakingComments);
+        setSpeakingComments((prevComments) => {
+          // Keep comments that have been edited by the user
+          const userEditedComments = prevComments.filter((comment) =>
+            editedCommentIds.has(`${comment.studentAnswerId}-${comment.part}`)
+          );
+          // Filter out database comments that conflict with user edits
+          const newComments = allSpeakingComments.filter(
+            (newComment) =>
+              !userEditedComments.some(
+                (editedComment) =>
+                  editedComment.studentAnswerId ===
+                    newComment.studentAnswerId &&
+                  editedComment.part === newComment.part
+              )
+          );
+
+          return [...userEditedComments, ...newComments];
+        });
+
         setIsChangingParticipant(false);
       }
     }
-  }, [isSpeakingPending, speakingData, participantId]);
+  }, [isSpeakingPending, speakingData, participantId, editedCommentIds]);
 
   // Handle comment changes from Assessment component
   const handleCommentChange = (commentData) => {
@@ -158,13 +202,22 @@ const GradingPage = () => {
       isPartFour,
       allStudentAnswerIds,
     } = commentData;
+
     if (isChangingParticipant) return;
+
+    // Mark this comment as edited by the user
+    const commentId = `${studentAnswerId}-${part}`;
+    setEditedCommentIds((prev) => {
+      const newSet = new Set(prev);
+      newSet.add(commentId);
+      return newSet;
+    });
+
     if (isSpeaking) {
       // Special handling for speaking part 4
       if (isPartFour && allStudentAnswerIds && allStudentAnswerIds.length > 0) {
         setSpeakingComments((prevComments) => {
           const updatedComments = [...prevComments];
-          // Remove any existing comments for part 4
           const filteredComments = updatedComments.filter(
             (comment) =>
               !(
@@ -172,12 +225,20 @@ const GradingPage = () => {
                 allStudentAnswerIds.includes(comment.studentAnswerId)
               )
           );
-          // Add new comments for all student answers in part 4
-          const newComments = allStudentAnswerIds.map((id) => ({
-            studentAnswerId: id,
-            messageContent,
-            part: "4",
-          }));
+          const newComments = allStudentAnswerIds.map((id) => {
+            // Mark all part 4 comments as edited
+            setEditedCommentIds((prev) => {
+              const newSet = new Set(prev);
+              newSet.add(`${id}-4`);
+              return newSet;
+            });
+
+            return {
+              studentAnswerId: id,
+              messageContent,
+              part: "4",
+            };
+          });
 
           return [...filteredComments, ...newComments];
         });
@@ -188,7 +249,6 @@ const GradingPage = () => {
               comment.studentAnswerId === studentAnswerId &&
               comment.part === part
           );
-
           if (existingIndex >= 0) {
             const updatedComments = [...prevComments];
             updatedComments[existingIndex] = {
@@ -203,12 +263,12 @@ const GradingPage = () => {
         });
       }
     } else {
-      // Update writing comments
       setWritingComments((prevComments) => {
         const existingIndex = prevComments.findIndex(
           (comment) =>
             comment.studentAnswerId === studentAnswerId && comment.part === part
         );
+
         if (existingIndex >= 0) {
           const updatedComments = [...prevComments];
           updatedComments[existingIndex] = {
@@ -235,7 +295,6 @@ const GradingPage = () => {
       };
     });
 
-    // Convert back to array for submission
     return Object.values(groupedComments);
   };
 
@@ -270,14 +329,15 @@ const GradingPage = () => {
     changeParticipant(previousParticipantId);
   };
 
-  //Current User
   const userData = participantsData?.data.data.find(
     (item) => item.ID === participantId
   );
+
   if (isWritingPending || isSpeakingPending || isParticipantsPending)
     return (
       <Spin size="large" className="flex justify-center items-center h-60" />
     );
+
   return (
     <div className="p-8">
       <ScrollToTop />

@@ -4,6 +4,7 @@ import { useUpdateProfile } from "@features/auth/hooks/index";
 import { UpdateProfileSchema } from "@features/profile/schema";
 import { yupSync } from "@shared/lib/utils";
 import { useSelector } from "react-redux";
+import dayjs from "dayjs";
 
 const ProfileUpdate = ({ isOpen, onClose }) => {
   const { mutate: updateProfile, isPending } = useUpdateProfile();
@@ -22,7 +23,7 @@ const ProfileUpdate = ({ isOpen, onClose }) => {
   const initialValues = {
     firstName: user?.firstName,
     lastName: user?.lastName,
-    dob: user?.dob,
+    dob: dayjs(user?.dob),
     teacherCode: user?.teacherCode,
     email: user?.email,
     phone: user?.phone,
@@ -35,7 +36,10 @@ const ProfileUpdate = ({ isOpen, onClose }) => {
       footer={null}
       centered
       width="70%"
-      onCancel={onClose}
+      onCancel={() => {
+        form.resetFields();
+        onClose();
+      }}
       className="w-[90%] md:w-[80%] lg:w-[1242px] max-w-[1242px]"
     >
       <div className="p-4 md:p-6 lg:p-8">
@@ -114,7 +118,7 @@ const ProfileUpdate = ({ isOpen, onClose }) => {
           >
             <DatePicker
               className="w-full h-[46px]"
-              format={"DD/MM/YYYY"}
+              format={"DD-MM-YYYY"}
               disabledDate={(current) =>
                 current && current.valueOf() > Date.now()
               }
