@@ -104,3 +104,7 @@ export const getStudentById = async (id) => {
   const response = await axiosInstance.get(`/users/${id}`);
   return response.data.data || response.data;
 };
+
+export const putStudentLevel = async (params) => {  
+  return axiosInstance.put(`/session-participants/${params.id}/level`, { newLevel: params.value });
+};
