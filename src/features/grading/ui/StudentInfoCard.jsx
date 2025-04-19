@@ -1,0 +1,101 @@
+import { Card, Button, Row, Col, Typography } from "antd";
+import {
+  LeftOutlined,
+  RightOutlined,
+  UnorderedListOutlined,
+} from "@ant-design/icons";
+
+const { Title } = Typography;
+
+const StudentInfoCard = ({
+  student,
+  onPrevious = () => {},
+  onNext = () => {},
+  onViewList = () => {},
+}) => {
+  return (
+    <div className="w-full">
+      {/* Header */}
+      <div className="mb-8">
+        <Title level={2} className="!mb-3 !font-bold">
+          Student information: {student.User?.fullName}
+        </Title>
+        <div className="text-[18px] text-primaryTextColor">
+          View student details.
+        </div>
+      </div>
+
+      <Row>
+        <Col flex={8}>
+          {/* Main Card */}
+          <Card className="shadow-sm rounded-lg border border-gray-100 py-5 px-8">
+            <Row gutter={[48, 16]}>
+              {/* Left Column */}
+              <Col xs={24} sm={12}>
+                <div className="grid grid-cols-[120px_1fr] gap-y-6 gap-x-6 text-base text-[#374151]">
+                  <div>Student name</div>
+                  <div className="font-bold">{student.User?.fullName}</div>
+
+                  <div>Student ID</div>
+                  <div className="font-bold">{student.User?.studentCode}</div>
+
+                  <div>Class ID</div>
+                  <div className="font-bold">{student.User?.class}</div>
+                </div>
+              </Col>
+
+              {/* Right Column */}
+              <Col xs={24} sm={12}>
+                <div className="grid grid-cols-[120px_1fr] gap-y-6 gap-x-6 text-base text-[#374151]">
+                  <div>Email</div>
+                  <div className="font-bold">{student.User?.email}</div>
+
+                  <div>Phone</div>
+                  <div className="font-bold">{student.User?.phone}</div>
+                </div>
+              </Col>
+            </Row>
+          </Card>
+        </Col>
+
+        <Col
+          flex={1}
+          className="flex mt-4 lg:mt-0 lg:flex-col items-center justify-between"
+        >
+          <Button
+            icon={<UnorderedListOutlined />}
+            shape="round"
+            size="large"
+            className="flex items-center border-primaryColor text-primaryColor w-[200px] h-[50px]"
+            onClick={onViewList}
+          >
+            Student List
+          </Button>
+
+          <Button
+            icon={<LeftOutlined />}
+            shape="round"
+            size="large"
+            className="flex items-center border-primaryColor text-primaryColor w-[200px] h-[50px]"
+            onClick={onPrevious}
+          >
+            Previous Student
+          </Button>
+
+          <Button
+            type="primary"
+            shape="round"
+            size="large"
+            icon={<RightOutlined />}
+            className="flex items-center bg-primaryColor hover:!bg-blue-800 border-primaryColor w-[200px] h-[50px]"
+            onClick={onNext}
+          >
+            Next Student
+          </Button>
+        </Col>
+      </Row>
+    </div>
+  );
+};
+
+export default StudentInfoCard;

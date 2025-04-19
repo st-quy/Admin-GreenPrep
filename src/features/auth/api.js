@@ -1,13 +1,26 @@
 import axiosInstance from "@shared/config/axios";
-///Example
-export const RequestApi = {
-  getAll: () => {
-    return axiosInstance.get("/requests");
+
+export const AuthApi = {
+
+  login: (credentials) => {
+    return axiosInstance.post("/users/login", credentials);
   },
-  update: (record) => {
-    return axiosInstance.put(`/requests/${record.id}`, record);
+  register: (params) => {
+    return axiosInstance.post("/users/register", params);
   },
-  add: (record) => {
-    return axiosInstance.post("/requests", record);
+  forgotPassword: (params) => {
+    return axiosInstance.post("/users/forgot-password", params);
+  },
+  resetPassword: (params) => {
+    return axiosInstance.post("/users/reset-password", params);
+  },
+  getProfile: (userId) => {    
+    return axiosInstance.get(`/users/${userId}`);
+  },
+  updateProfile: (userId, params) => {
+    return axiosInstance.put(`/users/${userId}`, params);
+  },
+  changePassword: (userId, params) => {
+    return axiosInstance.post(`/users/${userId}/change-password`, params);
   },
 };

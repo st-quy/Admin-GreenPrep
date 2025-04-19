@@ -1,5 +1,15 @@
 import { lazy } from "react";
 import { ProtectedRoute } from "./ProtectedRoute/ProtectedRoute.jsx";
+import GradingPage from "@pages/grading/GradingPage.jsx";
+import SessionLayout from "../../pages/SessionManagement/SessionLayout.jsx";
+import SessionInformation from "@pages/SessionManagement/SessionInformation.jsx";
+import { TableType } from "@features/session/constant/TableEnum.js";
+const ProfilePage = lazy(() => import("@pages/Profile/index.jsx"));
+import Dashboard from "@pages/Dashboard/Dashboard.jsx";
+import ClassDetail from "@pages/ClassDetail/ClassDetail.jsx";
+import TeacherAccountManagement from "@pages/TeacherManagement/TeacherAccountManagement.jsx";
+import ClassManagement from "@pages/ClassManagement/index.jsx";
+import RedirectByRole from "./RedirectByRole/index.jsx";
 
 const PrivateRoute = [
   {
@@ -9,50 +19,89 @@ const PrivateRoute = [
     children: [
       {
         index: true,
-        element: <div>Dashboard</div>,
+        element: <RedirectByRole />,
         breadcrumb: "Dashboard",
       },
       {
+        path: "dashboard",
+        element: <Dashboard />,
+        breadcrumb: "Dashboard",
+        role: ["admin"],
+      },
+      {
+        path: "teacher",
+        role: ["admin"],
+        breadcrumb: "Teacher",
+        element: <TeacherAccountManagement />,
+      },
+      {
         path: "class",
+        role: ["teacher"],
         breadcrumb: "Class Management",
         children: [
           {
             index: true,
-            element: <div>Class Management</div>,
+            element: <ClassManagement />,
           },
           {
-            path: "detail",
-            element: <div>Class Detail</div>,
+            path: ":classId",
             breadcrumb: "Class Detail",
-          },
-          {
-            path: "session-detail",
-            breadcrumb: "Session Detail",
             children: [
               {
                 index: true,
-                element: <div>Session Detail</div>,
+                element: <ClassDetail />,
               },
               {
-                path: "student",
+                path: "session",
+                element: <SessionLayout />,
                 children: [
                   {
-                    path: ":studentId",
-                    breadcrumb: ":studentId",
+                    path: ":sessionId",
+                    breadcrumb: "Session Detail",
                     children: [
                       {
                         index: true,
-                        element: <div>Student Detail</div>,
+                        element: (
+                          <SessionInformation type={TableType.SESSION} />
+                        ),
                       },
                       {
-                        path: "grade",
-                        element: <div>Student Grade</div>,
-                        breadcrumb: "Grade",
+                        path: "student",
+                        children: [
+                          {
+                            path: ":studentId",
+                            breadcrumb: "Student Detail",
+                            children: [
+                              {
+                                index: true,
+                                element: (
+                                  <SessionInformation
+                                    type={TableType.STUDENT}
+                                  />
+                                ),
+                              },
+                            ],
+                          },
+                        ],
+                      },
+                      {
+                        path: "participant",
+                        children: [
+                          {
+                            path: ":participantId",
+                            breadcrumb: "Participant Detail",
+                            children: [
+                              {
+                                index: true,
+                                element: <GradingPage />,
+                              },
+                            ],
+                          },
+                        ],
                       },
                     ],
                   },
                 ],
-                breadcrumb: "Student Detail",
               },
             ],
           },
@@ -60,8 +109,14 @@ const PrivateRoute = [
       },
       {
         path: "profile",
-        element: <div>Profile Page</div>,
         breadcrumb: "Profile",
+        children: [
+          {
+            path: "",
+            element: <ProfilePage />,
+            breadcrumb: "",
+          },
+        ],
       },
     ],
   },

@@ -3,6 +3,8 @@ import PrivateRoute from "@app/routes/PrivateRoute";
 import { Outlet, createBrowserRouter } from "react-router-dom";
 import { RouterProvider } from "react-router-dom";
 import NotFound from "@pages/NotFoundPage";
+import { useGetProfile } from "@features/auth/hooks";
+import { Spin } from "antd";
 
 const router = createBrowserRouter(
   [
@@ -25,6 +27,16 @@ const router = createBrowserRouter(
 );
 
 const RouteProvider = () => {
+  const { isLoading } = useGetProfile();
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
+  }
+
   return (
     <RouterProvider
       future={{
