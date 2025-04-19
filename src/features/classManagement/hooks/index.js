@@ -21,7 +21,7 @@ export const useCreateClass = () => {
     mutationFn: async (params) => {
       const response = await ClassApi.createClass({
         ...params,
-        UserID: user.userId,
+        userId: user.userId,
       });
       return response.data;
     },

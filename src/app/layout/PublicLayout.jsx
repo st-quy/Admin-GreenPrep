@@ -6,7 +6,7 @@ const { Header, Content } = Layout;
 
 export const PublicLayout = () => {
   return (
-    <Layout>
+    <Layout className="min-h-screen">
       <Header className="flex items-center h-[7rem] bg-[#f9f9f9]">
         <img src={Logo} className="max-w-44" />
       </Header>
