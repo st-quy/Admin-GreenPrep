@@ -4,6 +4,7 @@ import { TableType, StatusType, LevelEnum } from "../constant/TableEnum";
 import {
   useSessionParticipants,
   useStudentParticipants,
+  useUpdateLevel,
 } from "../hooks/useSession";
 import "../css/index.scss";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +17,8 @@ const StudentSessionTable = ({
   status = "draft",
   onAllQuestionGraded,
 }) => {
+  const { mutate: updateLevel } = useUpdateLevel();
+
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
@@ -77,6 +80,10 @@ const StudentSessionTable = ({
 
   const onLevelChange = (key, value) => {
     setLevels((prev) => ({ ...prev, [key]: value }));
+    updateLevel({
+      id: key,
+      value,
+    });
   };
 
   const commonColumns = [
@@ -85,11 +92,7 @@ const StudentSessionTable = ({
       dataIndex: "GrammarVocab",
       key: "GrammarVocab",
       width: "240px",
-      render: (text, record) => (
-        <span>
-          {text ? text + " | " + record.GrammarVocabLevel : "No Data"}
-        </span>
-      ),
+      render: (text, record) => <span>{text}</span>,
     },
     {
       title: "LISTENING",

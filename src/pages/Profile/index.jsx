@@ -152,7 +152,11 @@ const ProfilePage = () => {
           <div className="space-y-1">
             <InfoField
               label="DoB"
-              value={dayjs(user?.dob).format("DD-MM-YYYY") || "No information"}
+              value={
+                user?.dob
+                  ? dayjs(user?.dob).format("DD-MM-YYYY")
+                  : "No information"
+              }
             />
           </div>
           <div className="space-y-1">

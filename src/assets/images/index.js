@@ -14,9 +14,11 @@ import RecordIcon from "./Record.png";
 import Warning from "./Warning.png";
 import ResetSuccessImg from "./RS-password.png";
 import ForgotPasswordImg from "./Forgotpw.png";
+import LogoGreen from "./logoGreenprep.png"
 
 
 export {
+  LogoGreen,
   GreenPREP,
   GreenPREPLogo,
   WelcomeImage,
