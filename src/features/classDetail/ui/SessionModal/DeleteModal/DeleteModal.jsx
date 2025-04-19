@@ -7,6 +7,7 @@ const DeleteModal = ({ sessionID, isOpen, onClose }) => {
   const { mutate: deleteSession, isPending } = useDeleteSessionMutation();
   const handleOk = async () => {
     deleteSession(sessionID);
+    onClose();
   };
 
   return (
