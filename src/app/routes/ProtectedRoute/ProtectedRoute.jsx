@@ -1,4 +1,4 @@
-import { Logo } from "@assets/images";
+import { LogoGreen } from "@assets/images";
 import { ConfigProvider, Layout, Menu, Segmented } from "antd";
 import {
   Outlet,
@@ -118,8 +118,8 @@ export const ProtectedRoute = () => {
         <Header className="flex items-center justify-between h-28 bg-white shadow-xl">
           <div className="w-[200px] flex items-center h-28">
             <img
-              src={Logo}
-              className="max-w-[11rem] cursor-pointer"
+              src={LogoGreen}
+              className="max-w-40 cursor-pointer"
               onClick={() => navigate("/")}
             />
           </div>

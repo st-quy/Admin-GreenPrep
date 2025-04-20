@@ -63,13 +63,10 @@ const TeacherActionModal = ({ initialData = null }) => {
       // @ts-ignore
       teacherAction(data, {
         onSuccess: (data) => {
-          message
-            .success(
-              data.data.message || `${isEdit ? "Update" : "Create"} success!`
-            )
-            .then(() => {
-              handleCancel();
-            });
+          message.success(
+            data.data.message || `${isEdit ? "Update" : "Create"} success!`
+          );
+          handleCancel();
         },
         onError: (error) => {
           message.error(
