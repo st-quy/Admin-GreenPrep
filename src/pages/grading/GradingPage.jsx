@@ -18,6 +18,7 @@ const GradingPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { sessionId, participantId, classId } = useParams();
+  const { state } = location;
 
   const { data: audioFileName } = useAudioFileName(classId, sessionId);
 
@@ -356,6 +357,7 @@ const GradingPage = () => {
         speakingComments={prepareCommentsForSubmission(speakingComments)}
         writingComments={prepareCommentsForSubmission(writingComments)}
         isSpeaking={isSpeaking}
+        isPublished={state?.isPublished}
       />
       <Assessment
         key={`assessment-${isSpeaking ? "speaking" : "writing"}`}

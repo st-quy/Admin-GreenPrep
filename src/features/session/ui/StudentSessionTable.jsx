@@ -15,7 +15,7 @@ const StudentSessionTable = ({
   searchKeyword,
   type,
   status = "draft",
-  onAllQuestionGraded,
+  isPublished = false,
 }) => {
   const { mutate: updateLevel } = useUpdateLevel();
 
@@ -61,15 +61,6 @@ const StudentSessionTable = ({
 
   const checkIsAllQuestionGraded = useCallback(() => {
     if (!processedData.length) return;
-
-    const allGraded = processedData.every(
-      (record) => record.Speaking && record.Writing
-    );
-    const allLevelsSelected = Object.values(levels).every((level) => level);
-
-    if (allGraded && allLevelsSelected && Object.values(levels).length > 0) {
-      onAllQuestionGraded?.(processedData);
-    }
   }, [processedData, levels]);
 
   useEffect(() => {
@@ -120,7 +111,11 @@ const StudentSessionTable = ({
       render: (text, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
-            onClick={() => navigate(`participant/${record.ID}?skill=speaking`)}
+            onClick={() =>
+              navigate(`participant/${record.ID}?skill=speaking`, {
+                state: { isPublished },
+              })
+            }
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
             {text ? text + " | " + record.SpeakingLevel : "Ungraded"}
@@ -137,7 +132,11 @@ const StudentSessionTable = ({
       render: (text, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <a
-            onClick={() => navigate(`participant/${record.ID}?skill=writing`)}
+            onClick={() =>
+              navigate(`participant/${record.ID}?skill=writing`, {
+                state: { isPublished },
+              })
+            }
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
             {text ? text + " | " + record.WritingLevel : "Ungraded"}
@@ -164,9 +163,7 @@ const StudentSessionTable = ({
           <Select
             value={levels[record.ID]}
             placeholder="Level"
-            disabled={
-              status === StatusType.PUBLISHED || type === TableType.STUDENT
-            }
+            disabled={isPublished}
             onChange={(value) => onLevelChange(record.ID, value)}
             className="p-0"
           >
@@ -233,56 +230,52 @@ const StudentSessionTable = ({
 
   return (
     <div>
-      {isLoading ? (
-        <Spin tip="Loading..." />
-      ) : (
-        <Table
-          // @ts-ignore
-          columns={columns}
-          dataSource={filteredData.map((item) => ({ ...item, key: item.ID }))}
-          pagination={{
-            current: currentPage,
-            pageSize: pageSize,
-            total: processedData?.pagination?.totalItems || 0,
-            showSizeChanger: true,
-            pageSizeOptions: ["5", "10", "15", "20"],
-            showTotal: (total, range) =>
-              `Showing ${range[0]}-${range[1]} of ${total}`,
-            onChange: (page, size) => {
-              setCurrentPage(page);
-              setPageSize(size);
-            },
-          }}
-          bordered
-          className="border border-gray-200 pagination w-full p-0 m-0 overflow-x-auto bg-none"
-          rowClassName="text-center"
-          scroll={{ x: 768 }}
-          components={{
-            header: {
-              wrapper: (props) => (
-                <thead
-                  {...props}
-                  className={`bg-tableHeadColor text-primaryTextColor`}
-                />
-              ),
-              cell: (props) => (
-                <th
-                  {...props}
-                  className={` bg-[#E6F0FA] text-[10px] font-[700] md:text-[16px] text-[#637381] tracking-wider text-center !py-4 px-0 whitespace-nowrap `}
-                />
-              ),
-            },
-            body: {
-              cell: (props) => (
-                <td
-                  {...props}
-                  className={`font-[500] tracking-wider text-center py-4 px-0 whitespace-nowrap text-[10px] md:text-[14px] text-[#637381] ${props.className || ""}`}
-                />
-              ),
-            },
-          }}
-        />
-      )}
+      <Table
+        // @ts-ignore
+        columns={columns}
+        dataSource={filteredData.map((item) => ({ ...item, key: item.ID }))}
+        pagination={{
+          current: currentPage,
+          pageSize: pageSize,
+          total: processedData?.pagination?.totalItems || 0,
+          showSizeChanger: true,
+          pageSizeOptions: ["5", "10", "15", "20"],
+          showTotal: (total, range) =>
+            `Showing ${range[0]}-${range[1]} of ${total}`,
+          onChange: (page, size) => {
+            setCurrentPage(page);
+            setPageSize(size);
+          },
+        }}
+        bordered
+        className="border border-gray-200 pagination w-full p-0 m-0 overflow-x-auto bg-none"
+        rowClassName="text-center"
+        scroll={{ x: 768 }}
+        components={{
+          header: {
+            wrapper: (props) => (
+              <thead
+                {...props}
+                className={`bg-tableHeadColor text-primaryTextColor`}
+              />
+            ),
+            cell: (props) => (
+              <th
+                {...props}
+                className={` bg-[#E6F0FA] text-[10px] font-[700] md:text-[16px] text-[#637381] tracking-wider text-center !py-4 px-0 whitespace-nowrap `}
+              />
+            ),
+          },
+          body: {
+            cell: (props) => (
+              <td
+                {...props}
+                className={`font-[500] tracking-wider text-center py-4 px-0 whitespace-nowrap text-[10px] md:text-[14px] text-[#637381] ${props.className || ""}`}
+              />
+            ),
+          },
+        }}
+      />
     </div>
   );
 };

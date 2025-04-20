@@ -11,6 +11,7 @@ const AssessmentScores = ({
   speakingComments = [],
   writingComments = [],
   isSpeaking,
+  isPublished = false,
 }) => {
   const [scores, setScores] = useState(0);
   const [activeTab, setActiveTab] = useState(
@@ -120,18 +121,22 @@ const AssessmentScores = ({
                   changeOnWheel={true}
                   onChange={(value) => setScores(value)}
                   className="w-[170px] h-auto border border-[#637381] rounded-[10px]"
+                  disabled={isPublished}
                 />
               </Form.Item>
             </Form>
           </div>
           <div className="flex">
-            <Button
-              onClick={handleSubmit}
-              type="primary"
-              className="h-auto px-[41.5px] py-[13px] text-base bg-primaryColor rounded-[50px]"
-            >
-              Submit
-            </Button>
+            {!isPublished && (
+              <Button
+                onClick={handleSubmit}
+                type="primary"
+                className="h-auto px-[41.5px] py-[13px] text-base bg-primaryColor rounded-[50px]"
+                disabled={isPublished}
+              >
+                Submit
+              </Button>
+            )}
           </div>
         </div>
       </div>

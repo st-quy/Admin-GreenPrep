@@ -1,12 +1,8 @@
 import React from "react";
 import { Card, Spin, Tag, Typography, Descriptions, Divider } from "antd";
 import { TableType } from "@features/session/constant/TableEnum";
-import {
-  useSessionDetails,
-  useStudentDetails,
-} from "@features/session/hooks/useSession";
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 const statusTag = (status) => {
   const statusMap = {
@@ -21,10 +17,7 @@ const statusTag = (status) => {
   );
 };
 
-const Details = ({ type, id }) => {
-  const { data, isLoading: isLoading } =
-    type === TableType.SESSION ? useSessionDetails(id) : useStudentDetails(id);
-
+const Details = ({ type, isLoading, data }) => {
   if (isLoading) {
     return <Spin className="flex justify-center mt-4" />;
   }
