@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Tabs, message } from "antd";
+import { Button, Tabs, message } from "antd";
 import "@features/session/css/index.scss";
 import StudentMonitoring from "@features/session/ui/StudentModering";
 import StudentSessionTable from "@/features/session/ui/StudentSessionTable.jsx";
@@ -7,24 +7,24 @@ import SearchInput from "@/app/components/SearchInput.jsx";
 import Details from "@features/session/ui/Details.jsx";
 import { useParams } from "react-router-dom";
 import { TableType } from "@features/session/constant/TableEnum";
-import { usePublishScoresAndSendEmails } from "@features/session/hooks/useSession";
+import {
+  usePublishScores,
+  useSessionDetails,
+  useStudentDetails,
+} from "@features/session/hooks/useSession";
 
 const SessionInformation = ({ type }) => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const { sessionId, studentId } = useParams();
   const [pendingCount, setPendingCount] = useState(0);
-  const [isReadyToPublish, setIsReadyToPublish] = useState(false);
-  const [participants, setParticipants] = useState([]);
-  const { mutate: publishScores, isPending } = usePublishScoresAndSendEmails(
-    () => {
-      message.success("Email sent successfully!");
-    }
-  );
 
-  const handleAllGraded = (data) => {
-    setParticipants(data);
-    setIsReadyToPublish(true);
-  };
+  const { mutate: publishScores, isPending: isLoadingPublishScores } =
+    usePublishScores(sessionId);
+
+  const { data, isLoading: isLoading } =
+    type === TableType.SESSION
+      ? useSessionDetails(sessionId)
+      : useStudentDetails(studentId);
 
   const handlePendingCountChange = (count) => {
     setPendingCount(count);
@@ -35,10 +35,7 @@ const SessionInformation = ({ type }) => {
   };
 
   const handlePublishScore = () => {
-    console.log("Sending emails to participants:", participants);
-    // @ts-ignore
-    publishScores(participants);
-    setIsReadyToPublish(false);
+    publishScores();
   };
 
   const items = [
@@ -51,7 +48,7 @@ const SessionInformation = ({ type }) => {
           studentId={studentId}
           type={type}
           searchKeyword={searchKeyword}
-          onAllQuestionGraded={handleAllGraded}
+          isPublished={data?.isPublished}
         />
       ),
     },
@@ -78,10 +75,7 @@ const SessionInformation = ({ type }) => {
 
   return (
     <div className="session-container flex flex-col p-2 md:p-8">
-      <Details
-        type={type}
-        id={type == TableType.SESSION ? sessionId : studentId}
-      />
+      <Details type={type} isLoading={isLoading} data={data} />
 
       <div className="w-full">
         <div className="flex justify-between">
@@ -99,26 +93,19 @@ const SessionInformation = ({ type }) => {
           </div>
           {type === TableType.SESSION && (
             <div>
-              <button
+              <Button
                 className={`font-bold rounded-full transition-all duration-150 ease-in-out
     md:px-[28px] px-[18px] md:py-[13px] py-[7px] 
     md:text-base text-xs border-none transform 
-    ${
-      isReadyToPublish
-        ? "bg-secondaryColor text-white hover:bg-[#3b82f6] active:scale-95"
-        : "bg-[#E5E7EB] text-[#6B7280] "
-    } 
-    ${isPending ? "cursor-not-allowed opacity-60" : "hover:scale-105"}
+
+    ${isLoadingPublishScores ? "cursor-not-allowed opacity-60" : "hover:scale-105"}
   `}
                 onClick={handlePublishScore}
-                disabled={!isReadyToPublish || isPending}
+                disabled={data?.isPublished}
+                loading={isLoadingPublishScores}
               >
-                {isPending
-                  ? "Sending..."
-                  : isReadyToPublish
-                    ? "Ready to Publish"
-                    : "Publish Score"}
-              </button>
+                {data?.isPublished ? "Published" : "Publish Score"}
+              </Button>
             </div>
           )}
         </div>
@@ -138,7 +125,6 @@ const SessionInformation = ({ type }) => {
               studentId={studentId}
               type={type}
               searchKeyword={searchKeyword}
-              onAllQuestionGraded={handleAllGraded}
             />
           )}
         </div>

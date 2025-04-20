@@ -9,6 +9,7 @@ import {
   getSessionById,
   getStudentById,
   putStudentLevel,
+  publishScores,
 } from "../api/session_api";
 import { message } from "antd";
 
@@ -160,6 +161,21 @@ export const useUpdateLevel = () => {
     },
     onError: (error) => {
       message.error("Error approving request: " + error.message);
+    },
+  });
+};
+
+export const usePublishScores = (sessionId) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => publishScores(sessionId),
+    onSuccess: () => {
+      message.success("Publish Scores successfully")
+      queryClient.invalidateQueries({ queryKey: ["sessionParticipants"] });
+      queryClient.invalidateQueries({ queryKey: ["sessionDetails"] });
+    },
+    onError: (response) => {
+      message.error("Some students are missing scores or levels. Please waiting or complete the data before publishing.");
     },
   });
 };
