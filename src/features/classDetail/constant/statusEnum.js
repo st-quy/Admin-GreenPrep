@@ -1,6 +1,6 @@
 export const StatusEnum = Object.freeze({
-ALL: "",
-COMPLETED: "COMPLETED",
-ONGOING: "ON_GOING",
-NOTSTARTED: "NOT_STARTED"
-})
+  ALL: "",
+  COMPLETE: "COMPLETE",
+  ONGOING: "ON_GOING",
+  NOTSTARTED: "NOT_STARTED",
+});
