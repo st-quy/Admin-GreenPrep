@@ -109,7 +109,9 @@ const Assessment = ({
     if (!partData || !partData.Questions) return "";
 
     if (isSpeaking && activeTab === "4") {
-      const partFourQuestions = partData.Questions || [];
+      const partFourQuestions = [...(partData.Questions || [])].sort(
+        (a, b) => a.Sequence - b.Sequence
+      );
       if (partFourQuestions.length === 0) return "";
 
       return (
@@ -137,9 +139,12 @@ const Assessment = ({
       );
     }
 
-    return partData.Questions?.map((question, index) => (
-      <div className="flex gap-10 relative" key={index}>
-        <div className="w-[80%] h-fit shadow-md rounded-lg">
+    const sortedQuestions = [...(partData.Questions || [])].sort(
+      (a, b) => a.Sequence - b.Sequence
+    );
+    return sortedQuestions.map((question, index) => (
+      <div className="flex relative justify-between" key={index}>
+        <div className="w-[78%] h-fit shadow-md rounded-lg">
           <QuestionAnswer
             isSpeaking={isSpeaking}
             fileName={fileNameInfo + `-part${activeTab}-question${index + 1}`}

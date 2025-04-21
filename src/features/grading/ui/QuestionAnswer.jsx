@@ -9,7 +9,10 @@ export const QuestionAnswer = ({
 }) => {
   const studentAnswers = () => {
     if (isSpeaking) {
-      if (speakingPartFour?.length > 0) {
+      if (
+        speakingPartFour?.length > 0 &&
+        speakingPartFour[0]?.studentAnswer?.AnswerAudio
+      ) {
         return (
           <div className="place-self-center self-center">
             <AudioPlayers
