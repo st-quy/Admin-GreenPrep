@@ -138,7 +138,7 @@ const Assessment = ({
     }
 
     return partData.Questions?.map((question, index) => (
-      <div className="flex justify-between relative" key={index}>
+      <div className="flex relative justify-between" key={index}>
         <div className="w-[78%] h-fit shadow-md rounded-lg">
           <QuestionAnswer
             isSpeaking={isSpeaking}
@@ -147,7 +147,7 @@ const Assessment = ({
           />
         </div>
         {question.studentAnswer?.ID && (
-          <div className="w-[22%] h-fit shadow-md sticky top-0 rounded-lg">
+          <div className="w-[20%] h-fit shadow-md sticky top-0 rounded-lg">
             <CommentForm
               key={`${isSpeaking ? "speaking" : "writing"}-part${activeTab}-${question?.studentAnswer?.ID}-${currentUser}`}
               data={question}
