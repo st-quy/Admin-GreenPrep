@@ -87,7 +87,7 @@ const StudentListModal = ({
 
   return (
     <Modal open={visible} onCancel={onClose} footer={null} width={1000}>
-      <div className="px-12 pb-14 pt-8">
+      <div className="px-12 pb-14 pt-8" id="grading-participants-table">
         <h2 className="text-3xl font-bold mb-4">Student List</h2>
         <Table
           dataSource={filterData}
