@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Table, Input, Pagination, Select } from "antd";
-import { statusOptions } from "@features/classDetail/validate";
+import { statusOptions } from "@features/classDetail/constant/statusEnum";
 
 const { Search } = Input;
 

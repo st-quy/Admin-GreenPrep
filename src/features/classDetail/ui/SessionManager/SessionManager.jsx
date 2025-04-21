@@ -4,7 +4,7 @@ import DeleteModal from "../SessionModal/DeleteModal/DeleteModal";
 import { Link } from "react-router-dom";
 import { formatDateTime } from "@shared/lib/utils/formatString";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { statusOptions } from "@features/classDetail/validate";
+import { statusOptions } from "@features/classDetail/constant/statusEnum";
 import SessionTable from "./SessionTable/SessionTable";
 import { Button } from "antd";
 
