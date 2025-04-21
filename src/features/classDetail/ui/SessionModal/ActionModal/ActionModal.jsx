@@ -133,6 +133,7 @@ const ActionModal = ({
               name="sessionName"
               label="Session Name"
               rules={[yupSync(sessionSchema)]}
+              required
             >
               <Input placeholder="Session Name" className="!h-[46px]" />
             </Form.Item>
@@ -140,11 +141,13 @@ const ActionModal = ({
             <Form.Item
               name="sessionKey"
               label="Session Key"
+              required
               rules={[yupSync(sessionSchema)]}
             >
               <Input
                 placeholder="Session Key"
                 className="!h-[46px]"
+                required
                 suffix={
                   <div onClick={handleGenerateSessionKey}>
                     {isGenerating ? (
@@ -160,6 +163,7 @@ const ActionModal = ({
             <Form.Item
               name="examSet"
               label="Exam Set"
+              required
               rules={[yupSync(sessionSchema)]}
             >
               <Select
@@ -178,6 +182,7 @@ const ActionModal = ({
             <Form.Item
               name="dateRange"
               label="Date Range"
+              required
               rules={[yupSync(sessionSchema)]}
             >
               <RangePicker

@@ -8,6 +8,7 @@ import {
   publishScoresAndSendEmails,
   getSessionById,
   getStudentById,
+  putStudentLevel,
 } from "../api/session_api";
 import { message } from "antd";
 
@@ -145,5 +146,20 @@ export const useStudentDetails = (studentId) => {
     queryKey: ["studentDetails", studentId],
     queryFn: () => getStudentById(studentId),
     enabled: !!studentId,
+  });
+};
+
+
+export const useUpdateLevel = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (params) => putStudentLevel(params),
+    onSuccess: () => {
+      message.success("Updated level successfully")
+      queryClient.invalidateQueries({ queryKey: ["sessionParticipants"] });
+    },
+    onError: (error) => {
+      message.error("Error approving request: " + error.message);
+    },
   });
 };

@@ -31,6 +31,8 @@ const accountSchema = Yup.object().shape({
 const TeacherActionModal = ({ initialData = null }) => {
   const [form] = Form.useForm();
   const [open, setOpen] = useState(false);
+  const [passwordValue, setPasswordValue] = useState("");
+
   const isEdit = initialData !== null;
   // @ts-ignore
   const { mutate: teacherAction, isPending: isOnAction } = isEdit
@@ -55,21 +57,18 @@ const TeacherActionModal = ({ initialData = null }) => {
         lastName: values.lastName,
         email: values.email,
         teacherCode: values.teacherCode,
-        password: !isEdit ? values.password || `Greenwich@123` : undefined,
+        password: !isEdit ? passwordValue || `Greenwich@123` : undefined,
         roleIDs: ["teacher"],
         status: values.status,
-        phone: values.phone || undefined,
+        phone: values.phone ? values.phone : undefined,
       };
       // @ts-ignore
       teacherAction(data, {
         onSuccess: (data) => {
-          message
-            .success(
-              data.data.message || `${isEdit ? "Update" : "Create"} success!`
-            )
-            .then(() => {
-              handleCancel();
-            });
+          message.success(
+            data.data.message || `${isEdit ? "Update" : "Create"} success!`
+          );
+          handleCancel();
         },
         onError: (error) => {
           message.error(
@@ -106,7 +105,7 @@ const TeacherActionModal = ({ initialData = null }) => {
       <Modal
         open={open}
         okText={isEdit ? "Update" : "Create"}
-        onOk={onAction}
+        // onOk={onAction}
         closable={false}
         confirmLoading={isOnAction}
         width={{
@@ -201,7 +200,11 @@ const TeacherActionModal = ({ initialData = null }) => {
                   rules={[yupSync(accountSchema)]}
                   name="password"
                 >
-                  <Input.Password className="h-[46px]" placeholder="Password" />
+                  <Input.Password
+                    className="h-[46px]"
+                    placeholder="Password"
+                    onChange={(e) => setPasswordValue(e.target.value)}
+                  />
                   <div className="text-[14px] text-[#b3b0a5] mt-2">
                     Default Password: Greenwich@123
                   </div>
