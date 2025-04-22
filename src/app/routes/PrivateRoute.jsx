@@ -14,7 +14,7 @@ import RedirectByRole from "./RedirectByRole/index.jsx";
 const PrivateRoute = [
   {
     path: "/",
-    // element: <ProtectedRoute />,
+    element: <ProtectedRoute />,
     breadcrumb: "Home",
     children: [
       {
