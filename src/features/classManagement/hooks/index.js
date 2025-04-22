@@ -29,6 +29,9 @@ export const useCreateClass = () => {
       message.success("Class created successfully");
       queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
+    onError: ({response}) => {
+      message.error(response.data.error || "Failed to create class");
+    }
   });
 };
 
