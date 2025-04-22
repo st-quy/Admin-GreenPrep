@@ -83,7 +83,13 @@ const StudentSessionTable = ({
       dataIndex: "GrammarVocab",
       key: "GrammarVocab",
       width: "240px",
-      render: (text, record) => <span>{text}</span>,
+      render: (text, record) => (
+        <span>
+          {text || text === 0
+            ? text + " | " + record.GrammarVocabLevel
+            : "No Data"}
+        </span>
+      ),
     },
     {
       title: "LISTENING",
@@ -91,7 +97,11 @@ const StudentSessionTable = ({
       key: "Listening",
       width: "120px",
       render: (text, record) => (
-        <span>{text ? text + " | " + record.ListeningLevel : "No Data"}</span>
+        <span>
+          {text || text === 0
+            ? text + " | " + record.ListeningLevel
+            : "No Data"}
+        </span>
       ),
     },
     {
@@ -100,7 +110,9 @@ const StudentSessionTable = ({
       key: "Reading",
       width: "120px",
       render: (text, record) => (
-        <span>{text ? text + " | " + record.ReadingLevel : "No Data"}</span>
+        <span>
+          {text || text === 0 ? text + " | " + record.ReadingLevel : "No Data"}
+        </span>
       ),
     },
     {
@@ -118,10 +130,16 @@ const StudentSessionTable = ({
             }
             className="cursor-pointer underline underline-offset-4 hover:opacity-80"
           >
-            {text ? text + " | " + record.SpeakingLevel : "Ungraded"}
+            {text || text === 0
+              ? text + " | " + record.SpeakingLevel
+              : "Ungraded"}
           </a>
         ) : (
-          <span>{text ? text + " | " + record.SpeakingLevel : "Ungraded"}</span>
+          <span>
+            {text || text === 0
+              ? text + " | " + record.SpeakingLevel
+              : "Ungraded"}
+          </span>
         ),
     },
     {
