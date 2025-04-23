@@ -151,7 +151,7 @@ const AssessmentScores = ({
             </Form>
           </div>
           <div className="flex">
-            {audioFileName?.sesion?.isPublished && (
+            {!audioFileName?.session?.isPublished && (
               <Button
                 onClick={handleSubmit}
                 type="primary"

@@ -34,7 +34,9 @@ const StudentInfoCard = ({
               <Col xs={24} sm={24} md={12}>
                 <div className="grid grid-cols-[110px_1fr] gap-y-4 gap-x-4 text-base text-[#374151]">
                   <div>Student name</div>
-                  <div className="font-bold">{student.User?.fullName}</div>
+                  <div className="font-bold">
+                    {student.User?.firstName + " " + student.User?.lastName}
+                  </div>
 
                   <div>Student ID</div>
                   <div className="font-bold">{student.User?.studentCode}</div>

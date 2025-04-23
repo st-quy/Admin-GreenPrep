@@ -17,7 +17,6 @@ const Assessment = ({
   const [activeTab, setActiveTab] = useState("1");
   // Track part totals for each skill
   const [partData, setPartData] = useState({});
-  console.log(isSpeaking, "isSpeaking");
 
   const handleTabChange = (key) => {
     setActiveTab(key);
@@ -32,16 +31,6 @@ const Assessment = ({
     handleDataChange();
   }, [activeTab, isSpeaking, data]);
 
-  // useEffect(() => {
-  //   const searchParams = new URLSearchParams(location.search);
-  //   const skillParam = searchParams.get("skill");
-
-  //   if (skillParam === "speaking") {
-  //     setIsSpeaking(true);
-  //   } else {
-  //     setIsSpeaking(false);
-  //   }
-  // }, [location.search]);
   const handleDataChange = () => {
     try {
       const parts = data?.data?.data?.topic?.Parts;
