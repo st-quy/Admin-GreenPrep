@@ -1,29 +1,14 @@
-import axios from "axios";
-
-const api = axios.create({
-  baseURL: import.meta.env.VITE_BASE_URL,
-});
-
-console.log("API Base URL:", import.meta.env.VITE_BASE_URL);
+import axiosInstance from "@shared/config/axios";
 
 export const fetchDashboardStats = async () => {
   try {
-    console.log("Fetching dashboard stats...");
     const [teachers, classes, sessions, answers, requests] = await Promise.all([
-      api.get("/users/teachers"),
-      api.get("/classes"),
-      api.get("/sessions/all"),
-      api.get("/student-answers"),
-      api.get("/session-requests"),
+      axiosInstance.get("/users/teachers"),
+      axiosInstance.get("/classes"),
+      axiosInstance.get("/sessions/all"),
+      axiosInstance.get("/student-answers"),
+      axiosInstance.get("/session-requests"),
     ]);
-
-    console.log("API responses:", {
-      teachers: teachers.data,
-      classes: classes.data,
-      sessions: sessions.data,
-      answers: answers.data,
-      requests: requests.data,
-    });
 
     return {
       teacherCount: teachers.data.length,
@@ -56,7 +41,7 @@ export const fetchDashboardStats = async () => {
 
 export const fetchRecentActivities = async () => {
   try {
-    const response = await api.get("/activities/recent");
+    const response = await axiosInstance.get("/activities/recent");
     return response.data;
   } catch (error) {
     console.error("Error fetching recent activities:", error);
@@ -66,7 +51,7 @@ export const fetchRecentActivities = async () => {
 
 export const fetchPendingRequests = async () => {
   try {
-    const response = await api.get("/session-requests");
+    const response = await axiosInstance.get("/session-requests");
     return response.data.filter((request) => request.status === "pending");
   } catch (error) {
     console.error("Error fetching pending requests:", error);
@@ -76,7 +61,7 @@ export const fetchPendingRequests = async () => {
 
 export const approveSessionRequest = async (requestId) => {
   try {
-    await api.patch(`/session-requests/${requestId}/approve`);
+    await axiosInstance.patch(`/session-requests/${requestId}/approve`);
     return true;
   } catch (error) {
     console.error("Error approving request:", error);
@@ -86,7 +71,7 @@ export const approveSessionRequest = async (requestId) => {
 
 export const rejectSessionRequest = async (requestId) => {
   try {
-    await api.patch(`/session-requests/${requestId}/reject`);
+    await axiosInstance.patch(`/session-requests/${requestId}/reject`);
     return true;
   } catch (error) {
     console.error("Error rejecting request:", error);

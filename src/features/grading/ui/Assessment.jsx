@@ -17,7 +17,6 @@ const Assessment = ({
   const [activeTab, setActiveTab] = useState("1");
   // Track part totals for each skill
   const [partData, setPartData] = useState({});
-  console.log(isSpeaking, "isSpeaking");
 
   const handleTabChange = (key) => {
     setActiveTab(key);

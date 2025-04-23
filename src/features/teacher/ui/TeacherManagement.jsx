@@ -38,10 +38,7 @@ const TeacherManagement = () => {
       width: "200px",
       render: (text, record) => (
         <div className="overflow-hidden text-ellipsis whitespace-nowrap">
-          <a
-            onClick={() => console.log(record)}
-            className="cursor-pointer text-[10px] md:text-[14px] underline hover:opacity-80"
-          >
+          <a className="cursor-pointer text-[10px] md:text-[14px] underline hover:opacity-80">
             {`${record.firstName} ${record.lastName}` || "Unknown"}
           </a>
         </div>
