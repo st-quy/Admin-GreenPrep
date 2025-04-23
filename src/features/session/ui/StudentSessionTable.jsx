@@ -34,13 +34,14 @@ const StudentSessionTable = ({
   const processedData = data?.data || [];
 
   useEffect(() => {
-    if (processedData)
+    if (processedData.length) {
       setLevels(
         processedData.reduce(
           (acc, cur) => ({ ...acc, [cur.ID]: cur.Level }),
           {}
         )
       );
+    }
   }, [processedData]);
 
   const filteredData = useMemo(() => {
@@ -61,13 +62,14 @@ const StudentSessionTable = ({
 
   const checkIsAllQuestionGraded = useCallback(() => {
     if (!processedData.length) return;
-  }, [processedData, levels]);
+    // Add logic here if needed
+  }, [processedData]); // Removed `levels` from dependencies to stabilize the function
 
   useEffect(() => {
     if (type === TableType.SESSION && status !== StatusType.PUBLISHED) {
       checkIsAllQuestionGraded();
     }
-  }, [checkIsAllQuestionGraded]);
+  }, [type, status, checkIsAllQuestionGraded]); // Updated dependency array to include stable dependencies
 
   const onLevelChange = (key, value) => {
     setLevels((prev) => ({ ...prev, [key]: value }));
