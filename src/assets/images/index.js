@@ -15,9 +15,11 @@ import Warning from "./Warning.png";
 import ResetSuccessImg from "./RS-password.png";
 import ForgotPasswordImg from "./Forgotpw.png";
 import LogoGreen from "./logoGreenprep.png"
+import SubmitSuccess from "./submitSuccess.png";
 
 
 export {
+  SubmitSuccess,
   LogoGreen,
   GreenPREP,
   GreenPREPLogo,

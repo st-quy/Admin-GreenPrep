@@ -51,6 +51,7 @@ const GradingPage = () => {
     const newQueryString = searchParams.toString();
     const newUrl = `${location.pathname}?${newQueryString}`;
     window.history.replaceState(null, "", newUrl);
+    navigate(newUrl);
   };
 
   useEffect(() => {
