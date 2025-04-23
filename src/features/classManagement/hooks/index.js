@@ -30,7 +30,7 @@ export const useCreateClass = () => {
       queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
     onError: ({response}) => {
-      message.error(response.data.error || "Failed to create class");
+      message.error(response.data.message || "Failed to create class");
     }
   });
 };
@@ -62,5 +62,8 @@ export const useDeleteClass = () => {
       message.success("Deleted class successfully");
       queryClient.invalidateQueries({ queryKey: ["classes"] });
     },
+    onError: ({response}) => {
+      message.error("Can't delete this class because it has sessions");
+    }
   });
 };

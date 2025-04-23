@@ -6,10 +6,10 @@ import { useDeleteClass } from "@features/classManagement/hooks";
 import { WarningOutlined } from "@ant-design/icons";
 
 const DeleteClassModal = ({ classId, isOpen, onClose }) => {
-  const { mutate: updateClass, isPending } = useDeleteClass();
+  const { mutate: deleteClass, isPending } = useDeleteClass();
 
   const handleFinish = () => {
-    updateClass(classId, {
+    deleteClass(classId, {
       onSuccess: () => {
         onClose();
       },

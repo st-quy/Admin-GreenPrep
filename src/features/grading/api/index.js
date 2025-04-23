@@ -29,5 +29,6 @@ export const getAudioFileName = async (classId, sessionId) => {
   return {
     className: classRes.data.data.className,
     sessionName: sessionRes.data.data.sessionName,
+    session: sessionRes.data.data
   };
 };
