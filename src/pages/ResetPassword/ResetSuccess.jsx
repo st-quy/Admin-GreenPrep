@@ -1,4 +1,4 @@
-import RSPassword from "@assets/images/RS-password.png";
+import { SubmitSuccess } from "@assets/images";
 import { useNavigate } from "react-router-dom";
 
 const ResetPasswordSuccessfullyPage = () => {
@@ -8,7 +8,7 @@ const ResetPasswordSuccessfullyPage = () => {
     <div className="flex flex-col items-center justify-center bg-[#F9F9F9]">
       <div className="text-center max-w-[824px] w-full px-4 mx-auto">
         <img
-          src={RSPassword}
+          src={SubmitSuccess}
           alt="Reset Password Successfully"
           className="w-full max-w-[824px] h-[516px] object-contain mx-auto mb-6 sm:mb-8"
         />

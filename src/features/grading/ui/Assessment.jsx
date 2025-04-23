@@ -31,6 +31,16 @@ const Assessment = ({
     handleDataChange();
   }, [activeTab, isSpeaking, data]);
 
+  // useEffect(() => {
+  //   const searchParams = new URLSearchParams(location.search);
+  //   const skillParam = searchParams.get("skill");
+
+  //   if (skillParam === "speaking") {
+  //     setIsSpeaking(true);
+  //   } else {
+  //     setIsSpeaking(false);
+  //   }
+  // }, [location.search]);
   const handleDataChange = () => {
     try {
       const parts = data?.data?.data?.topic?.Parts;
