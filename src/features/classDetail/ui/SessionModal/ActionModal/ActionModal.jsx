@@ -71,8 +71,8 @@ const ActionModal = ({
       const values = await form.validateFields();
       const sessionData = {
         sessionId: initialData?.ID || null,
-        sessionName: values.sessionName,
-        sessionKey: values.sessionKey,
+        sessionName: values.sessionName?.trim(),
+        sessionKey: values.sessionKey?.trim(),
         startTime: values.dateRange?.[0]?.toISOString() || null,
         endTime: values.dateRange?.[1]?.toISOString() || null,
         examSet: values.examSet,
@@ -84,12 +84,6 @@ const ActionModal = ({
           const msg = data?.data?.message || `${actionLabel} success!`;
           message.success(msg);
           handleCancel();
-        },
-        onError: (error) => {
-          message.error(
-            error?.response?.data?.message ||
-              `Failed to ${actionLabel.toLowerCase()} session.`
-          );
         },
       });
     } catch (error) {

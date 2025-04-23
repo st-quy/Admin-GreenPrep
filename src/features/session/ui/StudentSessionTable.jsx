@@ -84,11 +84,7 @@ const StudentSessionTable = ({
       key: "GrammarVocab",
       width: "240px",
       render: (text, record) => (
-        <span>
-          {text || text === 0
-            ? text + " | " + record.GrammarVocabLevel
-            : "No Data"}
-        </span>
+        <span>{text || text === 0 ? text : "No Data"}</span>
       ),
     },
     {

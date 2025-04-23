@@ -8,8 +8,13 @@ const CreateClassModal = ({ isOpen, onClose }) => {
   const { mutate: createClass, isPending } = useCreateClass();
 
   const handleFinish = (values) => {
-    createClass(values, {
+    const trimmedValues = {
+      ...values,
+      className: values.className.trim(),
+    };
+    createClass(trimmedValues, {
       onSuccess: () => {
+        form.resetFields();
         onClose();
       },
     });

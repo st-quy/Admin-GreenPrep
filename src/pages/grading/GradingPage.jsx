@@ -18,7 +18,6 @@ const GradingPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { sessionId, participantId, classId } = useParams();
-  const { state } = location;
 
   const { data: audioFileName } = useAudioFileName(classId, sessionId);
 
@@ -47,7 +46,11 @@ const GradingPage = () => {
     useGetParticipants(sessionId);
 
   const onTabChange = (key) => {
-    setIsSpeaking(key);
+    const searchParams = new URLSearchParams(location.search);
+    searchParams.set("skill", key ? "speaking" : "writing");
+    const newQueryString = searchParams.toString();
+    const newUrl = `${location.pathname}?${newQueryString}`;
+    window.history.replaceState(null, "", newUrl);
   };
 
   useEffect(() => {
@@ -311,23 +314,31 @@ const GradingPage = () => {
   };
 
   const handleNextParticipant = () => {
-    const currentIndex = participantsData?.data.data.findIndex(
-      (item) => item.ID === participantId
-    );
-    const nextIndex = (currentIndex + 1) % participantsData?.data.data.length;
-    const nextParticipantId = participantsData?.data.data[nextIndex].ID;
-    changeParticipant(nextParticipantId);
+    if (!participantsData?.data.data) return;
+
+    if (participantsData?.data.data.length > 1) {
+      const currentIndex = participantsData?.data.data.findIndex(
+        (item) => item.ID === participantId
+      );
+      const nextIndex = (currentIndex + 1) % participantsData?.data.data.length;
+      const nextParticipantId = participantsData?.data.data[nextIndex].ID;
+      changeParticipant(nextParticipantId);
+    }
   };
 
   const handlePreviousParticipant = () => {
-    const currentIndex = participantsData?.data.data.findIndex(
-      (item) => item.ID === participantId
-    );
-    const previousIndex =
-      (currentIndex - 1 + participantsData?.data.data.length) %
-      participantsData?.data.data.length;
-    const previousParticipantId = participantsData?.data.data[previousIndex].ID;
-    changeParticipant(previousParticipantId);
+    if (!participantsData?.data.data) return;
+    if (participantsData?.data.data.length > 1) {
+      const currentIndex = participantsData?.data.data.findIndex(
+        (item) => item.ID === participantId
+      );
+      const previousIndex =
+        (currentIndex - 1 + participantsData?.data.data.length) %
+        participantsData?.data.data.length;
+      const previousParticipantId =
+        participantsData?.data.data[previousIndex].ID;
+      changeParticipant(previousParticipantId);
+    }
   };
 
   const userData = participantsData?.data.data.find(
@@ -357,7 +368,7 @@ const GradingPage = () => {
         speakingComments={prepareCommentsForSubmission(speakingComments)}
         writingComments={prepareCommentsForSubmission(writingComments)}
         isSpeaking={isSpeaking}
-        isPublished={state?.isPublished}
+        audioFileName={audioFileName}
       />
       <Assessment
         key={`assessment-${isSpeaking ? "speaking" : "writing"}`}

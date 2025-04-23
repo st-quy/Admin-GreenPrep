@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from "react";
 import { Tabs, Button, Form, InputNumber, message } from "antd";
 import { EditOutlined, AudioOutlined } from "@ant-design/icons";
 import { usePostGrade, useGetGrade } from "../hooks";
+import { useLocation } from "react-router-dom";
 
 const AssessmentScores = ({
   onTabChange,
@@ -11,7 +12,7 @@ const AssessmentScores = ({
   speakingComments = [],
   writingComments = [],
   isSpeaking,
-  isPublished = false,
+  audioFileName,
 }) => {
   const [scores, setScores] = useState(0);
   const [activeTab, setActiveTab] = useState(
@@ -105,7 +106,7 @@ const AssessmentScores = ({
             {activeTab === "writing" ? "Writing" : "Speaking"} Assessment Parts
           </h2>
           <p className="font-medium text-[18px] leading-[26px] text-[#637381]">
-            Detailed breakdown of each part in the{" "}
+            Detailed breakdown of each part in the
             {activeTab === "writing" ? "writing" : "speaking"} assessment.
           </p>
         </div>
@@ -119,20 +120,43 @@ const AssessmentScores = ({
                   max={50}
                   value={scores}
                   changeOnWheel={true}
-                  onChange={(value) => setScores(value)}
+                  onChange={(value) => {
+                    if (value > 50) {
+                      message.warning("Score cannot exceed 50");
+                      setScores(50);
+                    } else if (value === null || isNaN(value)) {
+                      message.warning("Please enter a valid number");
+                      setScores(null);
+                    } else {
+                      setScores(value);
+                    }
+                  }}
+                  onKeyDown={(e) => {
+                    if (
+                      !/[\d\b]/.test(e.key) &&
+                      ![
+                        "Backspace",
+                        "Delete",
+                        "ArrowLeft",
+                        "ArrowRight",
+                      ].includes(e.key)
+                    ) {
+                      e.preventDefault();
+                    }
+                  }}
                   className="w-[170px] h-auto border border-[#637381] rounded-[10px]"
-                  disabled={isPublished}
+                  disabled={audioFileName?.session?.isPublished}
                 />
               </Form.Item>
             </Form>
           </div>
           <div className="flex">
-            {!isPublished && (
+            {audioFileName?.sesion?.isPublished && (
               <Button
                 onClick={handleSubmit}
                 type="primary"
                 className="h-auto px-[41.5px] py-[13px] text-base bg-primaryColor rounded-[50px]"
-                disabled={isPublished}
+                disabled={audioFileName?.session?.isPublished}
               >
                 Submit
               </Button>

@@ -51,21 +51,25 @@ const ClassManagement = () => {
     {
       title: "ACTIONS",
       key: "actions",
+      fixed: "right",
       align: "center",
       render: (_, record) => (
-        <div className="flex gap-4 justify-center">
+        <div className="flex gap-4 justify-center items-center">
           <Button
             className="text-xl !text-primaryColor"
             type="link"
             icon={<EditOutlined />}
             onClick={handleUpdateClass(record)}
           />
-          <Button
-            className="text-xl"
-            type="link"
-            icon={<DeleteOutlined className="text-red-500" />}
-            onClick={handleDeleteClass(record)}
-          />
+          {/* Edit button */}
+          {record.numberOfSessions <= 0 && (
+            <Button
+              className="text-xl"
+              type="link"
+              icon={<DeleteOutlined className="text-red-500" />}
+              onClick={handleDeleteClass(record)}
+            />
+          )}
         </div>
       ),
     },
