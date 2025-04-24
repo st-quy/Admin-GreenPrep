@@ -13,9 +13,15 @@ const ClassManagement = () => {
   const [isOpen, setIsOpen] = useState("");
   const [dataClass, setClassData] = useState(null);
   const { userId, user } = useSelector((state) => state.auth);
+  const [limit, setLimit] = useState(10);
+  const [page, setPage] = useState(1);
+  const [searchName, setSearchName] = useState("");
 
   const { data: classList, isLoading } = useGetAllClass(
-    user?.role.includes("admin") ? null : userId
+    user?.role.includes("admin") ? null : userId,
+    page,
+    limit,
+    searchName
   );
 
   const handleUpdateClass = (record) => () => {
@@ -75,6 +81,16 @@ const ClassManagement = () => {
     },
   ];
 
+  const handleSearch = (value) => {
+    setSearchName(value);
+    setPage(1); // Reset to the first page when searching
+  };
+
+  const handlePaginationChange = (page, pageSize) => {
+    setLimit(pageSize);
+    setPage(page);
+  };
+
   return (
     <div className="p-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -96,9 +112,16 @@ const ClassManagement = () => {
           </Button>
         </div>
       </div>
-      {classList && (
-        <TableSearch data={classList} columns={columns} isLoading={isLoading} />
-      )}
+      <TableSearch
+        data={classList?.data}
+        columns={columns}
+        isLoading={isLoading}
+        pageSize={limit}
+        pageNumber={page}
+        pagination={classList?.pagination}
+        handleSearch={handleSearch}
+        handlePaginationChange={handlePaginationChange}
+      />
       <CreateClassModal
         isOpen={isOpen === "Create" ? true : false}
         onClose={() => setIsOpen(null)}

@@ -3,12 +3,12 @@ import { ClassApi } from "../api";
 import { message } from "antd";
 import { useSelector } from "react-redux";
 
-export const useGetAllClass = (teacherId = null) => {
+export const useGetAllClass = (teacherId = null, page, limit, searchName) => {
   return useQuery({
-    queryKey: ["classes"],
+    queryKey: ["classes",teacherId,  page, limit, searchName],
     queryFn: async () => {
-      const { data } = await ClassApi.getAll(teacherId);
-      return data.data;
+      const { data } = await ClassApi.getAll(teacherId, page, limit, searchName);
+      return data;
     },
   });
 };

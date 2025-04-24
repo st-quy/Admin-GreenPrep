@@ -3,30 +3,25 @@ import { Table, Input, Pagination } from "antd";
 
 const { Search } = Input;
 
-const TableSearch = ({ data = [], columns, isLoading }) => {
-  const [searchText, setSearchText] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const pageSize = 5;
-
-  const filteredData = data.filter((item) => {
-    const searchValue = searchText.toLowerCase();
-    return Object.values(item).some((value) =>
-      String(value).toLowerCase().includes(searchValue)
-    );
-  });
-
-  const start = (currentPage - 1) * pageSize + 1;
-  const end = Math.min(start + pageSize - 1, filteredData.length);
-  const total = filteredData.length;
-  const paginatedData = filteredData.slice(start - 1, end);
+const TableSearch = ({
+  data = [],
+  columns,
+  isLoading,
+  pageSize = 10,
+  pageNumber = 1,
+  pagination = {},
+  handleSearch,
+  handlePaginationChange,
+}) => {
+  const start = (pageNumber - 1) * pageSize + 1;
+  const end = Math.min(start + pageSize - 1, data.length);
 
   return (
     <div className="mt-4">
       <Search
         placeholder={"Search name"}
         onChange={(e) => {
-          setSearchText(e.target.value);
-          setCurrentPage(1);
+          handleSearch(e.target.value);
         }}
         className="mb-4 w-full max-w-[300px]"
         allowClear
@@ -34,7 +29,7 @@ const TableSearch = ({ data = [], columns, isLoading }) => {
       <div className="w-full">
         <Table
           columns={columns}
-          dataSource={paginatedData}
+          dataSource={data}
           rowKey="ID"
           pagination={false} // Ẩn pagination mặc định
           scroll={{ x: "max-content" }}
@@ -66,13 +61,16 @@ const TableSearch = ({ data = [], columns, isLoading }) => {
           }}
         />
         <div className="flex justify-between items-center mt-2 px-4">
-          <span className="text-gray-500 text-sm">{`Showing ${start}-${end} of ${total}`}</span>
+          <span className="text-gray-500 text-sm">{`Showing ${start}-${end} of ${pagination.totalItems}`}</span>
           <Pagination
-            current={currentPage}
+            current={pageNumber}
             pageSize={pageSize}
-            total={total}
-            onChange={(page) => setCurrentPage(page)}
-            showSizeChanger={false}
+            total={pagination.totalItems}
+            onChange={(page, size) => {
+              handlePaginationChange(page, size);
+            }}
+            showSizeChanger={true}
+            pageSizeOptions={[5, 10, 20, 50]}
           />
         </div>
       </div>
