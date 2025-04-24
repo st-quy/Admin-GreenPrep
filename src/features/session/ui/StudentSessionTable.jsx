@@ -26,50 +26,20 @@ const StudentSessionTable = ({
 
   const { data, isLoading } =
     type === TableType.SESSION
-      ? useSessionParticipants(id, { page: currentPage, limit: pageSize })
+      ? useSessionParticipants(id, searchKeyword, {
+          page: currentPage,
+          limit: pageSize,
+        })
       : useStudentParticipants(studentId, {
           page: currentPage,
           limit: pageSize,
         });
-  const processedData = data?.data || [];
 
   useEffect(() => {
-    if (processedData.length) {
-      setLevels(
-        processedData.reduce(
-          (acc, cur) => ({ ...acc, [cur.ID]: cur.Level }),
-          {}
-        )
-      );
+    if (searchKeyword) {
+      setCurrentPage(1);
     }
-  }, [processedData]);
-
-  const filteredData = useMemo(() => {
-    const keyword = searchKeyword?.toLowerCase().trim() || "";
-    if (!keyword) return processedData;
-    return processedData.filter((item) => {
-      const fullName = String(item.User?.fullName || "").toLowerCase();
-      const sessionName = String(item.Session?.sessionName || "").toLowerCase();
-      const level = String(item.Level || "").toLowerCase();
-
-      return (
-        sessionName.includes(keyword) ||
-        fullName.includes(keyword) ||
-        level.includes(keyword)
-      );
-    });
-  }, [processedData, searchKeyword]);
-
-  const checkIsAllQuestionGraded = useCallback(() => {
-    if (!processedData.length) return;
-    // Add logic here if needed
-  }, [processedData]); // Removed `levels` from dependencies to stabilize the function
-
-  useEffect(() => {
-    if (type === TableType.SESSION && status !== StatusType.PUBLISHED) {
-      checkIsAllQuestionGraded();
-    }
-  }, [type, status, checkIsAllQuestionGraded]); // Updated dependency array to include stable dependencies
+  }, [searchKeyword]);
 
   const onLevelChange = (key, value) => {
     setLevels((prev) => ({ ...prev, [key]: value }));
@@ -249,11 +219,11 @@ const StudentSessionTable = ({
       <Table
         // @ts-ignore
         columns={columns}
-        dataSource={filteredData.map((item) => ({ ...item, key: item.ID }))}
+        dataSource={data?.data.map((item) => ({ ...item, key: item.ID }))}
         pagination={{
           current: currentPage,
           pageSize: pageSize,
-          total: processedData?.pagination?.totalItems || 0,
+          total: data?.pagination?.totalItems,
           showSizeChanger: true,
           pageSizeOptions: ["5", "10", "15", "20"],
           showTotal: (total, range) =>
@@ -263,6 +233,7 @@ const StudentSessionTable = ({
             setPageSize(size);
           },
         }}
+        loading={isLoading}
         bordered
         className="border border-gray-200 pagination w-full p-0 m-0 overflow-x-auto bg-none"
         rowClassName="text-center"

@@ -10,16 +10,19 @@ import {
   getStudentById,
   putStudentLevel,
   publishScores,
+  approveAllRequest,
+  rejectAllRequest,
 } from "../api/session_api";
 import { message } from "antd";
 
 export const useSessionParticipants = (
   sessionId,
+  searchKeyword,
   { page = 1, limit = 10 } = {}
 ) => {
   return useQuery({
-    queryKey: ["sessionParticipants", sessionId, page, limit],
-    queryFn: () => fetchSessionParticipants(sessionId, { page, limit }),
+    queryKey: ["sessionParticipants", sessionId, page, limit, searchKeyword],
+    queryFn: () => fetchSessionParticipants(sessionId, searchKeyword, { page, limit }),
     enabled: !!sessionId,
   });
 };
@@ -53,6 +56,8 @@ export const useApproveRequest = (sessionId) => {
         queryKey: ["sessionRequests", sessionId],
       });
       queryClient.invalidateQueries({ queryKey: ["sessionParticipants"] });
+      queryClient.invalidateQueries({ queryKey: ["sessionDetails"] });
+      queryClient.invalidateQueries({ queryKey: ["studentDetails"] });
     },
     onError: (error) => {
       message.error("Error approving request: " + error.message);
@@ -70,6 +75,8 @@ export const useRejectRequest = (sessionId) => {
       queryClient.invalidateQueries({
         queryKey: ["sessionRequests", sessionId],
       });
+      queryClient.invalidateQueries({ queryKey: ["sessionDetails"] });
+      queryClient.invalidateQueries({ queryKey: ["studentDetails"] });
     },
     onError: (error) => {
       message.error("Error rejecting request: " + error.message);
@@ -176,6 +183,45 @@ export const usePublishScores = (sessionId) => {
     },
     onError: (response) => {
       message.error("Some students are missing scores or levels. Please waiting or complete the data before publishing.");
+    },
+  });
+};
+
+export const useApproveAllRequest = (sessionId) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => approveAllRequest(sessionId),
+    onSuccess: () => {
+      message.success("Approved all requests successfully");
+      queryClient.invalidateQueries({ queryKey: ["sessionParticipants"] });
+      queryClient.invalidateQueries({
+        queryKey: ["sessionRequests", sessionId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["sessionDetails"] });
+      queryClient.invalidateQueries({ queryKey: ["studentDetails"] });
+    },
+    onError: (response) => {
+      message.error("Failed to approve all requests. Please try again.");
+    },
+  });
+};
+
+
+export const useRejectAllRequest = (sessionId) => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: () => rejectAllRequest(sessionId),
+    onSuccess: () => {
+      message.success("Rejected all requests successfully");
+      queryClient.invalidateQueries({ queryKey: ["sessionParticipants"] });
+      queryClient.invalidateQueries({
+        queryKey: ["sessionRequests", sessionId],
+      });
+      queryClient.invalidateQueries({ queryKey: ["sessionDetails"] });
+      queryClient.invalidateQueries({ queryKey: ["studentDetails"] });
+    },
+    onError: (response) => {
+      message.error("Failed to reject all requests. Please try again.");
     },
   });
 };

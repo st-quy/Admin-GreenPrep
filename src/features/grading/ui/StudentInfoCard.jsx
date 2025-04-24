@@ -30,7 +30,6 @@ const StudentInfoCard = ({
           {/* Main Card */}
           <Card className="shadow-sm rounded-lg border border-gray-100 py-5 px-8">
             <Row gutter={[36, 16]}>
-              {/* Left Column */}
               <Col xs={24} sm={24} md={12}>
                 <div className="grid grid-cols-[110px_1fr] gap-y-4 gap-x-4 text-base text-[#374151]">
                   <div>Student name</div>
@@ -46,7 +45,6 @@ const StudentInfoCard = ({
                 </div>
               </Col>
 
-              {/* Right Column */}
               <Col xs={24} sm={24} md={12}>
                 <div className="grid grid-cols-[110px_1fr] gap-y-4 gap-x-4 text-base text-[#374151]">
                   <div>Email</div>

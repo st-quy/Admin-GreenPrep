@@ -10,6 +10,8 @@ import {
   useRejectRequest,
   useRejectSelectedRequest,
   useSessionRequests,
+  useApproveAllRequest,
+  useRejectAllRequest,
 } from "../hooks/useSession";
 
 const StudentMonitoring = ({
@@ -38,6 +40,12 @@ const StudentMonitoring = ({
     okButtonColor: "",
     onConfirm: () => {},
   });
+
+  const { mutate: approveAllRequest, isPending: isLoadingApprovedAll } =
+    useApproveAllRequest(sessionId);
+
+  const { mutate: rejectAllRequest, isPending: isLoadingRejectedAll } =
+    useRejectAllRequest(sessionId);
 
   const filterPending = useMemo(() => {
     if (!sessionId) return [];

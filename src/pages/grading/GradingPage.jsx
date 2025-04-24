@@ -42,7 +42,7 @@ const GradingPage = () => {
     data: speakingData,
     refetch: refetchSpeaking,
   } = useGetSpeakingQuestionsAnswers(participantId);
-  const { isPending: isParticipantsPending, data: participantsData } =
+  const { data: participantsData, isPending: isParticipantsPending } =
     useGetParticipants(sessionId);
 
   const onTabChange = (key) => {
@@ -346,7 +346,12 @@ const GradingPage = () => {
     (item) => item.ID === participantId
   );
 
-  if (isWritingPending || isSpeakingPending || isParticipantsPending)
+  if (
+    isWritingPending ||
+    isSpeakingPending ||
+    isParticipantsPending ||
+    !userData
+  )
     return (
       <Spin size="large" className="flex justify-center items-center h-60" />
     );

@@ -2,13 +2,14 @@ import axiosInstance from "@shared/config/axios";
 
 export const fetchSessionParticipants = async (
   sessionId,
+  searchKeyword,  
   { page = 1, limit = 10 } = {}
 ) => {
   try {
     const response = await axiosInstance.get(
       `/session-participants/${sessionId}`,
       {
-        params: { page, limit },
+        params: { page, limit, searchKeyword },
       }
     );
     return response.data;
@@ -111,4 +112,12 @@ export const putStudentLevel = async (params) => {
 
 export const publishScores = async (sessionId) => {  
   return axiosInstance.put(`/session-participants/publish-scores`, { sessionId });
+};
+
+export const approveAllRequest = (sessionId) => {
+  return axiosInstance.patch(`/session-requests/${sessionId}/approveAll`);
+};
+
+export const rejectAllRequest = (sessionId) => {
+  return axiosInstance.patch(`/session-requests/${sessionId}/rejectAll`);
 };

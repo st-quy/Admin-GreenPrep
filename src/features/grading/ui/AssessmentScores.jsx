@@ -106,7 +106,7 @@ const AssessmentScores = ({
             {activeTab === "writing" ? "Writing" : "Speaking"} Assessment Parts
           </h2>
           <p className="font-medium text-[18px] leading-[26px] text-[#637381]">
-            Detailed breakdown of each part in the
+            Detailed breakdown of each part in the{" "}
             {activeTab === "writing" ? "writing" : "speaking"} assessment.
           </p>
         </div>
