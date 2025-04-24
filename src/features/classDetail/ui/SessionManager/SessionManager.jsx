@@ -99,7 +99,7 @@ const SessionManager = ({ data, isLoading }) => {
             <span className="text-xl">
               <DeleteOutlined
                 onClick={() => openModal("delete", record)}
-                className="hover:opacity-50"
+                className=" text-red-500 hover:!text-red-700"
               />
             </span>
           )}

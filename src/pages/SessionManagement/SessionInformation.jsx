@@ -111,7 +111,7 @@ const SessionInformation = ({ type }) => {
         </div>
         <div className="md:mt-[34px] mt-[20px]">
           <SearchInput
-            placeholder="Search by name, level"
+            placeholder="Search by name"
             onSearchChange={onSearchChange}
             className={` ${type == TableType.SESSION ? "absolute z-10" : "mb-8"}`}
           />

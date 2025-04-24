@@ -21,12 +21,13 @@ export const fetchSessionParticipants = async (
 
 export const fetchStudentParticipants = async (
   studentId,
+  searchKeyword,
   { page = 1, limit = 10 } = {}
 ) => {
   const response = await axiosInstance.get(
     `/session-participants/user/${studentId}`,
     {
-      params: { page, limit },
+      params: { page, limit, searchKeyword },
     }
   );
   return response.data;

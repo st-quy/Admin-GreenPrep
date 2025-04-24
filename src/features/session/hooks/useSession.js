@@ -29,11 +29,12 @@ export const useSessionParticipants = (
 
 export const useStudentParticipants = (
   studentId,
+  searchKeyword,
   { page = 1, limit = 10 } = {}
 ) => {
   return useQuery({
-    queryKey: ["studentParticipants", studentId, page, limit],
-    queryFn: () => fetchStudentParticipants(studentId, { page, limit }),
+    queryKey: ["studentParticipants", studentId, page, limit, searchKeyword],
+    queryFn: () => fetchStudentParticipants(studentId, searchKeyword, { page, limit }),
     enabled: !!studentId,
   });
 };

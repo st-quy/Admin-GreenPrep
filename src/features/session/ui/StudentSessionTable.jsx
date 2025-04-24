@@ -26,11 +26,11 @@ const StudentSessionTable = ({
 
   const { data, isLoading } =
     type === TableType.SESSION
-      ? useSessionParticipants(id, searchKeyword, {
+      ? useSessionParticipants(id, searchKeyword.trim(), {
           page: currentPage,
           limit: pageSize,
         })
-      : useStudentParticipants(studentId, {
+      : useStudentParticipants(studentId, searchKeyword.trim(), {
           page: currentPage,
           limit: pageSize,
         });
