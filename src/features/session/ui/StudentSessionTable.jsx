@@ -147,9 +147,9 @@ const StudentSessionTable = ({
       render: (level, record) =>
         type === TableType.SESSION && status !== StatusType.PUBLISHED ? (
           <Select
-            value={levels[record.ID]}
+            value={record.Level}
             placeholder="Level"
-            disabled={isPublished}
+            disabled={record.IsPublished}
             onChange={(value) => onLevelChange(record.ID, value)}
             className="p-0"
           >
@@ -160,7 +160,7 @@ const StudentSessionTable = ({
             ))}
           </Select>
         ) : (
-          <span>{level || "No Data"}</span>
+          <span>{record?.Level || "No Data"}</span>
         ),
       onHeaderCell: () => {
         return {
