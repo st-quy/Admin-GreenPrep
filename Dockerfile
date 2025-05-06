@@ -1,4 +1,4 @@
-FROM node:18-alpine AS builder
+FROM node:20.19-alpine AS builder
 
 WORKDIR /app
 
@@ -6,10 +6,14 @@ COPY package*.json ./
 RUN npm install
 
 COPY . .
+
+ARG VITE_BASE_URL
+ENV VITE_BASE_URL=$VITE_BASE_URL
+
 RUN npm run build
 
 
-FROM node:18-alpine AS runner
+FROM node:20.19-alpine AS runner
 
 WORKDIR /app
 
