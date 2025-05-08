@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { DeleteOutlined, EditOutlined } from "@ant-design/icons";
-import { useGetAllClass } from "@features/classManagement/hooks";
+import {
+  useGetAllClass,
+  handleImportClick,
+  handleFileChange,
+  fileInputRef,
+  handleExportExcel,
+} from "@features/classManagement/hooks";
 import CreateClassModal from "@features/classManagement/ui/Modal/CreateClass";
 import TableSearch from "@shared/ui/TableSearch";
 import { Button, Typography } from "antd";
@@ -8,8 +14,12 @@ import { Link } from "react-router-dom";
 import UpdateClassModal from "@features/classManagement/ui/Modal/UpdateClass";
 import DeleteClassModal from "@features/classManagement/ui/Modal/DeleteClass";
 import { useSelector } from "react-redux";
+import { useQueryClient } from "@tanstack/react-query";
 
 const ClassManagement = () => {
+  const [importLoading, setImportLoading] = useState(false);
+  const [exportLoading, setExportLoading] = useState(false);
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState("");
   const [dataClass, setClassData] = useState(null);
   const { userId, user } = useSelector((state) => state.auth);
@@ -17,6 +27,12 @@ const ClassManagement = () => {
   const { data: classList, isLoading } = useGetAllClass(
     user?.role.includes("admin") ? null : userId
   );
+
+  const handleExport = async () => {
+    setExportLoading(true);
+    await handleExportExcel(setExportLoading);
+    setExportLoading(false);
+  };
 
   const handleUpdateClass = (record) => () => {
     setIsOpen("Update");
@@ -87,6 +103,31 @@ const ClassManagement = () => {
           </Typography.Text>
         </div>
         <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 sm:space-x-0">
+          <Button
+            type="primary"
+            className="min-w-[140px] md:min-w-[160px] h-[50px] rounded-full bg-primaryColor hover:!bg-[#002A6B] border-none font-medium"
+            onClick={handleExport}
+            loading={exportLoading}
+          >
+            Export to Excel
+          </Button>
+
+          <Button
+            type="primary"
+            className="min-w-[140px] md:min-w-[160px] h-[50px] rounded-full bg-primaryColor hover:!bg-[#002A6B] border-none font-medium"
+            onClick={handleImportClick}
+            loading={importLoading}
+          >
+            Import from Excel
+          </Button>
+
+          <input
+            type="file"
+            accept=".xlsx, .xls"
+            ref={fileInputRef}
+            onChange={(e) => handleFileChange(e, queryClient, setImportLoading)}
+            style={{ display: "none" }}
+          />
           <Button
             type="primary"
             className="min-w-[140px] md:min-w-[160px] h-[50px] rounded-full bg-primaryColor hover:!bg-[#002A6B] border-none font-medium"
