@@ -20,17 +20,19 @@ export const handleFileChange = async (e, queryClient, setImportLoading) => {
     const result = response.data;
     console.log(result);
 
-    if (result.data?.status === 200) {
+    if (result?.status === 200) {
       console.log(result);
       message.success(result?.message || "Import successful");
-    } else {
-      message.error(result?.message || "Import failed (data invalid)");
     }
   } catch (error) {
-    console.error("Import error", error);
-    message.error(
-      "Import failed: " + (error?.response?.data?.message || error.message)
-    );
+    const status = error?.response?.status;
+    const messageText = error?.response?.data?.message || error.message;
+
+    if (status === 400) {
+      message.error(messageText || "Import failed (data invalid)");
+    } else {
+      message.error("Import failed: " + messageText);
+    }
   } finally {
     setImportLoading(false);
     e.target.value = "";
